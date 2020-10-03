@@ -1,0 +1,74 @@
+{
+    "name": "shlinkio/shlink-importer",
+    "type": "library",
+    "homepage": "https://shlink.io",
+    "description": "Collection of tools to import links from different sources and map them to a shlink-compliant format",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alejandro Celaya Alastrué",
+            "homepage": "https://www.alejandrocelaya.com",
+            "email": "alejandro@alejandrocelaya.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4",
+        "laminas/laminas-servicemanager": "^3.4"
+    },
+    "require-dev": {
+        "infection/infection": "^0.17.6",
+        "phpstan/phpstan": "^0.12.48",
+        "phpunit/phpunit": "^9.2",
+        "roave/security-advisories": "dev-master",
+        "shlinkio/php-coding-standard": "~2.1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shlinkio\\Shlink\\Importer\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ShlinkioTest\\Shlink\\Importer\\": "test"
+        }
+    },
+    "scripts": {
+        "ci": [
+            "@cs",
+            "@stan",
+            "@test:ci",
+            "@infect:ci"
+        ],
+        "cs": "phpcs",
+        "cs:fix": "phpcbf",
+        "stan": "phpstan analyse src --level=6",
+        "test": "phpdbg -qrr vendor/bin/phpunit --order-by=random --testdox --colors=always",
+        "test:ci": "@test --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml",
+        "test:pretty": "@test --coverage-html build/coverage-html",
+        "infect": "infection --threads=4 --min-msi=85 --log-verbosity=default --only-covered",
+        "infect:ci": "@infect --coverage=build --skip-initial-tests",
+        "infect:show": "@infect --show-mutations",
+        "infect:show:ci": "@infect --show-mutations --coverage=build",
+        "test:infect": [
+            "@test:ci",
+            "@infect:show:ci"
+        ]
+    },
+    "scripts-descriptions": {
+        "ci": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"test:ci\" and \"infect:ci\"</>",
+        "cs": "<fg=blue;options=bold>Checks coding styles</>",
+        "cs:fix": "<fg=blue;options=bold>Fixes coding styles, when possible</>",
+        "stan": "<fg=blue;options=bold>Inspects code with phpstan</>",
+        "test": "<fg=blue;options=bold>Runs unit tests with no coverage reports</>",
+        "test:ci": "<fg=blue;options=bold>Runs unit tests generating coverage reports and logs</>",
+        "test:pretty": "<fg=blue;options=bold>Runs unit tests generating coverage reports in html</>",
+        "test:infect": "<fg=blue;options=bold>Alias for \"test:ci\" and \"infect:show:ci\"</>",
+        "infect": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing</>",
+        "infect:ci": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs</>",
+        "infect:show": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing and shows applied mutators</>",
+        "infect:show:ci": "<fg=blue;options=bold>Checks unit tests quality applying mutation testing with existing reports and logs and shows applied mutators</>"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
