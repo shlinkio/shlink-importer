@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Importer\Strategy;
+namespace Shlinkio\Shlink\Importer\Strategy;
 
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Model\ShlinkUrl;

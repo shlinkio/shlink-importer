@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Importer\Importer\Strategy;
+namespace ShlinkioTest\Shlink\Importer\Strategy;
 
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -15,8 +15,8 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Shlinkio\Shlink\Importer\Importer\Strategy\BitlyApiV4Importer;
 use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
+use Shlinkio\Shlink\Importer\Strategy\BitlyApiV4Importer;
 
 use function json_encode;
 use function sprintf;

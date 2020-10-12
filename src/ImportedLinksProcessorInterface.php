@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Importer;
+namespace Shlinkio\Shlink\Importer;
 
 use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
 
