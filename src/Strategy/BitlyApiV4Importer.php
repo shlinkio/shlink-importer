@@ -14,6 +14,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
+use Shlinkio\Shlink\Importer\Params\BitlyApiV4Params;
 use Throwable;
 
 use function Functional\filter;
@@ -40,18 +41,18 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
      * @return ShlinkUrl[]
      * @throws ImportException
      */
-    public function import(array $params): iterable
+    public function import(array $rawParams): iterable
     {
-        ['access_token' => $accessToken] = $params;
+        $params = BitlyApiV4Params::fromRawParams($rawParams);
 
         try {
             $groupsResp = $this->httpClient->sendRequest(
-                $this->createBitlyRequest('https://api-ssl.bitly.com/v4/groups', $accessToken),
+                $this->createBitlyRequest('https://api-ssl.bitly.com/v4/groups', $params),
             );
             ['groups' => $groups] = $this->respToJson($groupsResp);
 
             foreach ($groups as ['guid' => $groupId]) {
-                yield from $this->loadUrlsForGroup($groupId, $accessToken);
+                yield from $this->loadUrlsForGroup($groupId, $params);
             }
         } catch (Throwable $e) {
             throw ImportException::fromError($e);
@@ -63,41 +64,42 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
      * @throws ClientExceptionInterface
      * @throws JsonException
      */
-    private function loadUrlsForGroup(string $groupId, string $accessToken): iterable
+    private function loadUrlsForGroup(string $groupId, BitlyApiV4Params $params): iterable
     {
         $pagination = [];
 
         do {
             $url = $pagination['next'] ?? sprintf('https://api-ssl.bitly.com/v4/groups/%s/bitlinks', $groupId);
-            $linksResp = $this->httpClient->sendRequest($this->createBitlyRequest($url, $accessToken));
+            $linksResp = $this->httpClient->sendRequest($this->createBitlyRequest($url, $params));
             ['links' => $links, 'pagination' => $pagination] = $this->respToJson($linksResp);
 
-            $filteredLinks = filter($links, static function (array $link): bool {
+            $filteredLinks = filter($links, static function (array $link) use ($params): bool {
                 $hasLongUrl = isset($link['long_url']) && ! empty($link['long_url']);
                 $isArchived = $link['archived'] ?? false;
 
-                return $hasLongUrl && ! $isArchived;
+                return $hasLongUrl && (! $params->ignoreArchived() || ! $isArchived);
             });
 
-            yield from map($filteredLinks, static function (array $link) {
-                $date = isset($link['created_at'])
+            yield from map($filteredLinks, static function (array $link) use ($params): ShlinkUrl {
+                $date = isset($link['created_at']) && $params->keepCreationDate()
                     ? DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $link['created_at'])
                     : new DateTimeImmutable();
                 $parsedLink = parse_url($link['link'] ?? '');
                 $host = $parsedLink['host'] ?? null;
-                $normalizedHost = $host !== 'bit.ly' ? $host : null;
+                $domain = $host !== 'bit.ly' && $params->importCustomDomains() ? $host : null;
                 $shortCode = ltrim($parsedLink['path'] ?? '', '/');
+                $tags = $params->importTags() ? $link['tags'] ?? [] : [];
 
-                return new ShlinkUrl($link['long_url'], $link['tags'] ?? [], $date, $normalizedHost, $shortCode);
+                return new ShlinkUrl($link['long_url'], $tags, $date, $domain, $shortCode);
             });
         } while (! empty($pagination['next']));
     }
 
-    private function createBitlyRequest(string $url, string $accessToken): RequestInterface
+    private function createBitlyRequest(string $url, BitlyApiV4Params $params): RequestInterface
     {
         return $this->requestFactory->createRequest('GET', $url)->withHeader(
             'Authorization',
-            sprintf('Bearer %s', $accessToken),
+            sprintf('Bearer %s', $params->accessToken()),
         );
     }
 
