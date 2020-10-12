@@ -13,14 +13,19 @@
     ],
     "require": {
         "php": "^7.4",
-        "laminas/laminas-servicemanager": "^3.4"
+        "laminas/laminas-servicemanager": "^3.4",
+        "shlinkio/shlink-config": "^1.0"
     },
     "require-dev": {
+        "guzzlehttp/guzzle": "^7.2",
         "infection/infection": "^0.17.6",
         "phpstan/phpstan": "^0.12.48",
         "phpunit/phpunit": "^9.2",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.1.1"
+    },
+    "suggest": {
+        "psr/http-client": "If you want to be able to import URLs from Bit.ly"
     },
     "autoload": {
         "psr-4": {
