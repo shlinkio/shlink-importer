@@ -52,7 +52,7 @@ class ImportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
-        $source = $io->getArgument('source');
+        $source = $input->getArgument('source');
 
         /** @var ParamsConsoleHelperInterface $paramsHelper */
         $paramsHelper = $this->consoleHelperManager->get($source);

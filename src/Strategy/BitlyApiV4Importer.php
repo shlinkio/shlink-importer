@@ -44,12 +44,13 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
     public function import(array $rawParams): iterable
     {
         $params = BitlyApiV4Params::fromRawParams($rawParams);
+        $startDate = new DateTimeImmutable();
 
         try {
             ['groups' => $groups] = $this->callToBitlyApi('/groups', $params);
 
             foreach ($groups as ['guid' => $groupId]) {
-                yield from $this->loadUrlsForGroup($groupId, $params);
+                yield from $this->loadUrlsForGroup($groupId, $params, $startDate);
             }
         } catch (ImportException $e) {
             throw $e;
@@ -63,7 +64,7 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
      * @throws ClientExceptionInterface
      * @throws JsonException
      */
-    private function loadUrlsForGroup(string $groupId, BitlyApiV4Params $params): iterable
+    private function loadUrlsForGroup(string $groupId, BitlyApiV4Params $params, DateTimeInterface $startDate): iterable
     {
         $pagination = [];
 
@@ -78,10 +79,10 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
                 return $hasLongUrl && (! $params->ignoreArchived() || ! $isArchived);
             });
 
-            yield from map($filteredLinks, static function (array $link) use ($params): ShlinkUrl {
+            yield from map($filteredLinks, static function (array $link) use ($params, $startDate): ShlinkUrl {
                 $date = isset($link['created_at']) && $params->keepCreationDate()
                     ? DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $link['created_at'])
-                    : new DateTimeImmutable();
+                    : clone $startDate;
                 $parsedLink = parse_url($link['link'] ?? '');
                 $host = $parsedLink['host'] ?? null;
                 $domain = $host !== 'bit.ly' && $params->importCustomDomains() ? $host : null;
