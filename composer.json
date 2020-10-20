@@ -13,14 +13,26 @@
     ],
     "require": {
         "php": "^7.4",
-        "laminas/laminas-servicemanager": "^3.4"
+        "ext-json": "*",
+        "laminas/laminas-servicemanager": "^3.4",
+        "lstrojny/functional-php": "^1.14",
+        "shlinkio/shlink-config": "^1.0",
+        "symfony/console": "^5.1"
     },
     "require-dev": {
-        "infection/infection": "^0.17.6",
+        "guzzlehttp/guzzle": "^7.2",
+        "infection/infection": "^0.18",
+        "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^0.12.48",
         "phpunit/phpunit": "^9.2",
+        "psr/http-factory": "^1.0",
         "roave/security-advisories": "dev-master",
-        "shlinkio/php-coding-standard": "~2.1.1"
+        "shlinkio/php-coding-standard": "~2.1.1",
+        "symfony/var-dumper": "^5.1"
+    },
+    "suggest": {
+        "psr/http-client": "If you want to be able to import URLs from Bit.ly",
+        "psr/http-factory": "If you want to be able to import URLs from Bit.ly"
     },
     "autoload": {
         "psr-4": {
@@ -45,7 +57,7 @@
         "test": "phpdbg -qrr vendor/bin/phpunit --order-by=random --testdox --colors=always",
         "test:ci": "@test --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml",
         "test:pretty": "@test --coverage-html build/coverage-html",
-        "infect": "infection --threads=4 --min-msi=85 --log-verbosity=default --only-covered",
+        "infect": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered",
         "infect:ci": "@infect --coverage=build --skip-initial-tests",
         "infect:show": "@infect --show-mutations",
         "infect:show:ci": "@infect --show-mutations --coverage=build",
