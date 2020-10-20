@@ -22,7 +22,7 @@ use function json_decode;
 use function ltrim;
 use function parse_url;
 use function sprintf;
-use function strpos;
+use function str_starts_with;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -51,6 +51,8 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
             foreach ($groups as ['guid' => $groupId]) {
                 yield from $this->loadUrlsForGroup($groupId, $params);
             }
+        } catch (ImportException $e) {
+            throw $e;
         } catch (Throwable $e) {
             throw ImportException::fromError($e);
         }
@@ -97,7 +99,7 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
      */
     private function callToBitlyApi(string $url, BitlyApiV4Params $params): array
     {
-        $url = strpos($url, 'http') === 0 ? $url : sprintf('https://api-ssl.bitly.com/v4%s', $url);
+        $url = str_starts_with($url, 'http') ? $url : sprintf('https://api-ssl.bitly.com/v4%s', $url);
         $request = $this->requestFactory->createRequest('GET', $url)->withHeader(
             'Authorization',
             sprintf('Bearer %s', $params->accessToken()),

@@ -207,19 +207,20 @@ class BitlyApiV4ImporterTest extends TestCase
     {
         $request = new Request('GET', '/groups');
         $createRequest = $this->requestFactory->createRequest(Argument::cetera())->willReturn($request);
-        $sendRequest = $this->httpClient->sendRequest(Argument::any())->willReturn(
+        $sendRequest = $this->httpClient->sendRequest(Argument::cetera())->willReturn(
             new Response($statusCode, [], 'Error'),
         );
 
         $this->expectException(BitlyApiV4Exception::class);
-        $this->expectErrorMessage(sprintf(
-            'Request to Bitly API v4 to URL "/groups" failed with status code "%s" and body "Error"',
-            $statusCode,
-        ));
+        $this->expectErrorMessage('Request to Bitly API v4 to URL');
+        $this->expectErrorMessage(sprintf('failed with status code "%s" and body "Error"', $statusCode));
         $createRequest->shouldBeCalledOnce();
         $sendRequest->shouldBeCalledOnce();
 
-        $this->importer->import([]);
+        $list = $this->importer->import(['access_token' => 'abc']);
+        foreach ($list as $item) {
+            // Iteration needed to trigger generator code
+        }
     }
 
     public function provideErrorStatusCodes(): iterable
