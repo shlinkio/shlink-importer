@@ -22,8 +22,14 @@ class ConfigProviderTest extends TestCase
     {
         $config = ($this->provider)();
 
-        self::assertCount(2, $config);
+        self::assertCount(3, $config);
         self::assertArrayHasKey('dependencies', $config);
         self::assertArrayHasKey(ConfigAbstractFactory::class, $config);
+        self::assertArrayHasKey('cli', $config);
+
+        self::assertCount(3, $config['cli']);
+        self::assertArrayHasKey('commands', $config['cli']);
+        self::assertArrayHasKey('importer_strategies', $config['cli']);
+        self::assertArrayHasKey('params_console_helpers', $config['cli']);
     }
 }

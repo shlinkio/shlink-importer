@@ -16,7 +16,7 @@ class BitlyApiV4ParamsConsoleHelper implements ParamsConsoleHelperInterface
             ),
             'import_short_codes' => $io->confirm(
                 'Do you want to import short-codes/slugs as they are? Otherwise, new unique short-codes will be '
-                . 'generated',
+                . 'generated for every imported URL.',
                 true,
             ),
             'import_tags' => $io->confirm('Do you want to import tags?', true),
@@ -25,7 +25,7 @@ class BitlyApiV4ParamsConsoleHelper implements ParamsConsoleHelperInterface
                 false,
             ),
             'keep_creation_date' => $io->confirm(
-                'Do you want to keep the original creation date? (Otherwise, all imported URLs will have current date '
+                'Do you want to keep the original creation date? Otherwise, all imported URLs will have current date '
                 . 'as its creation date',
                 true,
             ),
