@@ -67,17 +67,16 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
     private function loadUrlsForGroup(string $groupId, BitlyApiV4Params $params, DateTimeInterface $startDate): iterable
     {
         $pagination = [];
+        $archived = $params->ignoreArchived() ? 'off' : 'both';
 
         do {
-            $url = $pagination['next'] ?? sprintf('/groups/%s/bitlinks', $groupId);
+            $url = $pagination['next'] ?? sprintf('/groups/%s/bitlinks?archived=%s', $groupId, $archived);
             ['links' => $links, 'pagination' => $pagination] = $this->callToBitlyApi($url, $params);
 
-            $filteredLinks = filter($links, static function (array $link) use ($params): bool {
-                $hasLongUrl = isset($link['long_url']) && ! empty($link['long_url']);
-                $isArchived = $link['archived'] ?? false;
-
-                return $hasLongUrl && (! $params->ignoreArchived() || ! $isArchived);
-            });
+            $filteredLinks = filter(
+                $links,
+                static fn (array $link): bool => isset($link['long_url']) && ! empty($link['long_url']),
+            );
 
             yield from map($filteredLinks, static function (array $link) use ($params, $startDate): ShlinkUrl {
                 $date = isset($link['created_at']) && $params->keepCreationDate()

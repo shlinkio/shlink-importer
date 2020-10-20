@@ -44,7 +44,7 @@ class BitlyApiV4ImporterTest extends TestCase
      * @test
      * @dataProvider provideParams
      */
-    public function groupsAndUrlsAreRecursivelyFetched(array $params, array $expected): void
+    public function groupsAndUrlsAreRecursivelyFetched(array $params, array $expected, string $archived): void
     {
         $params['access_token'] = $accessToken = 'abc123';
 
@@ -77,7 +77,7 @@ class BitlyApiV4ImporterTest extends TestCase
         $test = $this;
         $sendUrlsRequest = $this->httpClient->sendRequest(
             Argument::that(fn (RequestInterface $request) => 'groups' !== (string) $request->getUri()),
-        )->will(function (array $args) use (&$callCounts, $test): Response {
+        )->will(function (array $args) use (&$callCounts, $test, $archived): Response {
             /** @var RequestInterface $request */
             [$request] = $args;
             $url = (string) $request->getUri();
@@ -96,11 +96,10 @@ class BitlyApiV4ImporterTest extends TestCase
                             'link' => 'http://customdom.com/ddd',
                             'long_url' => 'https://github.com',
                             'tags' => ['bar'],
-                            'archived' => true,
                         ],
                     ],
                     'pagination' => [
-                        'next' => 'https://api-ssl.bitly.com/v4/groups/def/bitlinks',
+                        'next' => 'https://api-ssl.bitly.com/v4/groups/def/bitlinks?archived=' . $archived,
                     ],
                 ]));
             }
@@ -111,7 +110,6 @@ class BitlyApiV4ImporterTest extends TestCase
                         'created_at' => '2020-01-01T00:00:00+0000',
                         'link' => 'http://bit.ly/aaa',
                         'long_url' => 'https://shlink.io',
-                        'archived' => true,
                     ],
                     [
                         'created_at' => '2020-02-01T00:00:00+0000',
@@ -156,19 +154,23 @@ class BitlyApiV4ImporterTest extends TestCase
             new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
-        ]];
+        ], 'both'];
         yield 'ignore archived' => [['ignore_archived' => true], [
+            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
             new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
             new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-03-01T00:00:00+0000'), null, 'ccc'),
+            new ShlinkUrl('https://github.com', ['bar'], $this->createDate('2020-04-01T00:00:00+0000'), null, 'ddd'),
+            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
             new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
+            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
             new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
-        ]];
+        ], 'off'];
         yield 'ignore tags' => [['import_tags' => false], [
             new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
             new ShlinkUrl('https://github.com', [], $this->createDate('2020-02-01T00:00:00+0000'), null, 'bbb'),
@@ -178,7 +180,7 @@ class BitlyApiV4ImporterTest extends TestCase
             new ShlinkUrl('https://github.com', [], $this->createDate('2020-02-01T00:00:00+0000'), null, 'bbb'),
             new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
             new ShlinkUrl('https://github.com', [], $this->createDate('2020-02-01T00:00:00+0000'), null, 'bbb'),
-        ]];
+        ], 'both'];
         yield 'import custom domains' => [['import_custom_domains' => true], [
             new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
             new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
@@ -196,7 +198,7 @@ class BitlyApiV4ImporterTest extends TestCase
             new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
-        ]];
+        ], 'both'];
     }
 
     /**
