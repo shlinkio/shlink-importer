@@ -11,5 +11,5 @@ interface ImportedLinksProcessorInterface
     /**
      * @param ShlinkUrl[] $shlinkUrls
      */
-    public function process(iterable $shlinkUrls): void;
+    public function process(iterable $shlinkUrls, string $source, array $params): void;
 }
