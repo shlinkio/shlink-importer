@@ -21,7 +21,7 @@
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.2",
-        "infection/infection": "^0.17.6",
+        "infection/infection": "^0.18",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^0.12.48",
         "phpunit/phpunit": "^9.2",
@@ -57,7 +57,7 @@
         "test": "phpdbg -qrr vendor/bin/phpunit --order-by=random --testdox --colors=always",
         "test:ci": "@test --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml",
         "test:pretty": "@test --coverage-html build/coverage-html",
-        "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
+        "infect": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered",
         "infect:ci": "@infect --coverage=build --skip-initial-tests",
         "infect:show": "@infect --show-mutations",
         "infect:show:ci": "@infect --show-mutations --coverage=build",
