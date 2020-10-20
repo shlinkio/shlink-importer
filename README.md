@@ -1,14 +1,26 @@
-# shlink importer
+# Shlink importer
 
 Collection of tools to import links from different sources and map them to a shlink-compliant format.
 
 ## Installation
+
+This module can be installed using composer:
+
+    composer require shlinkio/shlink-importer
 
 ## Supported import sources
 
 * Bit.ly
 
 ## Usage
+
+The module register the `short-urls:import` command, which can be used to import links from different sources.
+
+This command requires the source from which to import to be provided:
+
+    `bin/cli short-urls:import bitly`
+
+The command will ask you some questions about how to import from this source, and then, once the data is there, it will invoke the `Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface` service.
 
 ## Requirements
 
