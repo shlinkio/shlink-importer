@@ -15,6 +15,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
+use Shlinkio\Shlink\Importer\Exception\BitlyApiV4Exception;
 use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
 use Shlinkio\Shlink\Importer\Strategy\BitlyApiV4Importer;
 
@@ -196,6 +197,38 @@ class BitlyApiV4ImporterTest extends TestCase
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
         ]];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideErrorStatusCodes
+     */
+    public function throwsExceptionWhenStatusCodeReturnedByApiIsError(int $statusCode): void
+    {
+        $request = new Request('GET', '/groups');
+        $createRequest = $this->requestFactory->createRequest(Argument::cetera())->willReturn($request);
+        $sendRequest = $this->httpClient->sendRequest(Argument::any())->willReturn(
+            new Response($statusCode, [], 'Error'),
+        );
+
+        $this->expectException(BitlyApiV4Exception::class);
+        $this->expectErrorMessage(sprintf(
+            'Request to Bitly API v4 to URL "/groups" failed with status code "%s" and body "Error"',
+            $statusCode,
+        ));
+        $createRequest->shouldBeCalledOnce();
+        $sendRequest->shouldBeCalledOnce();
+
+        $this->importer->import([]);
+    }
+
+    public function provideErrorStatusCodes(): iterable
+    {
+        yield '400' => [400];
+        yield '401' => [401];
+        yield '403' => [403];
+        yield '404' => [404];
+        yield '500' => [500];
     }
 
     private function jsonEncode(array $payload): string

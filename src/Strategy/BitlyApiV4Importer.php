@@ -10,8 +10,7 @@ use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Shlinkio\Shlink\Importer\Exception\BitlyApiV4Exception;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\BitlyApiV4Params;
@@ -23,6 +22,7 @@ use function json_decode;
 use function ltrim;
 use function parse_url;
 use function sprintf;
+use function strpos;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -46,10 +46,7 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
         $params = BitlyApiV4Params::fromRawParams($rawParams);
 
         try {
-            $groupsResp = $this->httpClient->sendRequest(
-                $this->createBitlyRequest('https://api-ssl.bitly.com/v4/groups', $params),
-            );
-            ['groups' => $groups] = $this->respToJson($groupsResp);
+            ['groups' => $groups] = $this->callToBitlyApi('/groups', $params);
 
             foreach ($groups as ['guid' => $groupId]) {
                 yield from $this->loadUrlsForGroup($groupId, $params);
@@ -69,9 +66,8 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
         $pagination = [];
 
         do {
-            $url = $pagination['next'] ?? sprintf('https://api-ssl.bitly.com/v4/groups/%s/bitlinks', $groupId);
-            $linksResp = $this->httpClient->sendRequest($this->createBitlyRequest($url, $params));
-            ['links' => $links, 'pagination' => $pagination] = $this->respToJson($linksResp);
+            $url = $pagination['next'] ?? sprintf('/groups/%s/bitlinks', $groupId);
+            ['links' => $links, 'pagination' => $pagination] = $this->callToBitlyApi($url, $params);
 
             $filteredLinks = filter($links, static function (array $link) use ($params): bool {
                 $hasLongUrl = isset($link['long_url']) && ! empty($link['long_url']);
@@ -95,19 +91,25 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
         } while (! empty($pagination['next']));
     }
 
-    private function createBitlyRequest(string $url, BitlyApiV4Params $params): RequestInterface
+    /**
+     * @throws ClientExceptionInterface
+     * @throws JsonException
+     */
+    private function callToBitlyApi(string $url, BitlyApiV4Params $params): array
     {
-        return $this->requestFactory->createRequest('GET', $url)->withHeader(
+        $url = strpos($url, 'http') === 0 ? $url : sprintf('https://api-ssl.bitly.com/v4%s', $url);
+        $request = $this->requestFactory->createRequest('GET', $url)->withHeader(
             'Authorization',
             sprintf('Bearer %s', $params->accessToken()),
         );
-    }
+        $resp = $this->httpClient->sendRequest($request);
+        $body = (string) $resp->getBody();
+        $statusCode = $resp->getStatusCode();
 
-    /**
-     * @throws JsonException
-     */
-    private function respToJson(ResponseInterface $resp): array
-    {
-        return json_decode((string) $resp->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        if ($statusCode >= 400) {
+            throw BitlyApiV4Exception::fromInvalidRequest($url, $statusCode, $body);
+        }
+
+        return json_decode($body, true, 512, JSON_THROW_ON_ERROR);
     }
 }
