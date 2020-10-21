@@ -21,11 +21,11 @@ This module can be installed using composer:
 
 ## Usage
 
-The module register the `short-urls:import` command, which can be used to import links from different sources.
+The module register the `short-url:import` command, which can be used to import links from different sources.
 
 This command requires the source from which to import to be provided:
 
-    `bin/cli short-urls:import bitly`
+    `bin/cli short-url:import bitly`
 
 The command will ask you some questions about how to import from this source, and then, once the data is there, it will invoke the `Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface` service.
 

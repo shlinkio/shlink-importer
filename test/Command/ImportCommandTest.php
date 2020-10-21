@@ -9,11 +9,13 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Importer\Command\ImportCommand;
+use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyManagerInterface;
+use Shlinkio\Shlink\Importer\Strategy\ImportSources;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -47,7 +49,7 @@ class ImportCommandTest extends TestCase
     /** @test */
     public function dependenciesAreInvokedAsExpected(): void
     {
-        $source = 'some_source';
+        $source = ImportSources::BITLY;
 
         $paramsHelper = $this->prophesize(ParamsConsoleHelperInterface::class);
         $importerStrategy = $this->prophesize(ImporterStrategyInterface::class);
@@ -65,5 +67,13 @@ class ImportCommandTest extends TestCase
         $requestParams->shouldHaveBeenCalledOnce();
         $import->shouldHaveBeenCalledOnce();
         $process->shouldHaveBeenCalledOnce();
+    }
+
+    /** @test */
+    public function exceptionIsThrownWhenInvalidSourceIsProvided(): void
+    {
+        $this->expectException(InvalidSourceException::class);
+
+        $this->commandTester->execute(['source' => 'invalid']);
     }
 }

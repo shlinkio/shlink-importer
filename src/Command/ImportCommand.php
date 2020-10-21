@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Command;
 
+use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
@@ -16,12 +17,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function Functional\contains;
 use function implode;
 use function sprintf;
 
 class ImportCommand extends Command
 {
-    public const NAME = 'short-urls:import';
+    public const NAME = 'short-url:import';
 
     private ImporterStrategyManagerInterface $importerStrategyManager;
     private ConsoleHelperManagerInterface $consoleHelperManager;
@@ -47,6 +49,16 @@ class ImportCommand extends Command
                 'The source from which you want to import. Supported sources: ["%s"]',
                 implode('", "', ImportSources::getAll()),
             ));
+    }
+
+    protected function interact(InputInterface $input, OutputInterface $output): void
+    {
+        $source = $input->getArgument('source');
+        $validSources = ImportSources::getAll();
+
+        if (! contains($validSources, $source)) {
+            throw InvalidSourceException::fromInvalidSource($source);
+        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
