@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Strategy;
 
+use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 use JsonException;
@@ -16,6 +17,7 @@ use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\BitlyApiV4Params;
 use Throwable;
 
+use function base64_encode;
 use function Functional\filter;
 use function Functional\map;
 use function json_decode;
@@ -30,6 +32,9 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
 {
     private ClientInterface $httpClient;
     private RequestFactoryInterface $requestFactory;
+
+    private ?string $lastProcessedUrlDate = null;
+    private ?string $lastProcessedGroup = null;
 
     public function __construct(ClientInterface $httpClient, RequestFactoryInterface $requestFactory)
     {
@@ -72,15 +77,17 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
         do {
             $url = $pagination['next'] ?? sprintf('/groups/%s/bitlinks?archived=%s', $groupId, $archived);
             ['links' => $links, 'pagination' => $pagination] = $this->callToBitlyApi($url, $params);
+            $this->lastProcessedGroup = $groupId;
 
             $filteredLinks = filter(
                 $links,
                 static fn (array $link): bool => isset($link['long_url']) && ! empty($link['long_url']),
             );
 
-            yield from map($filteredLinks, static function (array $link) use ($params, $startDate): ShlinkUrl {
+            yield from map($filteredLinks, function (array $link) use ($params, $startDate): ShlinkUrl {
+                $this->lastProcessedUrlDate = $link['created_at'] ?? $this->lastProcessedUrlDate;
                 $date = isset($link['created_at']) && $params->keepCreationDate()
-                    ? DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $link['created_at'])
+                    ? $this->dateFromAtom($link['created_at'])
                     : clone $startDate;
                 $parsedLink = parse_url($link['link'] ?? '');
                 $host = $parsedLink['host'] ?? null;
@@ -109,9 +116,31 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
         $statusCode = $resp->getStatusCode();
 
         if ($statusCode >= 400) {
-            throw BitlyApiV4Exception::fromInvalidRequest($url, $statusCode, $body);
+            throw BitlyApiV4Exception::fromInvalidRequest(
+                $url,
+                $statusCode,
+                $body,
+                $this->generateContinueToken() ?? $params->continueToken(),
+            );
         }
 
         return json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+    }
+
+    private function generateContinueToken(): ?string
+    {
+        if ($this->lastProcessedGroup === null || $this->lastProcessedUrlDate === null) {
+            return $this->lastProcessedGroup;
+        }
+
+        // Generate the timestamp corresponding to 1 second before the last processed URL
+        $createdBefore = $this->dateFromAtom($this->lastProcessedUrlDate)->sub(new DateInterval('PT1S'))->format('U');
+
+        return base64_encode(sprintf('%s__%s', $this->lastProcessedGroup, $createdBefore));
+    }
+
+    private function dateFromAtom(string $atomDate): DateTimeImmutable
+    {
+        return DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $atomDate);
     }
 }
