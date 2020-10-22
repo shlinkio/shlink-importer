@@ -33,27 +33,27 @@ return [
     'cli' => [
         'importer_strategies' => [
             'factories' => [
-                Strategy\BitlyApiV4Importer::class => ConfigAbstractFactory::class,
+                Strategy\BitlyApiImporter::class => ConfigAbstractFactory::class,
             ],
 
             'aliases' => [
-                Strategy\ImportSources::BITLY => Strategy\BitlyApiV4Importer::class,
+                Strategy\ImportSources::BITLY => Strategy\BitlyApiImporter::class,
             ],
         ],
 
         'params_console_helpers' => [
             'factories' => [
-                Params\ConsoleHelper\BitlyApiV4ParamsConsoleHelper::class => InvokableFactory::class,
+                Params\ConsoleHelper\BitlyApiParamsConsoleHelper::class => InvokableFactory::class,
             ],
 
             'aliases' => [
-                Strategy\ImportSources::BITLY => Params\ConsoleHelper\BitlyApiV4ParamsConsoleHelper::class,
+                Strategy\ImportSources::BITLY => Params\ConsoleHelper\BitlyApiParamsConsoleHelper::class,
             ],
         ],
     ],
 
     ConfigAbstractFactory::class => [
-        Strategy\BitlyApiV4Importer::class => [ClientInterface::class, RequestFactoryInterface::class],
+        Strategy\BitlyApiImporter::class => [ClientInterface::class, RequestFactoryInterface::class],
         Command\ImportCommand::class => [
             Strategy\ImporterStrategyManager::class,
             Params\ConsoleHelper\ConsoleHelperManager::class,

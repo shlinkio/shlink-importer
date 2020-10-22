@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Params;
 
-class BitlyApiV4Params
+class BitlyApiParams
 {
     private string $accessToken;
     private bool $importTags;
     private bool $importCustomDomains;
     private bool $keepCreationDate;
     private bool $ignoreArchived;
+    private ?string $continueToken = null;
 
     private function __construct()
     {
@@ -25,6 +26,7 @@ class BitlyApiV4Params
         $instance->importCustomDomains = (bool) ($params['import_custom_domains'] ?? false);
         $instance->keepCreationDate = (bool) ($params['keep_creation_date'] ?? true);
         $instance->ignoreArchived = (bool) ($params['ignore_archived'] ?? false);
+        $instance->continueToken = $params['continue_token'] ?? null;
 
         return $instance;
     }
@@ -52,5 +54,10 @@ class BitlyApiV4Params
     public function ignoreArchived(): bool
     {
         return $this->ignoreArchived;
+    }
+
+    public function continueToken(): ?string
+    {
+        return $this->continueToken;
     }
 }

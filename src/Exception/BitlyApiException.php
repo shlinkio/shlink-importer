@@ -6,15 +6,19 @@ namespace Shlinkio\Shlink\Importer\Exception;
 
 use function sprintf;
 
-class BitlyApiV4Exception extends ImportException
+class BitlyApiException extends ImportException
 {
-    public static function fromInvalidRequest(string $url, int $statusCode, string $body): self
-    {
+    public static function fromInvalidRequest(
+        string $url,
+        int $statusCode,
+        string $body,
+        ?string $continueToken = null
+    ): self {
         return new self(sprintf(
             'Request to Bitly API v4 to URL "%s" failed with status code "%s" and body "%s"',
             $url,
             $statusCode,
             $body,
-        ));
+        ), $continueToken);
     }
 }

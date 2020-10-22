@@ -6,13 +6,13 @@ namespace Shlinkio\Shlink\Importer\Params\ConsoleHelper;
 
 use Symfony\Component\Console\Style\StyleInterface;
 
-class BitlyApiV4ParamsConsoleHelper implements ParamsConsoleHelperInterface
+class BitlyApiParamsConsoleHelper implements ParamsConsoleHelperInterface
 {
     public function requestParams(StyleInterface $io): array
     {
         return [
             'access_token' => $io->ask(
-                'Bit.ly\'s API access token (you can generate one going to https://bitly.is/accesstoken)',
+                'What is your Bit.ly\'s API access token? (you can generate one here https://bitly.is/accesstoken)',
             ),
             'import_short_codes' => $io->confirm(
                 'Do you want to import short-codes/slugs as they are? Otherwise, new unique short-codes will be '
@@ -28,6 +28,11 @@ class BitlyApiV4ParamsConsoleHelper implements ParamsConsoleHelperInterface
                 . 'as its creation date',
             ),
             'ignore_archived' => $io->confirm('Do you want to ignore archived URLs?', false),
+            'continue_token' => $io->ask(
+                'If you already run this command once and a warning was displayed, you might have been provided with a '
+                . '"continue token". If that\'s the case, paste it here. If this is the first time you run this '
+                . 'command, ignore this',
+            ),
         ];
     }
 }
