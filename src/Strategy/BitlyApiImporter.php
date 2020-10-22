@@ -46,12 +46,20 @@ class BitlyApiImporter implements ImporterStrategyInterface
     public function import(array $rawParams): iterable
     {
         $params = BitlyApiParams::fromRawParams($rawParams);
-        $progressTracker = new BitlyApiProgressTracker();
+        $progressTracker = BitlyApiProgressTracker::initFromParams($params);
+        $initialGroup = $progressTracker->initialGroup();
+        $initialGroupFound = $initialGroup === null;
 
         try {
             ['groups' => $groups] = $this->callToBitlyApi('/groups', $params, $progressTracker);
 
             foreach ($groups as ['guid' => $groupId]) {
+                // Skip groups until the initial one is found
+                $initialGroupFound = $initialGroupFound || $groupId === $initialGroup;
+                if (!$initialGroupFound) {
+                    continue;
+                }
+
                 yield from $this->loadUrlsForGroup($groupId, $params, $progressTracker);
             }
         } catch (ImportException $e) {
@@ -73,9 +81,15 @@ class BitlyApiImporter implements ImporterStrategyInterface
     ): iterable {
         $pagination = [];
         $archived = $params->ignoreArchived() ? 'off' : 'both';
+        $createdBefore = $groupId === $progressTracker->initialGroup() ? $progressTracker->createdBefore() : '';
 
         do {
-            $url = $pagination['next'] ?? sprintf('/groups/%s/bitlinks?archived=%s', $groupId, $archived);
+            $url = $pagination['next'] ?? sprintf(
+                '/groups/%s/bitlinks?archived=%s&created_before=%s',
+                $groupId,
+                $archived,
+                $createdBefore,
+            );
             ['links' => $links, 'pagination' => $pagination] = $this->callToBitlyApi($url, $params, $progressTracker);
             $progressTracker->updateLastProcessedGroup($groupId);
 

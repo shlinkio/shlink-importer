@@ -31,7 +31,7 @@ class BitlyApiParamsConsoleHelper implements ParamsConsoleHelperInterface
             'continue_token' => $io->ask(
                 'If you already run this command once and a warning was displayed, you might have been provided with a '
                 . '"continue token". If that\'s the case, paste it here. If this is the first time you run this '
-                . 'command, ignore this.',
+                . 'command, ignore this',
             ),
         ];
     }
