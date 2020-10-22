@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 #### Added
 
-* [#2](https://github.com/shlinkio/shlink/issues/2) Added support to import from bit.ly
+* [#2](https://github.com/shlinkio/shlink-importer/issues/2) Added support to import from bit.ly
 
 #### Changed
 
