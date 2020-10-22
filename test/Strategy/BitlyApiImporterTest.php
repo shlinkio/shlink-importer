@@ -15,9 +15,9 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Shlinkio\Shlink\Importer\Exception\BitlyApiV4Exception;
+use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
 use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
-use Shlinkio\Shlink\Importer\Strategy\BitlyApiV4Importer;
+use Shlinkio\Shlink\Importer\Strategy\BitlyApiImporter;
 
 use function json_encode;
 use function sprintf;
@@ -25,11 +25,11 @@ use function stripos;
 
 use const JSON_THROW_ON_ERROR;
 
-class BitlyApiV4ImporterTest extends TestCase
+class BitlyApiImporterTest extends TestCase
 {
     use ProphecyTrait;
 
-    private BitlyApiV4Importer $importer;
+    private BitlyApiImporter $importer;
     private ObjectProphecy $httpClient;
     private ObjectProphecy $requestFactory;
 
@@ -37,7 +37,7 @@ class BitlyApiV4ImporterTest extends TestCase
     {
         $this->httpClient = $this->prophesize(ClientInterface::class);
         $this->requestFactory = $this->prophesize(RequestFactoryInterface::class);
-        $this->importer = new BitlyApiV4Importer($this->httpClient->reveal(), $this->requestFactory->reveal());
+        $this->importer = new BitlyApiImporter($this->httpClient->reveal(), $this->requestFactory->reveal());
     }
 
     /**
@@ -213,7 +213,7 @@ class BitlyApiV4ImporterTest extends TestCase
             new Response($statusCode, [], 'Error'),
         );
 
-        $this->expectException(BitlyApiV4Exception::class);
+        $this->expectException(BitlyApiException::class);
         $this->expectErrorMessage('Request to Bitly API v4 to URL');
         $this->expectErrorMessage(sprintf('failed with status code "%s" and body "Error"', $statusCode));
         $createRequest->shouldBeCalledOnce();

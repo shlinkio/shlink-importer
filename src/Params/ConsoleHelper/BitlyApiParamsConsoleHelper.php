@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Importer\Params\ConsoleHelper;
 
 use Symfony\Component\Console\Style\StyleInterface;
 
-class BitlyApiV4ParamsConsoleHelper implements ParamsConsoleHelperInterface
+class BitlyApiParamsConsoleHelper implements ParamsConsoleHelperInterface
 {
     public function requestParams(StyleInterface $io): array
     {

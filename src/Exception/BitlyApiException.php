@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Importer\Exception;
 
 use function sprintf;
 
-class BitlyApiV4Exception extends ImportException
+class BitlyApiException extends ImportException
 {
     public static function fromInvalidRequest(
         string $url,

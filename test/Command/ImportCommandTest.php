@@ -10,7 +10,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Command\ImportCommand;
-use Shlinkio\Shlink\Importer\Exception\BitlyApiV4Exception;
+use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
@@ -142,16 +142,16 @@ class ImportCommandTest extends TestCase
             ['[WARNING] Not all URLs were properly imported. Try executing this command again, providing "foobar"'],
         ];
         yield 'continue token, no verbose' => [
-            BitlyApiV4Exception::fromInvalidRequest('', 1, '', 'foobar'),
+            BitlyApiException::fromInvalidRequest('', 1, '', 'foobar'),
             OutputInterface::VERBOSITY_NORMAL,
             ['[WARNING] Not all URLs were properly imported. Try executing this command again, providing "foobar"'],
             [
                 '[ERROR] An error occurred while importing URLs.',
-                '[Shlinkio\Shlink\Importer\Exception\BitlyApiV4Exception]',
+                '[Shlinkio\Shlink\Importer\Exception\BitlyApiException]',
             ],
         ];
         yield 'continue token, verbose' => [
-            BitlyApiV4Exception::fromInvalidRequest('', 1, '', 'foobar'),
+            BitlyApiException::fromInvalidRequest('', 1, '', 'foobar'),
             OutputInterface::VERBOSITY_VERBOSE,
             ['[WARNING] Not all URLs were properly imported. Try executing this command again, providing "foobar"'],
             ['[ERROR] An error occurred while importing URLs.'],

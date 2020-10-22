@@ -8,11 +8,11 @@ use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Shlinkio\Shlink\Importer\Exception\BitlyApiV4Exception;
+use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Model\BitlyApiProgressTracker;
 use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
-use Shlinkio\Shlink\Importer\Params\BitlyApiV4Params;
+use Shlinkio\Shlink\Importer\Params\BitlyApiParams;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
 use Throwable;
 
@@ -26,7 +26,7 @@ use function str_starts_with;
 
 use const JSON_THROW_ON_ERROR;
 
-class BitlyApiV4Importer implements ImporterStrategyInterface
+class BitlyApiImporter implements ImporterStrategyInterface
 {
     use DateHelpersTrait;
 
@@ -45,7 +45,7 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
      */
     public function import(array $rawParams): iterable
     {
-        $params = BitlyApiV4Params::fromRawParams($rawParams);
+        $params = BitlyApiParams::fromRawParams($rawParams);
         $progressTracker = new BitlyApiProgressTracker();
 
         try {
@@ -68,7 +68,7 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
      */
     private function loadUrlsForGroup(
         string $groupId,
-        BitlyApiV4Params $params,
+        BitlyApiParams $params,
         BitlyApiProgressTracker $progressTracker
     ): iterable {
         $pagination = [];
@@ -110,7 +110,7 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
      */
     private function callToBitlyApi(
         string $url,
-        BitlyApiV4Params $params,
+        BitlyApiParams $params,
         BitlyApiProgressTracker $progressTracker
     ): array {
         $url = str_starts_with($url, 'http') ? $url : sprintf('https://api-ssl.bitly.com/v4%s', $url);
@@ -123,7 +123,7 @@ class BitlyApiV4Importer implements ImporterStrategyInterface
         $statusCode = $resp->getStatusCode();
 
         if ($statusCode >= 400) {
-            throw BitlyApiV4Exception::fromInvalidRequest(
+            throw BitlyApiException::fromInvalidRequest(
                 $url,
                 $statusCode,
                 $body,

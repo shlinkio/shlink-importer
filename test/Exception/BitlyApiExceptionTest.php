@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Importer\Exception;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Importer\Exception\BitlyApiV4Exception;
+use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
 
-class BitlyApiV4ExceptionTest extends TestCase
+class BitlyApiExceptionTest extends TestCase
 {
     /**
      * @test
@@ -15,7 +15,7 @@ class BitlyApiV4ExceptionTest extends TestCase
      */
     public function generatesExpectedMessage(?string $continueToken): void
     {
-        $e = BitlyApiV4Exception::fromInvalidRequest('something.com', 500, 'Error body', $continueToken);
+        $e = BitlyApiException::fromInvalidRequest('something.com', 500, 'Error body', $continueToken);
 
         self::assertEquals(
             'Request to Bitly API v4 to URL "something.com" failed with status code "500" and body "Error body"',

@@ -8,21 +8,21 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Importer\Params\ConsoleHelper\BitlyApiV4ParamsConsoleHelper;
+use Shlinkio\Shlink\Importer\Params\ConsoleHelper\BitlyApiParamsConsoleHelper;
 use Symfony\Component\Console\Style\StyleInterface;
 
 use function count;
 
-class BitlyApiV4ParamsConsoleHelperTest extends TestCase
+class BitlyApiParamsConsoleHelperTest extends TestCase
 {
     use ProphecyTrait;
 
-    private BitlyApiV4ParamsConsoleHelper $paramsHelper;
+    private BitlyApiParamsConsoleHelper $paramsHelper;
     private ObjectProphecy $io;
 
     public function setUp(): void
     {
-        $this->paramsHelper = new BitlyApiV4ParamsConsoleHelper();
+        $this->paramsHelper = new BitlyApiParamsConsoleHelper();
         $this->io = $this->prophesize(StyleInterface::class);
     }
 
