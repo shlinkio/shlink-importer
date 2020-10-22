@@ -92,8 +92,9 @@ class ImportCommand extends Command
             $io->error('An error occurred while importing URLs.');
         } else {
             $io->warning(sprintf(
-                'Not all URLs were properly imported. Try executing this command again, providing "%s" when '
-                . 'the "continue token" is requested. That will ensure already processed URLs are skipped.',
+                'Not all URLs were properly imported. Wait a few minutes, and then try executing this command again, '
+                . 'providing "%s" when the "continue token" is requested. That will ensure already processed URLs '
+                . 'are skipped.',
                 $continueToken,
             ));
         }

@@ -128,7 +128,9 @@ class ImportCommandTest extends TestCase
             OutputInterface::VERBOSITY_NORMAL,
             ['[ERROR] An error occurred while importing URLs.'],
             [
-                '[WARNING] Not all URLs were properly imported. Try executing this command again, providing "foobar"',
+                '[WARNING] Not all URLs were properly imported. Wait a few minutes, and then try executing this '
+                . 'command again, providing',
+                '"foobar" when the "continue token" is requested. That will ensure already processed URLs are skipped.',
                 '[Shlinkio\Shlink\Importer\Exception\ImportException (-1)]',
             ],
         ];
@@ -139,12 +141,20 @@ class ImportCommandTest extends TestCase
                 '[ERROR] An error occurred while importing URLs.',
                 '[Shlinkio\Shlink\Importer\Exception\ImportException (-1)]',
             ],
-            ['[WARNING] Not all URLs were properly imported. Try executing this command again, providing "foobar"'],
+            [
+                '[WARNING] Not all URLs were properly imported. Wait a few minutes, and then try executing this '
+                . 'command again, providing',
+                '"foobar" when the "continue token" is requested. That will ensure already processed URLs are skipped.',
+            ],
         ];
         yield 'continue token, no verbose' => [
             BitlyApiException::fromInvalidRequest('', 1, '', 'foobar'),
             OutputInterface::VERBOSITY_NORMAL,
-            ['[WARNING] Not all URLs were properly imported. Try executing this command again, providing "foobar"'],
+            [
+                '[WARNING] Not all URLs were properly imported. Wait a few minutes, and then try executing this '
+                . 'command again, providing',
+                '"foobar" when the "continue token" is requested. That will ensure already processed URLs are skipped.',
+            ],
             [
                 '[ERROR] An error occurred while importing URLs.',
                 '[Shlinkio\Shlink\Importer\Exception\BitlyApiException]',
@@ -153,7 +163,11 @@ class ImportCommandTest extends TestCase
         yield 'continue token, verbose' => [
             BitlyApiException::fromInvalidRequest('', 1, '', 'foobar'),
             OutputInterface::VERBOSITY_VERBOSE,
-            ['[WARNING] Not all URLs were properly imported. Try executing this command again, providing "foobar"'],
+            [
+                '[WARNING] Not all URLs were properly imported. Wait a few minutes, and then try executing this '
+                . 'command again, providing',
+                '"foobar" when the "continue token" is requested. That will ensure already processed URLs are skipped.',
+            ],
             ['[ERROR] An error occurred while importing URLs.'],
         ];
     }
