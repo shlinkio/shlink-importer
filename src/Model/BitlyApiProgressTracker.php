@@ -69,8 +69,12 @@ final class BitlyApiProgressTracker
 
     public function generateContinueToken(): ?string
     {
-        if ($this->lastProcessedGroup === null || $this->lastProcessedUrlDate === null) {
-            return $this->lastProcessedGroup;
+        if ($this->lastProcessedGroup === null) {
+            return null;
+        }
+
+        if ($this->lastProcessedUrlDate === null) {
+            return base64_encode($this->lastProcessedGroup);
         }
 
         // Generate the timestamp corresponding to 1 second before the last processed URL
