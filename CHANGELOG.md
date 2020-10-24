@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#9](https://github.com/shlinkio/shlink-importer/issues/9) Now the `ImportedLinksProcessorInterface::process` method receives a `StyleInterface` instance as its first argument, allowing consumers to display the import progress and give feedback.
 * [#10](https://github.com/shlinkio/shlink-importer/issues/10) The `ImportedShortUrl` model now wraps the source from which it was imported. Because of this, the source is no longer passed to the `ImportedLinksProcessorInterface::process` method.
+* [#7](https://github.com/shlinkio/shlink-importer/issues/7) Increased required MSI to 85%.
 
 #### Deprecated
 
