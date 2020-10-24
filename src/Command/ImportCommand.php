@@ -57,8 +57,16 @@ class ImportCommand extends Command
         $source = $input->getArgument('source');
         $validSources = ImportSources::getAll();
 
-        if (! contains($validSources, $source)) {
+        if ($source !== null && ! contains($validSources, $source)) {
             throw InvalidSourceException::fromInvalidSource($source);
+        }
+
+        if ($source === null) {
+            $source = (new SymfonyStyle($input, $output))->choice(
+                'What is the source you want to import from:',
+                $validSources,
+            );
+            $input->setArgument('source', $source);
         }
     }
 
