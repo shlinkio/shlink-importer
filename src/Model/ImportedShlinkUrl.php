@@ -13,19 +13,27 @@ class ImportedShlinkUrl
     private DateTimeInterface $createdAt;
     private ?string $domain;
     private ?string $shortCode;
+    private string $source;
 
     public function __construct(
+        string $source,
         string $longUrl,
         array $tags,
         DateTimeInterface $createdAt,
         ?string $domain,
         ?string $shortCode
     ) {
+        $this->source = $source;
         $this->longUrl = $longUrl;
         $this->tags = $tags;
         $this->createdAt = $createdAt;
         $this->domain = $domain;
         $this->shortCode = $shortCode;
+    }
+
+    public function source(): string
+    {
+        return $this->source;
     }
 
     public function longUrl(): string

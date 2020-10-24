@@ -83,7 +83,7 @@ class ImportCommandTest extends TestCase
 
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
         $import = $this->importerStrategy->import([])->willReturn([]);
-        $process = $this->importedLinksProcessor->process([], $source, []);
+        $process = $this->importedLinksProcessor->process(Argument::type(StyleInterface::class), [], []);
 
         if ($expectSourceQuestion) {
             $this->commandTester->setInputs(['0']);

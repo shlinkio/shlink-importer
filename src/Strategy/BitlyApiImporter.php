@@ -104,6 +104,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
                     $progressTracker->updateLastProcessedUrlDate($link['created_at']);
                 }
 
+                $longUrl = $link['long_url'];
                 $date = $hasCreatedDate && $params->keepCreationDate()
                     ? $this->dateFromAtom($link['created_at'])
                     : clone $progressTracker->startDate();
@@ -113,7 +114,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
                 $shortCode = ltrim($parsedLink['path'] ?? '', '/');
                 $tags = $params->importTags() ? $link['tags'] ?? [] : [];
 
-                return new ImportedShlinkUrl($link['long_url'], $tags, $date, $domain, $shortCode);
+                return new ImportedShlinkUrl(ImportSources::BITLY, $longUrl, $tags, $date, $domain, $shortCode);
             });
         } while (! empty($pagination['next']));
     }

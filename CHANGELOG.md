@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## 2.0.0 - 2020-10-24
+
+#### Added
+
+* *Nothing*
+
+#### Changed
+
+* [#9](https://github.com/shlinkio/shlink-importer/issues/9) Now the `ImportedLinksProcessorInterface::process` method receives a `StyleInterface` instance as its first argument, allowing consumers to display the import progress and give feedback.
+* [#10](https://github.com/shlinkio/shlink-importer/issues/10) The `ImportedShortUrl` model now wraps the source from which it was imported. Because of this, the source is no longer passed to the `ImportedLinksProcessorInterface::process` method.
+
+#### Deprecated
+
+* *Nothing*
+
+#### Removed
+
+* Removed `ShlinkUrl` deprecated class. Use `ImportedShlinkUrl` instead.
+
+#### Fixed
+
+* *Nothing*
+
+
 ## 1.0.1 - 2020-10-24
 
 #### Added

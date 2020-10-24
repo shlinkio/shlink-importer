@@ -18,6 +18,7 @@ use Psr\Http\Message\RequestInterface;
 use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl as ShlinkUrl;
 use Shlinkio\Shlink\Importer\Strategy\BitlyApiImporter;
+use Shlinkio\Shlink\Importer\Strategy\ImportSources;
 
 use function explode;
 use function json_encode;
@@ -140,63 +141,77 @@ class BitlyApiImporterTest extends TestCase
 
     public function provideParams(): iterable
     {
+        $source = ImportSources::BITLY;
+
         yield 'default options' => [[], [
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-03-01T00:00:00+0000'), null, 'ccc'),
-            new ShlinkUrl('https://github.com', ['bar'], $this->createDate('2020-04-01T00:00:00+0000'), null, 'ddd'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-03-01T00:00:00+0000'), null, 'ccc'),
+            new ShlinkUrl($source, 'https://github.com', ['bar'], $this->createDate(
+                '2020-04-01T00:00:00+0000',
+            ), null, 'ddd'),
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
         ]];
         yield 'ignore archived' => [['ignore_archived' => true], [
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-03-01T00:00:00+0000'), null, 'ccc'),
-            new ShlinkUrl('https://github.com', ['bar'], $this->createDate('2020-04-01T00:00:00+0000'), null, 'ddd'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-03-01T00:00:00+0000'), null, 'ccc'),
+            new ShlinkUrl($source, 'https://github.com', ['bar'], $this->createDate(
+                '2020-04-01T00:00:00+0000',
+            ), null, 'ddd'),
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
         ]];
         yield 'ignore tags' => [['import_tags' => false], [
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', [], $this->createDate('2020-02-01T00:00:00+0000'), null, 'bbb'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-03-01T00:00:00+0000'), null, 'ccc'),
-            new ShlinkUrl('https://github.com', [], $this->createDate('2020-04-01T00:00:00+0000'), null, 'ddd'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', [], $this->createDate('2020-02-01T00:00:00+0000'), null, 'bbb'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', [], $this->createDate('2020-02-01T00:00:00+0000'), null, 'bbb'),
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', [], $this->createDate(
+                '2020-02-01T00:00:00+0000',
+            ), null, 'bbb'),
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-03-01T00:00:00+0000'), null, 'ccc'),
+            new ShlinkUrl($source, 'https://github.com', [], $this->createDate(
+                '2020-04-01T00:00:00+0000',
+            ), null, 'ddd'),
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', [], $this->createDate(
+                '2020-02-01T00:00:00+0000',
+            ), null, 'bbb'),
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', [], $this->createDate(
+                '2020-02-01T00:00:00+0000',
+            ), null, 'bbb'),
         ]];
         yield 'import custom domains' => [['import_custom_domains' => true], [
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-03-01T00:00:00+0000'), null, 'ccc'),
-            new ShlinkUrl('https://github.com', ['bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-03-01T00:00:00+0000'), null, 'ccc'),
+            new ShlinkUrl($source, 'https://github.com', ['bar'], $this->createDate(
                 '2020-04-01T00:00:00+0000',
             ), 'customdom.com', 'ddd'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
-            new ShlinkUrl('https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
-            new ShlinkUrl('https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate('2020-01-01T00:00:00+0000'), null, 'aaa'),
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb'),
         ]];
