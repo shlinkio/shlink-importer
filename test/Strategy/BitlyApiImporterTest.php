@@ -16,7 +16,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
-use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl as ShlinkUrl;
 use Shlinkio\Shlink\Importer\Strategy\BitlyApiImporter;
 
 use function explode;

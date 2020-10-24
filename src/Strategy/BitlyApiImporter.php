@@ -11,7 +11,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Model\BitlyApiProgressTracker;
-use Shlinkio\Shlink\Importer\Model\ShlinkUrl;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\BitlyApiParams;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
 use Throwable;
@@ -40,7 +40,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
     }
 
     /**
-     * @return ShlinkUrl[]
+     * @return ImportedShlinkUrl[]
      * @throws ImportException
      */
     public function import(array $rawParams): iterable
@@ -70,7 +70,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
     }
 
     /**
-     * @return ShlinkUrl[]
+     * @return ImportedShlinkUrl[]
      * @throws ClientExceptionInterface
      * @throws JsonException
      */
@@ -98,7 +98,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
                 static fn (array $link): bool => isset($link['long_url']) && ! empty($link['long_url']),
             );
 
-            yield from map($filteredLinks, function (array $link) use ($params, $progressTracker): ShlinkUrl {
+            yield from map($filteredLinks, function (array $link) use ($params, $progressTracker): ImportedShlinkUrl {
                 $hasCreatedDate = isset($link['created_at']);
                 if ($hasCreatedDate) {
                     $progressTracker->updateLastProcessedUrlDate($link['created_at']);
@@ -113,7 +113,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
                 $shortCode = ltrim($parsedLink['path'] ?? '', '/');
                 $tags = $params->importTags() ? $link['tags'] ?? [] : [];
 
-                return new ShlinkUrl($link['long_url'], $tags, $date, $domain, $shortCode);
+                return new ImportedShlinkUrl($link['long_url'], $tags, $date, $domain, $shortCode);
             });
         } while (! empty($pagination['next']));
     }
