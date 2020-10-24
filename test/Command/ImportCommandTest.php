@@ -73,16 +73,23 @@ class ImportCommandTest extends TestCase
         $this->commandTester->execute(['source' => 'invalid']);
     }
 
-    /** @test */
-    public function dependenciesAreInvokedAsExpected(): void
+    /**
+     * @test
+     * @dataProvider provideSource
+     */
+    public function dependenciesAreInvokedAsExpected(?string $providedSource, bool $expectSourceQuestion): void
     {
-        $source = ImportSources::BITLY;
+        $source = $providedSource ?? ImportSources::BITLY;
 
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
         $import = $this->importerStrategy->import([])->willReturn([]);
         $process = $this->importedLinksProcessor->process([], $source, []);
 
-        $exitCode = $this->commandTester->execute(['source' => $source]);
+        if ($expectSourceQuestion) {
+            $this->commandTester->setInputs(['0']);
+        }
+        $exitCode = $this->commandTester->execute(['source' => $providedSource]);
+        $output = $this->commandTester->getDisplay();
 
         self::assertEquals(ImportCommand::SUCCESS, $exitCode);
         $this->consoleHelperManager->get($source)->shouldHaveBeenCalledOnce();
@@ -90,6 +97,17 @@ class ImportCommandTest extends TestCase
         $requestParams->shouldHaveBeenCalledOnce();
         $import->shouldHaveBeenCalledOnce();
         $process->shouldHaveBeenCalledOnce();
+        if ($expectSourceQuestion) {
+            self::assertStringContainsString('What is the source you want to import from:', $output);
+        } else {
+            self::assertStringNotContainsString('What is the source you want to import from:', $output);
+        }
+    }
+
+    public function provideSource(): iterable
+    {
+        yield 'provided source' => [ImportSources::BITLY, false];
+        yield 'not provided source' => [null, true];
     }
 
     /**
