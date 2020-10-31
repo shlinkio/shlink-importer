@@ -2,7 +2,7 @@
 
 Collection of tools to import links from different sources and map them to a shlink-compliant format.
 
-[![Build Status](https://img.shields.io/travis/shlinkio/shlink-importer.svg?style=flat-square)](https://travis-ci.org/shlinkio/shlink-importer)
+[![Build Status](https://img.shields.io/travis/com/shlinkio/shlink-importer.svg?style=flat-square)](https://travis-ci.com/shlinkio/shlink-importer)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/shlinkio/shlink-importer.svg?style=flat-square)](https://scrutinizer-ci.com/g/shlinkio/shlink-importer/)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/shlinkio/shlink-importer.svg?style=flat-square)](https://scrutinizer-ci.com/g/shlinkio/shlink-importer/)
 [![Latest Stable Version](https://img.shields.io/github/release/shlinkio/shlink-importer.svg?style=flat-square)](https://packagist.org/packages/shlinkio/shlink-importer)
