@@ -4,95 +4,71 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## 2.0.1 - 2020-10-25
-
-#### Added
-
+## [2.0.1] - 2020-10-25
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * [#13](https://github.com/shlinkio/shlink-importer/issues/13) Ensured `shortCode` cannot be null on `ImportedShlinkUrl`.
 
 
-## 2.0.0 - 2020-10-24
-
-#### Added
-
+## [2.0.0] - 2020-10-24
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * [#9](https://github.com/shlinkio/shlink-importer/issues/9) Now the `ImportedLinksProcessorInterface::process` method receives a `StyleInterface` instance as its first argument, allowing consumers to display the import progress and give feedback.
 * [#10](https://github.com/shlinkio/shlink-importer/issues/10) The `ImportedShortUrl` model now wraps the source from which it was imported. Because of this, the source is no longer passed to the `ImportedLinksProcessorInterface::process` method.
 * [#7](https://github.com/shlinkio/shlink-importer/issues/7) Increased required MSI to 85%.
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * Removed `ShlinkUrl` deprecated class. Use `ImportedShlinkUrl` instead.
 
-#### Fixed
-
+### Fixed
 * *Nothing*
 
 
-## 1.0.1 - 2020-10-24
-
-#### Added
-
+## [1.0.1] - 2020-10-24
+### Added
 * *Nothing*
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * Fixed `short-url:import` command throwing an exception if source is not provided.
 
 
-## 1.0.0 - 2020-10-22
-
-#### Added
-
+## [1.0.0] - 2020-10-22
+### Added
 * [#2](https://github.com/shlinkio/shlink-importer/issues/2) Added support to import from bit.ly
 
-#### Changed
-
+### Changed
 * *Nothing*
 
-#### Deprecated
-
+### Deprecated
 * *Nothing*
 
-#### Removed
-
+### Removed
 * *Nothing*
 
-#### Fixed
-
+### Fixed
 * *Nothing*
