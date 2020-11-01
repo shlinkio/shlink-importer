@@ -12,7 +12,7 @@
         }
     ],
     "require": {
-        "php": "^7.4",
+        "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "laminas/laminas-servicemanager": "^3.4",
         "lstrojny/functional-php": "^1.14",
@@ -21,10 +21,10 @@
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.2",
-        "infection/infection": "^0.18",
+        "infection/infection": "^0.20.0",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan": "^0.12.48",
-        "phpunit/phpunit": "^9.2",
+        "phpstan/phpstan": "^0.12.52",
+        "phpunit/phpunit": "^9.4",
         "psr/http-factory": "^1.0",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.1.1",
@@ -57,7 +57,7 @@
         "test": "phpdbg -qrr vendor/bin/phpunit --order-by=random --testdox --colors=always",
         "test:ci": "@test --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml",
         "test:pretty": "@test --coverage-html build/coverage-html",
-        "infect": "infection --threads=4 --min-msi=85 --log-verbosity=default --only-covered",
+        "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
         "infect:ci": "@infect --coverage=build --skip-initial-tests",
         "infect:show": "@infect --show-mutations",
         "infect:show:ci": "@infect --show-mutations --coverage=build",
