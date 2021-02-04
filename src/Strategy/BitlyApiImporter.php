@@ -113,8 +113,9 @@ class BitlyApiImporter implements ImporterStrategyInterface
                 $domain = $host !== 'bit.ly' && $params->importCustomDomains() ? $host : null;
                 $shortCode = ltrim($parsedLink['path'] ?? '', '/');
                 $tags = $params->importTags() ? $link['tags'] ?? [] : [];
+                $title = $link['title'] ?? null;
 
-                return new ImportedShlinkUrl(ImportSources::BITLY, $longUrl, $tags, $date, $domain, $shortCode);
+                return new ImportedShlinkUrl(ImportSources::BITLY, $longUrl, $tags, $date, $domain, $shortCode, $title);
             });
         } while (! empty($pagination['next']));
     }
