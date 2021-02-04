@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#21](https://github.com/shlinkio/shlink-importer/issues/21) Added support to import URL `title` prop.
 
 ### Changed
 * Migrated build to Github Actions.
