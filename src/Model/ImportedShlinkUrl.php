@@ -14,6 +14,7 @@ class ImportedShlinkUrl
     private ?string $domain;
     private string $shortCode;
     private string $source;
+    private ?string $title;
 
     public function __construct(
         string $source,
@@ -21,7 +22,8 @@ class ImportedShlinkUrl
         array $tags,
         DateTimeInterface $createdAt,
         ?string $domain,
-        string $shortCode
+        string $shortCode,
+        ?string $title
     ) {
         $this->source = $source;
         $this->longUrl = $longUrl;
@@ -29,6 +31,7 @@ class ImportedShlinkUrl
         $this->createdAt = $createdAt;
         $this->domain = $domain;
         $this->shortCode = $shortCode;
+        $this->title = $title;
     }
 
     public function source(): string
@@ -59,5 +62,10 @@ class ImportedShlinkUrl
     public function shortCode(): string
     {
         return $this->shortCode;
+    }
+
+    public function title(): ?string
+    {
+        return $this->title;
     }
 }

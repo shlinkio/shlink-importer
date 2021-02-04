@@ -21,14 +21,14 @@
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.2",
-        "infection/infection": "^0.20.0",
+        "infection/infection": "^0.21.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^0.12.52",
-        "phpunit/phpunit": "^9.4",
+        "phpunit/phpunit": "^9.5",
         "psr/http-factory": "^1.0",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.1.1",
-        "symfony/var-dumper": "^5.1"
+        "symfony/var-dumper": "^5.2"
     },
     "suggest": {
         "psr/http-client": "If you want to be able to import URLs from Bit.ly",
