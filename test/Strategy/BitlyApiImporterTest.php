@@ -92,6 +92,7 @@ class BitlyApiImporterTest extends TestCase
                             'created_at' => '2020-03-01T00:00:00+0000',
                             'link' => 'http://bit.ly/ccc',
                             'long_url' => 'https://shlink.io',
+                            'title' => 'Cool title',
                         ],
                         [
                             'created_at' => '2020-04-01T00:00:00+0000',
@@ -152,7 +153,7 @@ class BitlyApiImporterTest extends TestCase
             ), null, 'bbb', null),
             new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
                 '2020-03-01T00:00:00+0000',
-            ), null, 'ccc', null),
+            ), null, 'ccc', 'Cool title'),
             new ShlinkUrl($source, 'https://github.com', ['bar'], $this->createDate(
                 '2020-04-01T00:00:00+0000',
             ), null, 'ddd', null),
@@ -178,7 +179,7 @@ class BitlyApiImporterTest extends TestCase
             ), null, 'bbb', null),
             new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
                 '2020-03-01T00:00:00+0000',
-            ), null, 'ccc', null),
+            ), null, 'ccc', 'Cool title'),
             new ShlinkUrl($source, 'https://github.com', ['bar'], $this->createDate(
                 '2020-04-01T00:00:00+0000',
             ), null, 'ddd', null),
@@ -204,7 +205,7 @@ class BitlyApiImporterTest extends TestCase
             ), null, 'bbb', null),
             new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
                 '2020-03-01T00:00:00+0000',
-            ), null, 'ccc', null),
+            ), null, 'ccc', 'Cool title'),
             new ShlinkUrl($source, 'https://github.com', [], $this->createDate(
                 '2020-04-01T00:00:00+0000',
             ), null, 'ddd', null),
@@ -230,7 +231,7 @@ class BitlyApiImporterTest extends TestCase
             ), null, 'bbb', null),
             new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
                 '2020-03-01T00:00:00+0000',
-            ), null, 'ccc', null),
+            ), null, 'ccc', 'Cool title'),
             new ShlinkUrl($source, 'https://github.com', ['bar'], $this->createDate(
                 '2020-04-01T00:00:00+0000',
             ), 'customdom.com', 'ddd', null),
