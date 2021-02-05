@@ -10,15 +10,15 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Command\ImportCommand;
-use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
+use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyManagerInterface;
-use Shlinkio\Shlink\Importer\Strategy\ImportSources;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
@@ -175,7 +175,7 @@ class ImportCommandTest extends TestCase
             ],
             [
                 '[ERROR] An error occurred while importing URLs.',
-                '[Shlinkio\Shlink\Importer\Exception\BitlyApiException]',
+                '[Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException]',
             ],
         ];
         yield 'continue token, verbose' => [

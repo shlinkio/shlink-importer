@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Exception;
 
 use InvalidArgumentException;
-use Shlinkio\Shlink\Importer\Strategy\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSources;
 
 use function implode;
 use function sprintf;

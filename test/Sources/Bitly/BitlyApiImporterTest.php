@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Importer\Strategy;
+namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -15,10 +15,10 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl as ShlinkUrl;
-use Shlinkio\Shlink\Importer\Strategy\BitlyApiImporter;
-use Shlinkio\Shlink\Importer\Strategy\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiImporter;
+use Shlinkio\Shlink\Importer\Sources\ImportSources;
 
 use function explode;
 use function json_encode;

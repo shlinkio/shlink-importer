@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Params;
+namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
 class BitlyApiParams
 {

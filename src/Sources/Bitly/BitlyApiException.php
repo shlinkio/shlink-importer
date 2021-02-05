@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Exception;
+namespace Shlinkio\Shlink\Importer\Sources\Bitly;
+
+use Shlinkio\Shlink\Importer\Exception\ImportException;
 
 use function sprintf;
 

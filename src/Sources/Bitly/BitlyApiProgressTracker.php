@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Model;
+namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
 use DateInterval;
 use DateTimeImmutable;
-use Shlinkio\Shlink\Importer\Params\BitlyApiParams;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
 
 use function base64_decode;

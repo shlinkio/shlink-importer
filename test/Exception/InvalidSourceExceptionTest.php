@@ -21,8 +21,8 @@ class InvalidSourceExceptionTest extends TestCase
 
     public function provideInvalidSources(): iterable
     {
-        yield 'foo' => ['foo', 'Provided source "foo" is not valid. Expected one of ["bitly"]'];
-        yield 'bar' => ['bar', 'Provided source "bar" is not valid. Expected one of ["bitly"]'];
-        yield 'baz' => ['baz', 'Provided source "baz" is not valid. Expected one of ["bitly"]'];
+        yield 'foo' => ['foo', 'Provided source "foo" is not valid. Expected one of ["bitly", "csv"]'];
+        yield 'bar' => ['bar', 'Provided source "bar" is not valid. Expected one of ["bitly", "csv"]'];
+        yield 'baz' => ['baz', 'Provided source "baz" is not valid. Expected one of ["bitly", "csv"]'];
     }
 }

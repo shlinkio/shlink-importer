@@ -17,6 +17,7 @@ This module can be installed using composer:
 ## Supported import sources
 
 * Bit.ly
+* Standard CSV
 
 ## Usage
 

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Importer\Model;
+namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use DateInterval;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Importer\Model\BitlyApiProgressTracker;
-use Shlinkio\Shlink\Importer\Params\BitlyApiParams;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiProgressTracker;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
 
 use function base64_encode;
