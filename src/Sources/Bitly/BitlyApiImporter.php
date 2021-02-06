@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Strategy;
+namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
-use Shlinkio\Shlink\Importer\Model\BitlyApiProgressTracker;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
-use Shlinkio\Shlink\Importer\Params\BitlyApiParams;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiProgressTracker;
+use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
 use Throwable;
 

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Importer\Params\ConsoleHelper;
+namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Shlinkio\Shlink\Importer\Params\ConsoleHelper\BitlyApiParamsConsoleHelper;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParamsConsoleHelper;
 use Symfony\Component\Console\Style\StyleInterface;
 
 use function count;

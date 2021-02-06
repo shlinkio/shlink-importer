@@ -9,9 +9,9 @@ use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
+use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyManagerInterface;
-use Shlinkio\Shlink\Importer\Strategy\ImportSources;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -47,8 +47,8 @@ class ImportCommand extends Command
             ->setName(self::NAME)
             ->setDescription('Allows to import short URLs from third party sources')
             ->addArgument('source', InputArgument::REQUIRED, sprintf(
-                'The source from which you want to import. Supported sources: ["%s"]',
-                implode('", "', ImportSources::getAll()),
+                'The source from which you want to import. Supported sources: [<info>%s</info>]',
+                implode('</info>, <info>', ImportSources::getAll()),
             ));
     }
 

@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Params\ConsoleHelper;
+namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
+use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 
 class BitlyApiParamsConsoleHelper implements ParamsConsoleHelperInterface

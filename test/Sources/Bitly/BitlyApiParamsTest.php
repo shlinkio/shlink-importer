@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Importer\Model;
+namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Importer\Params\BitlyApiParams;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
 
 class BitlyApiParamsTest extends TestCase
 {

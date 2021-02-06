@@ -16,7 +16,15 @@ This module can be installed using composer:
 
 ## Supported import sources
 
-* Bit.ly
+#### Bit.ly
+
+It imports using the API v4. The only required param is an [access token](https://bitly.is/accesstoken).
+
+#### Standard CSV
+
+It parses a CSV file with the `Long URL` and `Short code` columns. It can optionally contain `Domain`, `Title` and `Tags`, being the latter a pipe-separated list of items (`foo|bar|baz`).
+
+Column names can have spaces and have any combination of upper and lowercase.
 
 ## Usage
 

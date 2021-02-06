@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Strategy;
+namespace Shlinkio\Shlink\Importer\Sources;
 
 final class ImportSources
 {
     public const BITLY = 'bitly';
+    public const CSV = 'csv';
 
     public static function getAll(): array
     {
-        return [self::BITLY];
+        return [self::BITLY, self::CSV];
     }
 }

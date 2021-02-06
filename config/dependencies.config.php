@@ -33,27 +33,31 @@ return [
     'cli' => [
         'importer_strategies' => [
             'factories' => [
-                Strategy\BitlyApiImporter::class => ConfigAbstractFactory::class,
+                Sources\Bitly\BitlyApiImporter::class => ConfigAbstractFactory::class,
+                Sources\Csv\CsvImporter::class => InvokableFactory::class,
             ],
 
             'aliases' => [
-                Strategy\ImportSources::BITLY => Strategy\BitlyApiImporter::class,
+                Sources\ImportSources::BITLY => Sources\Bitly\BitlyApiImporter::class,
+                Sources\ImportSources::CSV => Sources\Csv\CsvImporter::class,
             ],
         ],
 
         'params_console_helpers' => [
             'factories' => [
-                Params\ConsoleHelper\BitlyApiParamsConsoleHelper::class => InvokableFactory::class,
+                Sources\Bitly\BitlyApiParamsConsoleHelper::class => InvokableFactory::class,
+                Sources\Csv\CsvParamsConsoleHelper::class => InvokableFactory::class,
             ],
 
             'aliases' => [
-                Strategy\ImportSources::BITLY => Params\ConsoleHelper\BitlyApiParamsConsoleHelper::class,
+                Sources\ImportSources::BITLY => Sources\Bitly\BitlyApiParamsConsoleHelper::class,
+                Sources\ImportSources::CSV => Sources\Csv\CsvParamsConsoleHelper::class,
             ],
         ],
     ],
 
     ConfigAbstractFactory::class => [
-        Strategy\BitlyApiImporter::class => [ClientInterface::class, RequestFactoryInterface::class],
+        Sources\Bitly\BitlyApiImporter::class => [ClientInterface::class, RequestFactoryInterface::class],
         Command\ImportCommand::class => [
             Strategy\ImporterStrategyManager::class,
             Params\ConsoleHelper\ConsoleHelperManager::class,

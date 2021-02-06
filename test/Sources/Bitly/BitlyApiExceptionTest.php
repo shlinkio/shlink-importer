@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Importer\Exception;
+namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Importer\Exception\BitlyApiException;
+use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
 
 class BitlyApiExceptionTest extends TestCase
 {
