@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
-class BitlyApiParams
+final class BitlyApiParams
 {
     private string $accessToken;
     private bool $importTags;

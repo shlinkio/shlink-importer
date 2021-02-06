@@ -47,8 +47,8 @@ class ImportCommand extends Command
             ->setName(self::NAME)
             ->setDescription('Allows to import short URLs from third party sources')
             ->addArgument('source', InputArgument::REQUIRED, sprintf(
-                'The source from which you want to import. Supported sources: ["%s"]',
-                implode('", "', ImportSources::getAll()),
+                'The source from which you want to import. Supported sources: [<info>%s</info>]',
+                implode('</info>, <info>', ImportSources::getAll()),
             ));
     }
 
