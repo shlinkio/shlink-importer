@@ -4,12 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.2.0] - 2021-02-06
 ### Added
 * [#21](https://github.com/shlinkio/shlink-importer/issues/21) Added support to import URL `title` prop.
+* [#5](https://github.com/shlinkio/shlink-importer/issues/5) Added support to import from a standard CSV file.
 
 ### Changed
 * Migrated build to Github Actions.
+* [#23](https://github.com/shlinkio/shlink-importer/issues/23) Increased required MSI to 75%.
 
 ### Deprecated
 * *Nothing*
