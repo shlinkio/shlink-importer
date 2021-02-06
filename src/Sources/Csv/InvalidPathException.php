@@ -13,7 +13,7 @@ class InvalidPathException extends RuntimeException implements ExceptionInterfac
 {
     public static function pathNotProvided(): self
     {
-        return new self('The path of the file is required');
+        return new self('The path of the file is required.');
     }
 
     public static function pathIsNotFile(string $path): self
