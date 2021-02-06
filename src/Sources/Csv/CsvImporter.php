@@ -40,7 +40,7 @@ class CsvImporter implements ImporterStrategyInterface
             yield new ImportedShlinkUrl(
                 ImportSources::CSV,
                 $record['longurl'],
-                array_filter(explode(self::TAG_SEPARATOR, $this->nonEmptyValueOrNull($record, 'tags') ?? '')),
+                $this->parseTags($record),
                 $now,
                 $this->nonEmptyValueOrNull($record, 'domain'),
                 $record['shortcode'],
@@ -72,5 +72,10 @@ class CsvImporter implements ImporterStrategyInterface
         }
 
         return $trimmedValue;
+    }
+
+    private function parseTags(array $record): array
+    {
+        return array_filter(explode(self::TAG_SEPARATOR, $this->nonEmptyValueOrNull($record, 'tags') ?? ''));
     }
 }
