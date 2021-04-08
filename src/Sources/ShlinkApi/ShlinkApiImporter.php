@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Sources\ShlinkApi;
 
 use DateTimeImmutable;
+use Generator;
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
@@ -36,12 +37,12 @@ class ShlinkApiImporter extends AbstractApiImporterStrategy
      * @throws ClientExceptionInterface
      * @throws JsonException
      */
-    private function loadUrls(ShlinkApiParams $params, int $page = 1): iterable
+    private function loadUrls(ShlinkApiParams $params, int $page = 1): Generator
     {
-        $queryString = http_build_query(['page' => $page, 'itemsPerPage' => 100]);
+        $queryString = http_build_query(['page' => $page, 'itemsPerPage' => 50]);
         $url = sprintf('%s/rest/v1/short-urls?%s', $params->baseUrl(), $queryString);
 
-        $parsedBody = $this->callApi($url, ['X-Api-Key' => $params->apiKey()]);
+        $parsedBody = $this->callApi($url, ['X-Api-Key' => $params->apiKey(), 'Accept' => 'application/json']);
         yield from $this->mapUrls($parsedBody['shortUrls']['data'] ?? []);
 
         $currentPage = $parsedBody['shortUrls']['pagination']['currentPage'] ?? 0;
