@@ -6,40 +6,24 @@ namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
+use Shlinkio\Shlink\Importer\Exception\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
-use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
-use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
-use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiProgressTracker;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
-use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
+use Shlinkio\Shlink\Importer\Strategy\AbstractApiImporterStrategy;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
 use Throwable;
 
 use function Functional\filter;
 use function Functional\map;
-use function json_decode;
 use function ltrim;
 use function parse_url;
 use function sprintf;
 use function str_starts_with;
 
-use const JSON_THROW_ON_ERROR;
-
-class BitlyApiImporter implements ImporterStrategyInterface
+class BitlyApiImporter extends AbstractApiImporterStrategy
 {
     use DateHelpersTrait;
-
-    private ClientInterface $httpClient;
-    private RequestFactoryInterface $requestFactory;
-
-    public function __construct(ClientInterface $httpClient, RequestFactoryInterface $requestFactory)
-    {
-        $this->httpClient = $httpClient;
-        $this->requestFactory = $requestFactory;
-    }
 
     /**
      * @return ImportedShlinkUrl[]
@@ -132,23 +116,14 @@ class BitlyApiImporter implements ImporterStrategyInterface
         BitlyApiProgressTracker $progressTracker
     ): array {
         $url = str_starts_with($url, 'http') ? $url : sprintf('https://api-ssl.bitly.com/v4%s', $url);
-        $request = $this->requestFactory->createRequest('GET', $url)->withHeader(
-            'Authorization',
-            sprintf('Bearer %s', $params->accessToken()),
-        );
-        $resp = $this->httpClient->sendRequest($request);
-        $body = (string) $resp->getBody();
-        $statusCode = $resp->getStatusCode();
 
-        if ($statusCode >= 400) {
+        try {
+            return $this->callApi($url, ['Authorization' => sprintf('Bearer %s', $params->accessToken())]);
+        } catch (InvalidRequestException $e) {
             throw BitlyApiException::fromInvalidRequest(
-                $url,
-                $statusCode,
-                $body,
+                $e,
                 $progressTracker->generateContinueToken() ?? $params->continueToken(),
             );
         }
-
-        return json_decode($body, true, 512, JSON_THROW_ON_ERROR);
     }
 }
