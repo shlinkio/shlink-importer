@@ -29,13 +29,15 @@ class ImportCommand extends Command
     private ImporterStrategyManagerInterface $importerStrategyManager;
     private ConsoleHelperManagerInterface $consoleHelperManager;
     private ImportedLinksProcessorInterface $importedLinksProcessor;
+    private array $validSources;
 
     public function __construct(
         ImporterStrategyManagerInterface $importerStrategyManager,
         ConsoleHelperManagerInterface $consoleHelperManager,
         ImportedLinksProcessorInterface $importedLinksProcessor
     ) {
-        parent::__construct(null);
+        $this->validSources = ImportSources::getAll();
+        parent::__construct();
         $this->importerStrategyManager = $importerStrategyManager;
         $this->consoleHelperManager = $consoleHelperManager;
         $this->importedLinksProcessor = $importedLinksProcessor;
@@ -48,23 +50,26 @@ class ImportCommand extends Command
             ->setDescription('Allows to import short URLs from third party sources')
             ->addArgument('source', InputArgument::REQUIRED, sprintf(
                 'The source from which you want to import. Supported sources: [<info>%s</info>]',
-                implode('</info>, <info>', ImportSources::getAll()),
+                implode('</info>, <info>', $this->validSources),
             ));
+    }
+
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        $source = $input->getArgument('source');
+        if ($source !== null && ! contains($this->validSources, $source)) {
+            throw InvalidSourceException::fromInvalidSource($source);
+        }
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
         $source = $input->getArgument('source');
-        $validSources = ImportSources::getAll();
-
-        if ($source !== null && ! contains($validSources, $source)) {
-            throw InvalidSourceException::fromInvalidSource($source);
-        }
 
         if ($source === null) {
             $source = (new SymfonyStyle($input, $output))->choice(
                 'What is the source you want to import from:',
-                $validSources,
+                $this->validSources,
             );
             $input->setArgument('source', $source);
         }
