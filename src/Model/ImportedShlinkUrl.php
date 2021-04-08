@@ -15,6 +15,9 @@ class ImportedShlinkUrl
     private string $shortCode;
     private string $source;
     private ?string $title;
+    /** @var ImportedShlinkVisit[]|iterable */
+    private iterable $visits;
+    private ?int $visitsCount;
 
     public function __construct(
         string $source,
@@ -23,7 +26,9 @@ class ImportedShlinkUrl
         DateTimeInterface $createdAt,
         ?string $domain,
         string $shortCode,
-        ?string $title
+        ?string $title,
+        iterable $visits = [],
+        ?int $visitsCount = null
     ) {
         $this->source = $source;
         $this->longUrl = $longUrl;
@@ -32,6 +37,8 @@ class ImportedShlinkUrl
         $this->domain = $domain;
         $this->shortCode = $shortCode;
         $this->title = $title;
+        $this->visits = $visits;
+        $this->visitsCount = $visitsCount;
     }
 
     public function source(): string
@@ -67,5 +74,15 @@ class ImportedShlinkUrl
     public function title(): ?string
     {
         return $this->title;
+    }
+
+    public function visits(): iterable
+    {
+        return $this->visits;
+    }
+
+    public function visitsCount(): ?int
+    {
+        return $this->visitsCount;
     }
 }
