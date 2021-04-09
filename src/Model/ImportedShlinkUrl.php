@@ -76,6 +76,9 @@ class ImportedShlinkUrl
         return $this->title;
     }
 
+    /**
+     * @return ImportedShlinkVisit[]|iterable
+     */
     public function visits(): iterable
     {
         return $this->visits;

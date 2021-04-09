@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Importer\Exception\InvalidRequestException;
+use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
 
 class BitlyApiExceptionTest extends TestCase

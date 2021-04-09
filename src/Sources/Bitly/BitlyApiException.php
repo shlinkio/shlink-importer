@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
 use Shlinkio\Shlink\Importer\Exception\ImportException;
-use Shlinkio\Shlink\Importer\Exception\InvalidRequestException;
+use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 
 use function sprintf;
 

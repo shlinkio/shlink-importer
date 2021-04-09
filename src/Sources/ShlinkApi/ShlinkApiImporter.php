@@ -9,20 +9,28 @@ use Generator;
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
+use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
+use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
-use Shlinkio\Shlink\Importer\Strategy\AbstractApiImporterStrategy;
+use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Throwable;
 
 use function Functional\map;
 use function http_build_query;
 use function sprintf;
 
-class ShlinkApiImporter extends AbstractApiImporterStrategy
+class ShlinkApiImporter implements ImporterStrategyInterface
 {
     private DateTimeImmutable $importStartTime;
+    private RestApiConsumerInterface $apiConsumer;
+
+    public function __construct(RestApiConsumerInterface $apiConsumer)
+    {
+        $this->apiConsumer = $apiConsumer;
+    }
 
     /**
      * @return ImportedShlinkUrl[]
@@ -42,12 +50,16 @@ class ShlinkApiImporter extends AbstractApiImporterStrategy
     /**
      * @throws ClientExceptionInterface
      * @throws JsonException
+     * @throws InvalidRequestException
      */
     private function loadUrls(ShlinkApiParams $params, int $page = 1): Generator
     {
         $queryString = http_build_query(['page' => $page, 'itemsPerPage' => 50]);
         $url = sprintf('%s/rest/v2/short-urls?%s', $params->baseUrl(), $queryString);
-        $parsedBody = $this->callApi($url, ['X-Api-Key' => $params->apiKey(), 'Accept' => 'application/json']);
+        $parsedBody = $this->apiConsumer->callApi(
+            $url,
+            ['X-Api-Key' => $params->apiKey(), 'Accept' => 'application/json'],
+        );
 
         yield from $this->mapUrls($parsedBody['shortUrls']['data'] ?? [], $params);
 
@@ -56,6 +68,11 @@ class ShlinkApiImporter extends AbstractApiImporterStrategy
         }
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws JsonException
+     * @throws \Shlinkio\Shlink\Importer\Http\InvalidRequestException
+     */
     private function mapUrls(array $urls, ShlinkApiParams $params): array
     {
         return map($urls, function (array $url) use ($params): ImportedShlinkUrl {
@@ -78,11 +95,19 @@ class ShlinkApiImporter extends AbstractApiImporterStrategy
         });
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws JsonException
+     * @throws \Shlinkio\Shlink\Importer\Http\InvalidRequestException
+     */
     private function loadVisits(string $shortCode, ?string $domain, ShlinkApiParams $params, int $page = 1): Generator
     {
         $queryString = http_build_query(['page' => $page, 'itemsPerPage' => 1000, 'domain' => $domain]);
         $url = sprintf('%s/rest/v2/short-urls/%s/visits?%s', $params->baseUrl(), $shortCode, $queryString);
-        $parsedBody = $this->callApi($url, ['X-Api-Key' => $params->apiKey(), 'Accept' => 'application/json']);
+        $parsedBody = $this->apiConsumer->callApi(
+            $url,
+            ['X-Api-Key' => $params->apiKey(), 'Accept' => 'application/json'],
+        );
 
         yield from $this->mapVisits($parsedBody['visits']['data'] ?? []);
 

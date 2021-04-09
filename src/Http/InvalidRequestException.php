@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Exception;
+namespace Shlinkio\Shlink\Importer\Http;
 
 use RuntimeException;
+use Shlinkio\Shlink\Importer\Exception\ExceptionInterface;
 
 use function sprintf;
 

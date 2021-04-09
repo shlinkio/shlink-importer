@@ -2,19 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Strategy;
+namespace Shlinkio\Shlink\Importer\Http;
 
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Shlinkio\Shlink\Importer\Exception\InvalidRequestException;
 
 use function json_decode;
 
 use const JSON_THROW_ON_ERROR;
 
-abstract class AbstractApiImporterStrategy implements ImporterStrategyInterface
+class RestApiConsumer implements RestApiConsumerInterface
 {
     private ClientInterface $httpClient;
     private RequestFactoryInterface $requestFactory;
@@ -30,7 +29,7 @@ abstract class AbstractApiImporterStrategy implements ImporterStrategyInterface
      * @throws JsonException
      * @throws InvalidRequestException
      */
-    protected function callApi(string $url, array $headers = [], string $method = 'GET'): array
+    public function callApi(string $url, array $headers = [], string $method = 'GET'): array
     {
         $request = $this->requestFactory->createRequest($method, $url);
         foreach ($headers as $name => $value) {

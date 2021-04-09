@@ -15,6 +15,7 @@ return [
     'dependencies' => [
         'factories' => [
             Command\ImportCommand::class => ConfigAbstractFactory::class,
+            Http\RestApiConsumer::class => ConfigAbstractFactory::class,
             Strategy\ImporterStrategyManager::class => fn (
                 ContainerInterface $container
             ) => new Strategy\ImporterStrategyManager(
@@ -61,8 +62,10 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
+        Http\RestApiConsumer::class => [ClientInterface::class, RequestFactoryInterface::class],
+
         Sources\Bitly\BitlyApiImporter::class => [ClientInterface::class, RequestFactoryInterface::class],
-        Sources\ShlinkApi\ShlinkApiImporter::class => [ClientInterface::class, RequestFactoryInterface::class],
+        Sources\ShlinkApi\ShlinkApiImporter::class => [Http\RestApiConsumer::class],
 
         Command\ImportCommand::class => [
             Strategy\ImporterStrategyManager::class,

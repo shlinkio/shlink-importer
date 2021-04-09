@@ -6,11 +6,14 @@ namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
-use Shlinkio\Shlink\Importer\Exception\InvalidRequestException;
+use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
+use Shlinkio\Shlink\Importer\Http\RestApiConsumer;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
-use Shlinkio\Shlink\Importer\Strategy\AbstractApiImporterStrategy;
+use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
 use Throwable;
 
@@ -21,9 +24,17 @@ use function parse_url;
 use function sprintf;
 use function str_starts_with;
 
-class BitlyApiImporter extends AbstractApiImporterStrategy
+class BitlyApiImporter implements ImporterStrategyInterface
 {
     use DateHelpersTrait;
+
+    private RestApiConsumer $apiConsumer;
+
+    public function __construct(ClientInterface $httpClient, RequestFactoryInterface $requestFactory)
+    {
+        // TODO Inject RestApiConsumer instead
+        $this->apiConsumer = new RestApiConsumer($httpClient, $requestFactory);
+    }
 
     /**
      * @return ImportedShlinkUrl[]
@@ -118,7 +129,7 @@ class BitlyApiImporter extends AbstractApiImporterStrategy
         $url = str_starts_with($url, 'http') ? $url : sprintf('https://api-ssl.bitly.com/v4%s', $url);
 
         try {
-            return $this->callApi($url, ['Authorization' => sprintf('Bearer %s', $params->accessToken())]);
+            return $this->apiConsumer->callApi($url, ['Authorization' => sprintf('Bearer %s', $params->accessToken())]);
         } catch (InvalidRequestException $e) {
             throw BitlyApiException::fromInvalidRequest(
                 $e,
