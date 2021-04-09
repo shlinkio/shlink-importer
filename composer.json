@@ -60,11 +60,9 @@
         "test:pretty": "@test --coverage-html build/coverage-html",
         "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
         "infect:ci": "@infect --coverage=build --skip-initial-tests",
-        "infect:show": "@infect --show-mutations",
-        "infect:show:ci": "@infect --show-mutations --coverage=build",
         "infect:test": [
             "@test:ci",
-            "@infect:show:ci"
+            "@infect:ci"
         ]
     },
     "scripts-descriptions": {

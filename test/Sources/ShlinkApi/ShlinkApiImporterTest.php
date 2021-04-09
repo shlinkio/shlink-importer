@@ -60,9 +60,8 @@ class ShlinkApiImporterTest extends TestCase
             'visitsCount' => 48,
             'tags' => ['bar', 'foo', 'website'],
             'meta' => [
-                'validSince' => null,
-              'validUntil' => null,
-              'maxVisits' => null,
+                'validUntil' => '2020-05-02T17:49:53+02:00',
+                'maxVisits' => null,
             ],
             'domain' => null,
             'title' => '',
@@ -142,6 +141,12 @@ class ShlinkApiImporterTest extends TestCase
             self::assertEquals('rY9zd', $url->shortCode());
             self::assertEquals('', $url->title());
             self::assertEquals(48, $url->visitsCount());
+            self::assertNull($url->meta()->validSince());
+            self::assertEquals(
+                DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, '2020-05-02T17:49:53+02:00'),
+                $url->meta()->validUntil(),
+            );
+            self::assertNull($url->meta()->maxVisits());
 
             foreach ($url->visits() as $visit) {
                 $visits[] = $visit;
