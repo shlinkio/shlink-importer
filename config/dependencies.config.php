@@ -64,7 +64,7 @@ return [
     ConfigAbstractFactory::class => [
         Http\RestApiConsumer::class => [ClientInterface::class, RequestFactoryInterface::class],
 
-        Sources\Bitly\BitlyApiImporter::class => [ClientInterface::class, RequestFactoryInterface::class],
+        Sources\Bitly\BitlyApiImporter::class => [Http\RestApiConsumer::class],
         Sources\ShlinkApi\ShlinkApiImporter::class => [Http\RestApiConsumer::class],
 
         Command\ImportCommand::class => [

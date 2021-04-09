@@ -6,11 +6,9 @@ namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
-use Shlinkio\Shlink\Importer\Http\RestApiConsumer;
+use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
@@ -28,12 +26,11 @@ class BitlyApiImporter implements ImporterStrategyInterface
 {
     use DateHelpersTrait;
 
-    private RestApiConsumer $apiConsumer;
+    private RestApiConsumerInterface $apiConsumer;
 
-    public function __construct(ClientInterface $httpClient, RequestFactoryInterface $requestFactory)
+    public function __construct(RestApiConsumerInterface $apiConsumer)
     {
-        // TODO Inject RestApiConsumer instead
-        $this->apiConsumer = new RestApiConsumer($httpClient, $requestFactory);
+        $this->apiConsumer = $apiConsumer;
     }
 
     /**
@@ -53,7 +50,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
             foreach ($groups as ['guid' => $groupId]) {
                 // Skip groups until the initial one is found
                 $initialGroupFound = $initialGroupFound || $groupId === $initialGroup;
-                if (!$initialGroupFound) {
+                if (! $initialGroupFound) {
                     continue;
                 }
 
