@@ -32,6 +32,7 @@ class ShlinkApiParamsConsoleHelperTest extends TestCase
         $result = $this->helper->requestParams($this->io->reveal());
 
         self::assertEquals([
+            'import_short_codes' => true,
             'base_url' => 'foo.com',
             'api_key' => 'abc-123',
         ], $result);
