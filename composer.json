@@ -16,7 +16,7 @@
         "ext-json": "*",
         "laminas/laminas-servicemanager": "^3.6.4",
         "league/csv": "^9.6",
-        "lstrojny/functional-php": "^1.15",
+        "lstrojny/functional-php": "^1.17",
         "shlinkio/shlink-config": "^1.0",
         "symfony/console": "^5.2"
     },
@@ -58,13 +58,11 @@
         "test": "phpdbg -qrr vendor/bin/phpunit --order-by=random --testdox --colors=always",
         "test:ci": "@test --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml",
         "test:pretty": "@test --coverage-html build/coverage-html",
-        "infect": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered",
+        "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
         "infect:ci": "@infect --coverage=build --skip-initial-tests",
-        "infect:show": "@infect --show-mutations",
-        "infect:show:ci": "@infect --show-mutations --coverage=build",
         "infect:test": [
             "@test:ci",
-            "@infect:show:ci"
+            "@infect:ci"
         ]
     },
     "scripts-descriptions": {

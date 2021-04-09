@@ -8,9 +8,10 @@ final class ImportSources
 {
     public const BITLY = 'bitly';
     public const CSV = 'csv';
+    public const SHLINK = 'shlink';
 
     public static function getAll(): array
     {
-        return [self::BITLY, self::CSV];
+        return [self::BITLY, self::CSV, self::SHLINK];
     }
 }

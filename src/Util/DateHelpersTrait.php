@@ -12,4 +12,13 @@ trait DateHelpersTrait
     {
         return DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $atomDate);
     }
+
+    private function nullableDateFromAtom(?string $atomDate): ?DateTimeImmutable
+    {
+        if ($atomDate === null) {
+            return null;
+        }
+
+        return $this->dateFromAtom($atomDate);
+    }
 }

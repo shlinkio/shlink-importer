@@ -15,6 +15,10 @@ class ImportedShlinkUrl
     private string $shortCode;
     private string $source;
     private ?string $title;
+    /** @var ImportedShlinkVisit[]|iterable */
+    private iterable $visits;
+    private ?int $visitsCount;
+    private ImportedShlinkUrlMeta $meta;
 
     public function __construct(
         string $source,
@@ -23,7 +27,10 @@ class ImportedShlinkUrl
         DateTimeInterface $createdAt,
         ?string $domain,
         string $shortCode,
-        ?string $title
+        ?string $title,
+        iterable $visits = [],
+        ?int $visitsCount = null,
+        ?ImportedShlinkUrlMeta $meta = null
     ) {
         $this->source = $source;
         $this->longUrl = $longUrl;
@@ -32,6 +39,9 @@ class ImportedShlinkUrl
         $this->domain = $domain;
         $this->shortCode = $shortCode;
         $this->title = $title;
+        $this->visits = $visits;
+        $this->visitsCount = $visitsCount;
+        $this->meta = $meta ?? ImportedShlinkUrlMeta::emptyInstance();
     }
 
     public function source(): string
@@ -67,5 +77,23 @@ class ImportedShlinkUrl
     public function title(): ?string
     {
         return $this->title;
+    }
+
+    /**
+     * @return ImportedShlinkVisit[]|iterable
+     */
+    public function visits(): iterable
+    {
+        return $this->visits;
+    }
+
+    public function visitsCount(): ?int
+    {
+        return $this->visitsCount;
+    }
+
+    public function meta(): ImportedShlinkUrlMeta
+    {
+        return $this->meta;
     }
 }

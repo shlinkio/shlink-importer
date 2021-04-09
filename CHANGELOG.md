@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* [#4](https://github.com/shlinkio/shlink-importer/issues/4) Added support to import from another Shlink instance through its REST API.
+
+    It imports visits and metadata as well, preparing the implementation to support this on other import sources.
+
+### Changed
+* [#25](https://github.com/shlinkio/shlink-importer/issues/25) Increased required MSI to 80%.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [2.2.0] - 2021-02-06
 ### Added
 * [#21](https://github.com/shlinkio/shlink-importer/issues/21) Added support to import URL `title` prop.

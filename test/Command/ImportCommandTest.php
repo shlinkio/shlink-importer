@@ -12,6 +12,7 @@ use RuntimeException;
 use Shlinkio\Shlink\Importer\Command\ImportCommand;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
+use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
@@ -166,7 +167,7 @@ class ImportCommandTest extends TestCase
             ],
         ];
         yield 'continue token, no verbose' => [
-            BitlyApiException::fromInvalidRequest('', 1, '', 'foobar'),
+            BitlyApiException::fromInvalidRequest(InvalidRequestException::fromResponseData('', 1, ''), 'foobar'),
             OutputInterface::VERBOSITY_NORMAL,
             [
                 '[WARNING] Not all URLs were properly imported. Wait a few minutes, and then try executing this '
@@ -179,7 +180,7 @@ class ImportCommandTest extends TestCase
             ],
         ];
         yield 'continue token, verbose' => [
-            BitlyApiException::fromInvalidRequest('', 1, '', 'foobar'),
+            BitlyApiException::fromInvalidRequest(InvalidRequestException::fromResponseData('', 1, ''), 'foobar'),
             OutputInterface::VERBOSITY_VERBOSE,
             [
                 '[WARNING] Not all URLs were properly imported. Wait a few minutes, and then try executing this '

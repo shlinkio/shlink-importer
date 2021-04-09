@@ -6,40 +6,33 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
+use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
+use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl as ShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiImporter;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 
 use function explode;
-use function json_encode;
 use function sprintf;
-use function stripos;
-
-use const JSON_THROW_ON_ERROR;
+use function str_contains;
+use function str_starts_with;
 
 class BitlyApiImporterTest extends TestCase
 {
     use ProphecyTrait;
 
     private BitlyApiImporter $importer;
-    private ObjectProphecy $httpClient;
-    private ObjectProphecy $requestFactory;
+    private ObjectProphecy $apiConsumer;
 
     public function setUp(): void
     {
-        $this->httpClient = $this->prophesize(ClientInterface::class);
-        $this->requestFactory = $this->prophesize(RequestFactoryInterface::class);
-        $this->importer = new BitlyApiImporter($this->httpClient->reveal(), $this->requestFactory->reveal());
+        $this->apiConsumer = $this->prophesize(RestApiConsumerInterface::class);
+        $this->importer = new BitlyApiImporter($this->apiConsumer->reveal());
     }
 
     /**
@@ -48,45 +41,30 @@ class BitlyApiImporterTest extends TestCase
      */
     public function groupsAndUrlsAreRecursivelyFetched(array $params, array $expected): void
     {
-        $params['access_token'] = $accessToken = 'abc123';
+        $params['access_token'] = 'abc123';
 
-        $groupsRequest = new Request('GET', 'groups');
-        $createGroupsRequest = $this->requestFactory->createRequest(
-            'GET',
+        $sendGroupsRequest = $this->apiConsumer->callApi(
             'https://api-ssl.bitly.com/v4/groups',
-        )->willReturn($groupsRequest);
-
-        $groupsResponse = new Response(200, [], $this->jsonEncode([
+            Argument::cetera(),
+        )->willReturn([
             'groups' => [
                 ['guid' => 'abc'],
                 ['guid' => 'def'],
                 ['guid' => 'ghi'],
             ],
-        ]));
-        $sendGroupsRequest = $this->httpClient->sendRequest(
-            $groupsRequest->withHeader('Authorization', sprintf('Bearer %s', $accessToken)),
-        )->willReturn($groupsResponse);
-
-        $createUrlsRequest = $this->requestFactory->createRequest(
-            'GET',
-            Argument::containingString('https://api-ssl.bitly.com/v4/groups/'),
-        )->will(function (array $args) {
-            [, $url] = $args;
-            return new Request('GET', $url);
-        });
+        ]);
 
         $callCounts = [];
-        $test = $this;
-        $sendUrlsRequest = $this->httpClient->sendRequest(
-            Argument::that(fn (RequestInterface $request) => 'groups' !== (string) $request->getUri()),
-        )->will(function (array $args) use (&$callCounts, $test): Response {
-            /** @var RequestInterface $request */
-            [$request] = $args;
-            [$url] = explode('?', (string) $request->getUri());
+        $sendUrlsRequest = $this->apiConsumer->callApi(
+            Argument::that(fn (string $uri) => str_starts_with($uri, 'https://api-ssl.bitly.com/v4/groups/')),
+            Argument::cetera(),
+        )->will(function (array $args) use (&$callCounts): array {
+            [$uri] = $args;
+            [$url] = explode('?', $uri);
             $callCounts[$url] = ($callCounts[$url] ?? 0) + 1;
 
-            if ($callCounts[$url] === 1 && stripos($url, 'def') !== false) {
-                return new Response(200, [], $test->jsonEncode([
+            if ($callCounts[$url] === 1 && str_contains($url, 'def')) {
+                return [
                     'links' => [
                         [
                             'created_at' => '2020-03-01T00:00:00+0000',
@@ -104,10 +82,10 @@ class BitlyApiImporterTest extends TestCase
                     'pagination' => [
                         'next' => 'https://api-ssl.bitly.com/v4/groups/def/bitlinks',
                     ],
-                ]));
+                ];
             }
 
-            return new Response(200, [], $test->jsonEncode([
+            return [
                 'links' => [
                     [
                         'created_at' => '2020-01-01T00:00:00+0000',
@@ -124,7 +102,7 @@ class BitlyApiImporterTest extends TestCase
                 'pagination' => [
                     'next' => '',
                 ],
-            ]));
+            ];
         });
 
         $generator = $this->importer->import($params);
@@ -134,9 +112,7 @@ class BitlyApiImporterTest extends TestCase
         }
 
         self::assertEquals($expected, $urls);
-        $createGroupsRequest->shouldHaveBeenCalledOnce();
         $sendGroupsRequest->shouldHaveBeenCalledOnce();
-        $createUrlsRequest->shouldBeCalledTimes(4);
         $sendUrlsRequest->shouldHaveBeenCalledTimes(4);
     }
 
@@ -256,16 +232,13 @@ class BitlyApiImporterTest extends TestCase
      */
     public function throwsExceptionWhenStatusCodeReturnedByApiIsError(int $statusCode): void
     {
-        $request = new Request('GET', '/groups');
-        $createRequest = $this->requestFactory->createRequest(Argument::cetera())->willReturn($request);
-        $sendRequest = $this->httpClient->sendRequest(Argument::cetera())->willReturn(
-            new Response($statusCode, [], 'Error'),
+        $sendRequest = $this->apiConsumer->callApi(Argument::cetera())->willThrow(
+            InvalidRequestException::fromResponseData('', $statusCode, 'Error'),
         );
 
         $this->expectException(BitlyApiException::class);
         $this->expectErrorMessage('Request to Bitly API v4 to URL');
         $this->expectErrorMessage(sprintf('failed with status code "%s" and body "Error"', $statusCode));
-        $createRequest->shouldBeCalledOnce();
         $sendRequest->shouldBeCalledOnce();
 
         $list = $this->importer->import(['access_token' => 'abc']);
@@ -281,11 +254,6 @@ class BitlyApiImporterTest extends TestCase
         yield '403' => [403];
         yield '404' => [404];
         yield '500' => [500];
-    }
-
-    private function jsonEncode(array $payload): string
-    {
-        return json_encode($payload, JSON_THROW_ON_ERROR);
     }
 
     private function createDate(string $date): DateTimeInterface

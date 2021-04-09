@@ -15,6 +15,7 @@ return [
     'dependencies' => [
         'factories' => [
             Command\ImportCommand::class => ConfigAbstractFactory::class,
+            Http\RestApiConsumer::class => ConfigAbstractFactory::class,
             Strategy\ImporterStrategyManager::class => fn (
                 ContainerInterface $container
             ) => new Strategy\ImporterStrategyManager(
@@ -35,11 +36,13 @@ return [
             'factories' => [
                 Sources\Bitly\BitlyApiImporter::class => ConfigAbstractFactory::class,
                 Sources\Csv\CsvImporter::class => InvokableFactory::class,
+                Sources\ShlinkApi\ShlinkApiImporter::class => ConfigAbstractFactory::class,
             ],
 
             'aliases' => [
                 Sources\ImportSources::BITLY => Sources\Bitly\BitlyApiImporter::class,
                 Sources\ImportSources::CSV => Sources\Csv\CsvImporter::class,
+                Sources\ImportSources::SHLINK => Sources\ShlinkApi\ShlinkApiImporter::class,
             ],
         ],
 
@@ -47,17 +50,23 @@ return [
             'factories' => [
                 Sources\Bitly\BitlyApiParamsConsoleHelper::class => InvokableFactory::class,
                 Sources\Csv\CsvParamsConsoleHelper::class => InvokableFactory::class,
+                Sources\ShlinkApi\ShlinkApiParamsConsoleHelper::class => InvokableFactory::class,
             ],
 
             'aliases' => [
                 Sources\ImportSources::BITLY => Sources\Bitly\BitlyApiParamsConsoleHelper::class,
                 Sources\ImportSources::CSV => Sources\Csv\CsvParamsConsoleHelper::class,
+                Sources\ImportSources::SHLINK => Sources\ShlinkApi\ShlinkApiParamsConsoleHelper::class,
             ],
         ],
     ],
 
     ConfigAbstractFactory::class => [
-        Sources\Bitly\BitlyApiImporter::class => [ClientInterface::class, RequestFactoryInterface::class],
+        Http\RestApiConsumer::class => [ClientInterface::class, RequestFactoryInterface::class],
+
+        Sources\Bitly\BitlyApiImporter::class => [Http\RestApiConsumer::class],
+        Sources\ShlinkApi\ShlinkApiImporter::class => [Http\RestApiConsumer::class],
+
         Command\ImportCommand::class => [
             Strategy\ImporterStrategyManager::class,
             Params\ConsoleHelper\ConsoleHelperManager::class,
