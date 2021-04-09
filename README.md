@@ -20,11 +20,23 @@ This module can be installed using composer:
 
 It imports using the API v4. The only required param is an [access token](https://bitly.is/accesstoken).
 
+Only the URLs will be imported. Visits/clicks won't be imported yet (See https://github.com/shlinkio/shlink-importer/issues/20).
+
+#### Shlink
+
+It imports from another Shlink instance using the API v2. Useful if you want to migrate to a different host or change the database engine.
+
+You will have to provide the instance's base URL and a valid API key.
+
+It will import short URLs and all their visits. However, it won't be possible to recalculate the location for those visits, so make sure to calculate the locations on the original instance first, by running `bin/cli visit:locate --retry`.
+
 #### Standard CSV
 
 It parses a CSV file with the `Long URL` and `Short code` columns. It can optionally contain `Domain`, `Title` and `Tags`, being the latter a pipe-separated list of items (`foo|bar|baz`).
 
 Column names can have spaces and have any combination of upper and lowercase.
+
+This method does not allow importing visits due to its one-dimensional nature.
 
 ## Usage
 
@@ -41,5 +53,5 @@ The command will ask you some questions about how to import from this source, an
 This package expects some services to be registered as dependencies, as they need to be used by some of the tools.
 
 * `Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface`: It has to resolve an object implementing the interface.
-* `Psr\Http\Client\ClientInterface`: Required to be able to import from Bit.ly
-* `Psr\Http\Message\RequestFactoryInterface`: Required to be able to import from Bit.ly
+* `Psr\Http\Client\ClientInterface`: Required to be able to import from Bit.ly or another Shlink instance.
+* `Psr\Http\Message\RequestFactoryInterface`: Required to be able to import from Bit.ly or another Shlink instance.
