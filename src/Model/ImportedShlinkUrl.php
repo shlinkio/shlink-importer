@@ -18,7 +18,7 @@ class ImportedShlinkUrl
     /** @var ImportedShlinkVisit[]|iterable */
     private iterable $visits;
     private ?int $visitsCount;
-    private ImportedShortUrlMeta $meta;
+    private ImportedShlinkUrlMeta $meta;
 
     public function __construct(
         string $source,
@@ -30,7 +30,7 @@ class ImportedShlinkUrl
         ?string $title,
         iterable $visits = [],
         ?int $visitsCount = null,
-        ?ImportedShortUrlMeta $meta = null
+        ?ImportedShlinkUrlMeta $meta = null
     ) {
         $this->source = $source;
         $this->longUrl = $longUrl;
@@ -41,7 +41,7 @@ class ImportedShlinkUrl
         $this->title = $title;
         $this->visits = $visits;
         $this->visitsCount = $visitsCount;
-        $this->meta = $meta ?? ImportedShortUrlMeta::emptyInstance();
+        $this->meta = $meta ?? ImportedShlinkUrlMeta::emptyInstance();
     }
 
     public function source(): string
@@ -92,7 +92,7 @@ class ImportedShlinkUrl
         return $this->visitsCount;
     }
 
-    public function meta(): ImportedShortUrlMeta
+    public function meta(): ImportedShlinkUrlMeta
     {
         return $this->meta;
     }

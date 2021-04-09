@@ -12,9 +12,9 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
-use Shlinkio\Shlink\Importer\Model\ImportedShortUrlMeta;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
@@ -82,7 +82,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
         return map($urls, function (array $url) use ($params): ImportedShlinkUrl {
             $shortCode = $url['shortCode'];
             $domain = $url['domain'] ?? null;
-            $meta = new ImportedShortUrlMeta(
+            $meta = new ImportedShlinkUrlMeta(
                 $this->nullableDateFromAtom($url['meta']['validSince'] ?? null),
                 $this->nullableDateFromAtom($url['meta']['validUntil'] ?? null),
                 $url['meta']['maxVisits'] ?? null,
