@@ -142,8 +142,8 @@ class ShlinkApiImporter implements ImporterStrategyInterface
 
     private function shouldContinue(array $pagination): bool
     {
-        $currentPage = $pagination['currentPage'] ?? 0;
-        $pagesCount = $pagination['pagesCount'] ?? 0;
+        $currentPage = $pagination['currentPage'];
+        $pagesCount = $pagination['pagesCount'];
 
         return $currentPage < $pagesCount;
     }

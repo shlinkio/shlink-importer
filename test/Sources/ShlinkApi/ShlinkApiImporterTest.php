@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Importer\Sources\ShlinkApi;
 
 use DateTimeImmutable;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -15,6 +16,8 @@ use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Sources\ShlinkApi\ShlinkApiImporter;
+
+use function sprintf;
 
 class ShlinkApiImporterTest extends TestCase
 {
@@ -48,6 +51,7 @@ class ShlinkApiImporterTest extends TestCase
     /** @test */
     public function expectedAmountOfCallsIsPerformedBasedOnPaginationResults(): void
     {
+        $apiKey = 'abc-123';
         $shortUrl = [
             'shortCode' => 'rY9zd',
             'shortUrl' => 'https://acel.me/rY9zd',
@@ -73,15 +77,19 @@ class ShlinkApiImporterTest extends TestCase
                 'regionName' => 'regionName',
                 'cityName' => 'cityName',
                 'timezone' => 'timezone',
-                'latitude' => 0.2,
-                'longitude' => 0.1,
             ],
         ];
 
         $urlsCallNum = 0;
-        $loadUrls = $this->apiConsumer->callApi(Argument::containingString('short-urls?'), Argument::cetera())->will(
-            function () use (&$urlsCallNum, $shortUrl): array {
+        $loadUrls = $this->apiConsumer->callApi(
+            Argument::containingString('short-urls?'),
+            ['X-Api-Key' => $apiKey, 'Accept' => 'application/json'],
+        )->will(
+            function (array $args) use (&$urlsCallNum, $shortUrl): array {
                 $urlsCallNum++;
+
+                [$url] = $args;
+                Assert::assertEquals(sprintf('/rest/v2/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
 
                 return [
                     'shortUrls' => [
@@ -95,20 +103,28 @@ class ShlinkApiImporterTest extends TestCase
             },
         );
 
-        $loadVisits = $this->apiConsumer->callApi(Argument::containingString('visits'), Argument::cetera())->will(
-            fn (array $args) => [
-                'visits' => [
-                    'data' => [$visit, $visit, $visit, $visit, $visit],
-                    'pagination' => [
-                        'currentPage' => 1,
-                        'pagesCount' => 1,
+        $loadVisits = $this->apiConsumer->callApi(
+            Argument::containingString('visits'),
+            ['X-Api-Key' => $apiKey, 'Accept' => 'application/json'],
+        )->will(
+            function (array $args) use ($visit): array {
+                [$url] = $args;
+                Assert::assertEquals('/rest/v2/short-urls/rY9zd/visits?page=1&itemsPerPage=1000', $url);
+
+                return [
+                    'visits' => [
+                        'data' => [$visit, $visit, $visit, $visit, $visit],
+                        'pagination' => [
+                            'currentPage' => 1,
+                            'pagesCount' => 1,
+                        ],
                     ],
-                ],
-            ],
+                ];
+            },
         );
 
         /** @var ImportedShlinkUrl[] $result */
-        $result = $this->importer->import([]);
+        $result = $this->importer->import(['api_key' => $apiKey]);
 
         $urls = [];
         $visits = [];
@@ -140,8 +156,8 @@ class ShlinkApiImporterTest extends TestCase
                 self::assertEquals('regionName', $visit->location()->regionName());
                 self::assertEquals('cityName', $visit->location()->cityName());
                 self::assertEquals('timezone', $visit->location()->timezone());
-                self::assertEquals(0.2, $visit->location()->latitude());
-                self::assertEquals(0.1, $visit->location()->longitude());
+                self::assertEquals(0.0, $visit->location()->latitude());
+                self::assertEquals(0.0, $visit->location()->longitude());
             }
         }
 
