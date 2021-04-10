@@ -20,6 +20,8 @@ use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
 use Throwable;
 
+use function array_reverse;
+use function ceil;
 use function Functional\map;
 use function http_build_query;
 use function sprintf;
@@ -27,6 +29,9 @@ use function sprintf;
 class ShlinkApiImporter implements ImporterStrategyInterface
 {
     use DateHelpersTrait;
+
+    private const SHORT_URLS_PER_PAGE = 50;
+    private const VISITS_PER_PAGE = 300;
 
     private DateTimeImmutable $importStartTime;
     private RestApiConsumerInterface $apiConsumer;
@@ -58,7 +63,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
      */
     private function loadUrls(ShlinkApiParams $params, int $page = 1): Generator
     {
-        $queryString = http_build_query(['page' => $page, 'itemsPerPage' => 50]);
+        $queryString = http_build_query(['page' => $page, 'itemsPerPage' => self::SHORT_URLS_PER_PAGE]);
         $url = sprintf('%s/rest/v2/short-urls?%s', $params->baseUrl(), $queryString);
         $parsedBody = $this->apiConsumer->callApi(
             $url,
@@ -75,13 +80,21 @@ class ShlinkApiImporter implements ImporterStrategyInterface
     /**
      * @throws ClientExceptionInterface
      * @throws JsonException
-     * @throws \Shlinkio\Shlink\Importer\Http\InvalidRequestException
+     * @throws InvalidRequestException
      */
     private function mapUrls(array $urls, ShlinkApiParams $params): array
     {
         return map($urls, function (array $url) use ($params): ImportedShlinkUrl {
             $shortCode = $url['shortCode'];
             $domain = $url['domain'] ?? null;
+            $visitsCount = $url['visitsCount'];
+
+            // Shlink returns visits ordered from newer to older. To keep stats working once imported, we need to
+            // reverse them.
+            // In order to do that, we calculate the amount of pages we will get, and start from last to first.
+            // Then, each page's result set gets reversed individually.
+            $expectedPages = (int) ceil($visitsCount / self::VISITS_PER_PAGE);
+
             $meta = new ImportedShlinkUrlMeta(
                 $this->nullableDateFromAtom($url['meta']['validSince'] ?? null),
                 $this->nullableDateFromAtom($url['meta']['validUntil'] ?? null),
@@ -96,8 +109,8 @@ class ShlinkApiImporter implements ImporterStrategyInterface
                 $domain,
                 $shortCode,
                 $url['title'] ?? null,
-                $this->loadVisits($shortCode, $domain, $params),
-                $url['visitsCount'] ?? null,
+                $this->loadVisits($shortCode, $domain, $params, $expectedPages),
+                $visitsCount,
                 $meta,
             );
         });
@@ -106,21 +119,23 @@ class ShlinkApiImporter implements ImporterStrategyInterface
     /**
      * @throws ClientExceptionInterface
      * @throws JsonException
-     * @throws \Shlinkio\Shlink\Importer\Http\InvalidRequestException
+     * @throws InvalidRequestException
      */
-    private function loadVisits(string $shortCode, ?string $domain, ShlinkApiParams $params, int $page = 1): Generator
+    private function loadVisits(string $shortCode, ?string $domain, ShlinkApiParams $params, int $page): Generator
     {
-        $queryString = http_build_query(['page' => $page, 'itemsPerPage' => 1000, 'domain' => $domain]);
+        $queryString = http_build_query(
+            ['page' => $page, 'itemsPerPage' => self::VISITS_PER_PAGE, 'domain' => $domain],
+        );
         $url = sprintf('%s/rest/v2/short-urls/%s/visits?%s', $params->baseUrl(), $shortCode, $queryString);
         $parsedBody = $this->apiConsumer->callApi(
             $url,
             ['X-Api-Key' => $params->apiKey(), 'Accept' => 'application/json'],
         );
 
-        yield from $this->mapVisits($parsedBody['visits']['data'] ?? []);
+        yield from array_reverse($this->mapVisits($parsedBody['visits']['data'] ?? []));
 
-        if ($this->shouldContinue($parsedBody['visits']['pagination'] ?? [])) {
-            yield from $this->loadVisits($shortCode, $domain, $params, $page + 1);
+        if ($page > 1) {
+            yield from $this->loadVisits($shortCode, $domain, $params, $page - 1);
         }
     }
 

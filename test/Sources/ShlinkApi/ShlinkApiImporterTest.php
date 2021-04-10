@@ -17,6 +17,8 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Sources\ShlinkApi\ShlinkApiImporter;
 
+use function array_merge;
+use function Functional\contains;
 use function sprintf;
 
 class ShlinkApiImporterTest extends TestCase
@@ -66,8 +68,8 @@ class ShlinkApiImporterTest extends TestCase
             'domain' => null,
             'title' => '',
         ];
-        $visit = [
-            'referer' => '',
+        $visit1 = [
+            'referer' => 'visit1',
             'date' => '2020-09-12T11:49:59+02:00',
             'userAgent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.10',
             'visitLocation' => [
@@ -78,6 +80,7 @@ class ShlinkApiImporterTest extends TestCase
                 'timezone' => 'timezone',
             ],
         ];
+        $visit2 = array_merge($visit1, ['referer' => 'visit2']);
 
         $urlsCallNum = 0;
         $loadUrls = $this->apiConsumer->callApi(
@@ -106,17 +109,13 @@ class ShlinkApiImporterTest extends TestCase
             Argument::containingString('visits'),
             ['X-Api-Key' => $apiKey, 'Accept' => 'application/json'],
         )->will(
-            function (array $args) use ($visit): array {
+            function (array $args) use ($visit1, $visit2): array {
                 [$url] = $args;
-                Assert::assertEquals('/rest/v2/short-urls/rY9zd/visits?page=1&itemsPerPage=1000', $url);
+                Assert::assertEquals('/rest/v2/short-urls/rY9zd/visits?page=1&itemsPerPage=300', $url);
 
                 return [
                     'visits' => [
-                        'data' => [$visit, $visit, $visit, $visit, $visit],
-                        'pagination' => [
-                            'currentPage' => 1,
-                            'pagesCount' => 1,
-                        ],
+                        'data' => [$visit1, $visit1, $visit2, $visit2, $visit2],
                     ],
                 ];
             },
@@ -148,10 +147,10 @@ class ShlinkApiImporterTest extends TestCase
             );
             self::assertNull($url->meta()->maxVisits());
 
-            foreach ($url->visits() as $visit) {
+            foreach ($url->visits() as $index => $visit) {
                 $visits[] = $visit;
 
-                self::assertEquals('', $visit->referer());
+                self::assertEquals(contains([3, 4], $index) ? 'visit1' : 'visit2', $visit->referer());
                 self::assertEquals(
                     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.10',
                     $visit->userAgent(),
