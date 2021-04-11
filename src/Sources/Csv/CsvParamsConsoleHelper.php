@@ -14,7 +14,6 @@ class CsvParamsConsoleHelper implements ParamsConsoleHelperInterface
     public function requestParams(StyleInterface $io): array
     {
         return [
-            'import_short_codes' => true,
             'stream' => $io->ask('What\'s the path for the CSV file you want to import', null, [$this, 'pathToStream']),
             'delimiter' => $io->choice('What\'s the delimiter used to separate values?', [
                 ',' => 'Comma',

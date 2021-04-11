@@ -81,10 +81,15 @@ class ImportCommandTest extends TestCase
     public function dependenciesAreInvokedAsExpected(?string $providedSource, bool $expectSourceQuestion): void
     {
         $source = $providedSource ?? ImportSources::BITLY;
+        $params = [
+            'import_short_codes' => true,
+            'import_visits' => false,
+            'source' => $source,
+        ];
 
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
-        $import = $this->importerStrategy->import([])->willReturn([]);
-        $process = $this->importedLinksProcessor->process(Argument::type(StyleInterface::class), [], []);
+        $import = $this->importerStrategy->import($params)->willReturn([]);
+        $process = $this->importedLinksProcessor->process(Argument::type(StyleInterface::class), [], $params);
 
         if ($expectSourceQuestion) {
             $this->commandTester->setInputs(['0']);
@@ -122,7 +127,11 @@ class ImportCommandTest extends TestCase
         array $notExpectedOutputs
     ): void {
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
-        $import = $this->importerStrategy->import([])->willThrow($e);
+        $import = $this->importerStrategy->import([
+            'import_short_codes' => true,
+            'import_visits' => false,
+            'source' => ImportSources::BITLY,
+        ])->willThrow($e);
         $process = $this->importedLinksProcessor->process(Argument::cetera());
 
         $exitCode = $this->commandTester->execute(['source' => ImportSources::BITLY], ['verbosity' => $verbosity]);

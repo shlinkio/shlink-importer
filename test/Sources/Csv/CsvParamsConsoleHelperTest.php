@@ -34,7 +34,6 @@ class CsvParamsConsoleHelperTest extends TestCase
         $result = $this->helper->requestParams($this->io->reveal());
 
         self::assertEquals([
-            'import_short_codes' => true,
             'stream' => 'stream',
             'delimiter' => ';',
         ], $result);
