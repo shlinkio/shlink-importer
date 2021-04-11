@@ -28,15 +28,17 @@ class ShlinkApiParamsConsoleHelperTest extends TestCase
     {
         $askBaseUrl = $this->io->ask('What is your Shlink instance base URL?')->willReturn('foo.com');
         $askApiKey = $this->io->ask('What is your Shlink instance API key?')->willReturn('abc-123');
+        $importVisits = $this->io->confirm('Do you want to import each short URL\'s visits too?')->willReturn(true);
 
         $result = $this->helper->requestParams($this->io->reveal());
 
         self::assertEquals([
-            'import_short_codes' => true,
             'base_url' => 'foo.com',
             'api_key' => 'abc-123',
+            'import_visits' => true,
         ], $result);
         $askBaseUrl->shouldHaveBeenCalledOnce();
         $askApiKey->shouldHaveBeenCalledOnce();
+        $importVisits->shouldHaveBeenCalledOnce();
     }
 }

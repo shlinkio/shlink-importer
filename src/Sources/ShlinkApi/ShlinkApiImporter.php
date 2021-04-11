@@ -109,7 +109,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
                 $domain,
                 $shortCode,
                 $url['title'] ?? null,
-                $this->loadVisits($shortCode, $domain, $params, $expectedPages),
+                $params->importVisits() ? $this->loadVisits($shortCode, $domain, $params, $expectedPages) : [],
                 $visitsCount,
                 $meta,
             );

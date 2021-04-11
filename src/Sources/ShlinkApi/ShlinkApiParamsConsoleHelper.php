@@ -12,9 +12,9 @@ class ShlinkApiParamsConsoleHelper implements ParamsConsoleHelperInterface
     public function requestParams(StyleInterface $io): array
     {
         return [
-            'import_short_codes' => true,
             'base_url' => $io->ask('What is your Shlink instance base URL?'),
             'api_key' => $io->ask('What is your Shlink instance API key?'),
+            'import_visits' => $io->confirm('Do you want to import each short URL\'s visits too?'),
         ];
     }
 }
