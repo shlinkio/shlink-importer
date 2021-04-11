@@ -8,6 +8,7 @@ final class ShlinkApiParams
 {
     private string $baseUrl;
     private string $apiKey;
+    private bool $importVisits;
 
     private function __construct()
     {
@@ -18,6 +19,7 @@ final class ShlinkApiParams
         $instance = new self();
         $instance->baseUrl = $params['base_url'] ?? '';
         $instance->apiKey = $params['api_key'] ?? '';
+        $instance->importVisits = $params['import_visits'] ?? true;
 
         return $instance;
     }
@@ -30,5 +32,10 @@ final class ShlinkApiParams
     public function apiKey(): string
     {
         return $this->apiKey;
+    }
+
+    public function importVisits(): bool
+    {
+        return $this->importVisits;
     }
 }

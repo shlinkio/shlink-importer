@@ -14,6 +14,7 @@ class ShlinkApiParamsConsoleHelper implements ParamsConsoleHelperInterface
         return [
             'base_url' => $io->ask('What is your Shlink instance base URL?'),
             'api_key' => $io->ask('What is your Shlink instance API key?'),
+            'import_visits' => $io->confirm('Do you want to import each short URL\'s visits too?'),
         ];
     }
 }
