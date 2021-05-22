@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [2.3.0] - 2021-05-22
 ### Added
 * [#4](https://github.com/shlinkio/shlink-importer/issues/4) Added support to import from another Shlink instance through its REST API.
 
@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#25](https://github.com/shlinkio/shlink-importer/issues/25) Increased required MSI to 80%.
+* Updated to Infection 0.23
 
 ### Deprecated
 * *Nothing*

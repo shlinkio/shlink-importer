@@ -22,7 +22,7 @@
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.2",
-        "infection/infection": "^0.21.0",
+        "infection/infection": "^0.23.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^0.12.52",
         "phpunit/phpunit": "^9.5",
