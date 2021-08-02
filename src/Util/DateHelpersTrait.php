@@ -10,6 +10,7 @@ trait DateHelpersTrait
 {
     private function dateFromAtom(string $atomDate): DateTimeImmutable
     {
+        // @phpstan-ignore-next-line
         return DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $atomDate);
     }
 
