@@ -121,8 +121,9 @@ class ImportCommand extends Command
             ));
         }
 
-        if ($io->isVerbose()) {
-            $this->getApplication()->renderThrowable($e, $io);
+        $app = $this->getApplication();
+        if ($app !== null && $io->isVerbose()) {
+            $app->renderThrowable($e, $io);
         }
     }
 }

@@ -17,6 +17,7 @@ use Throwable;
 
 use function Functional\filter;
 use function Functional\map;
+use function is_array;
 use function ltrim;
 use function parse_url;
 use function sprintf;
@@ -102,7 +103,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
                 $date = $hasCreatedDate && $params->keepCreationDate()
                     ? $this->dateFromAtom($link['created_at'])
                     : clone $progressTracker->startDate();
-                $parsedLink = parse_url($link['link'] ?? '');
+                $parsedLink = $this->parseLink($link['link'] ?? '');
                 $host = $parsedLink['host'] ?? null;
                 $domain = $host !== 'bit.ly' && $params->importCustomDomains() ? $host : null;
                 $shortCode = ltrim($parsedLink['path'] ?? '', '/');
@@ -133,5 +134,11 @@ class BitlyApiImporter implements ImporterStrategyInterface
                 $progressTracker->generateContinueToken() ?? $params->continueToken(),
             );
         }
+    }
+
+    private function parseLink(string $link): array
+    {
+        $parsedUrl = parse_url($link);
+        return is_array($parsedUrl) ? $parsedUrl : [];
     }
 }
