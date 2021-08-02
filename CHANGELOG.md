@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#32](https://github.com/shlinkio/shlink-importer/issues/32) Fixed error when importing short URLs with no visits from another Shlink instance.
 
 
 ## [2.3.0] - 2021-05-22
