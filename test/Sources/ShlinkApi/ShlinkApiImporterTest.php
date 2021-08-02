@@ -172,7 +172,7 @@ class ShlinkApiImporterTest extends TestCase
     }
 
     /** @test */
-    public function noVisitsApiallIsperformedForShortUrlsWithoutVisits(): void
+    public function noVisitsApiCallsArePerformedForShortUrlsWithoutVisits(): void
     {
         $shortUrl = [
             'shortCode' => 'abc123',
