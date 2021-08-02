@@ -57,7 +57,7 @@ class ShlinkApiImporterTest extends TestCase
         $shortUrl = [
             'shortCode' => 'rY9zd',
             'shortUrl' => 'https://acel.me/rY9zd',
-            'longUrl' => 'http://www.alejandrocelaya.com/foo',
+            'longUrl' => 'https://www.alejandrocelaya.com/foo',
             'dateCreated' => '2016-05-02T17:49:53+02:00',
             'visitsCount' => 48,
             'tags' => ['bar', 'foo', 'website'],
@@ -130,7 +130,7 @@ class ShlinkApiImporterTest extends TestCase
             $urls[] = $url;
 
             self::assertEquals(ImportSources::SHLINK, $url->source());
-            self::assertEquals('http://www.alejandrocelaya.com/foo', $url->longUrl());
+            self::assertEquals('https://www.alejandrocelaya.com/foo', $url->longUrl());
             self::assertEquals(['bar', 'foo', 'website'], $url->tags());
             self::assertEquals(
                 DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, '2016-05-02T17:49:53+02:00'),
@@ -169,5 +169,58 @@ class ShlinkApiImporterTest extends TestCase
         self::assertCount(9 * 5, $visits);
         $loadUrls->shouldHaveBeenCalledTimes(3);
         $loadVisits->shouldHaveBeenCalledTimes(9);
+    }
+
+    /** @test */
+    public function noVisitsApiallIsperformedForShortUrlsWithoutVisits(): void
+    {
+        $shortUrl = [
+            'shortCode' => 'abc123',
+            'shortUrl' => 'https://acel.me/abc123',
+            'longUrl' => 'https://shlink.io',
+            'dateCreated' => '2017-05-02T17:49:53+02:00',
+            'visitsCount' => 0,
+            'tags' => [],
+            'meta' => [],
+            'domain' => null,
+            'title' => '',
+        ];
+
+        $loadUrls = $this->apiConsumer->callApi(
+            Argument::containingString('short-urls?'),
+            Argument::cetera(),
+        )->will(
+            function (array $args) use (&$urlsCallNum, $shortUrl): array {
+                $urlsCallNum++;
+
+                [$url] = $args;
+                Assert::assertEquals(sprintf('/rest/v2/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
+
+                return [
+                    'shortUrls' => [
+                        'data' => [$shortUrl, $shortUrl, $shortUrl],
+                        'pagination' => [
+                            'currentPage' => $urlsCallNum,
+                            'pagesCount' => 3,
+                        ],
+                    ],
+                ];
+            },
+        );
+
+        $loadVisits = $this->apiConsumer->callApi(
+            Argument::containingString('visits'),
+            Argument::cetera(),
+        )->willReturn([]);
+
+        $result = $this->importer->import(['api_key' => 'foo']);
+        foreach ($result as $url) {
+            // The result needs to be iterated in order to perfomr the calls
+            foreach ($url->visits() as $visit) {
+            }
+        }
+
+        $loadUrls->shouldHaveBeenCalledTimes(3);
+        $loadVisits->shouldNotHaveBeenCalled();
     }
 }

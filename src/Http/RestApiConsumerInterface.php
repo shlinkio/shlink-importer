@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Importer\Http;
 
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
-use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 
 interface RestApiConsumerInterface
 {
