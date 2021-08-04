@@ -34,11 +34,9 @@ class ShlinkApiImporter implements ImporterStrategyInterface
     private const VISITS_PER_PAGE = 300;
 
     private DateTimeImmutable $importStartTime;
-    private RestApiConsumerInterface $apiConsumer;
 
-    public function __construct(RestApiConsumerInterface $apiConsumer)
+    public function __construct(private RestApiConsumerInterface $apiConsumer)
     {
-        $this->apiConsumer = $apiConsumer;
     }
 
     /**

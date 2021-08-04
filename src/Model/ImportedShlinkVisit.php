@@ -8,21 +8,12 @@ use DateTimeInterface;
 
 class ImportedShlinkVisit
 {
-    private string $referer;
-    private string $userAgent;
-    private DateTimeInterface $date;
-    private ?ImportedShlinkVisitLocation $location;
-
     public function __construct(
-        string $referer,
-        string $userAgent,
-        DateTimeInterface $date,
-        ?ImportedShlinkVisitLocation $location
+        private string $referer,
+        private string $userAgent,
+        private DateTimeInterface $date,
+        private ?ImportedShlinkVisitLocation $location
     ) {
-        $this->referer = $referer;
-        $this->userAgent = $userAgent;
-        $this->date = $date;
-        $this->location = $location;
     }
 
     public function referer(): string

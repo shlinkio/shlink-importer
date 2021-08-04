@@ -23,11 +23,8 @@ class CsvImporter implements ImporterStrategyInterface
 {
     private const TAG_SEPARATOR = '|';
 
-    private ?DateTimeInterface $date;
-
-    public function __construct(?DateTimeInterface $date = null)
+    public function __construct(private ?DateTimeInterface $date = null)
     {
-        $this->date = $date;
     }
 
     /**
