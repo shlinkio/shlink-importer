@@ -9,6 +9,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* Dropped support for PHP 7.4
+
+### Fixed
+* *Nothing*
+
+
+## [2.3.1] - 2021-08-02
+### Added
+* *Nothing*
+
+### Changed
 * [#34](https://github.com/shlinkio/shlink-importer/issues/34) Added experimental builds under PHP 8.1.
 * [#36](https://github.com/shlinkio/shlink-importer/issues/36) Increased required phpstan level to 8.
 

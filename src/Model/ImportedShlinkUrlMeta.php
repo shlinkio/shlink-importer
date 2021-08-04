@@ -8,15 +8,11 @@ use DateTimeInterface;
 
 class ImportedShlinkUrlMeta
 {
-    private ?DateTimeInterface $validSince;
-    private ?DateTimeInterface $validUntil;
-    private ?int $maxVisits;
-
-    public function __construct(?DateTimeInterface $validSince, ?DateTimeInterface $validUntil, ?int $maxVisits)
-    {
-        $this->validSince = $validSince;
-        $this->validUntil = $validUntil;
-        $this->maxVisits = $maxVisits;
+    public function __construct(
+        private ?DateTimeInterface $validSince,
+        private ?DateTimeInterface $validUntil,
+        private ?int $maxVisits,
+    ) {
     }
 
     public static function emptyInstance(): self

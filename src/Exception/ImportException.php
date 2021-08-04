@@ -9,12 +9,13 @@ use Throwable;
 
 class ImportException extends RuntimeException implements ExceptionInterface
 {
-    private ?string $continueToken;
-
-    protected function __construct(string $message, ?string $continueToken, int $code = 0, ?Throwable $previous = null)
-    {
+    protected function __construct(
+        string $message,
+        private ?string $continueToken,
+        int $code = 0,
+        ?Throwable $previous = null
+    ) {
         parent::__construct($message, $code, $previous);
-        $this->continueToken = $continueToken;
     }
 
     public static function fromError(Throwable $e): self

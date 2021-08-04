@@ -27,11 +27,8 @@ class BitlyApiImporter implements ImporterStrategyInterface
 {
     use DateHelpersTrait;
 
-    private RestApiConsumerInterface $apiConsumer;
-
-    public function __construct(RestApiConsumerInterface $apiConsumer)
+    public function __construct(private RestApiConsumerInterface $apiConsumer)
     {
-        $this->apiConsumer = $apiConsumer;
     }
 
     /**

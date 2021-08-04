@@ -31,21 +31,15 @@ class ImportCommand extends Command
         'import_visits' => false,
     ];
 
-    private ImporterStrategyManagerInterface $importerStrategyManager;
-    private ConsoleHelperManagerInterface $consoleHelperManager;
-    private ImportedLinksProcessorInterface $importedLinksProcessor;
     private array $validSources;
 
     public function __construct(
-        ImporterStrategyManagerInterface $importerStrategyManager,
-        ConsoleHelperManagerInterface $consoleHelperManager,
-        ImportedLinksProcessorInterface $importedLinksProcessor
+        private ImporterStrategyManagerInterface $importerStrategyManager,
+        private ConsoleHelperManagerInterface $consoleHelperManager,
+        private ImportedLinksProcessorInterface $importedLinksProcessor
     ) {
         $this->validSources = ImportSources::getAll();
         parent::__construct();
-        $this->importerStrategyManager = $importerStrategyManager;
-        $this->consoleHelperManager = $consoleHelperManager;
-        $this->importedLinksProcessor = $importedLinksProcessor;
     }
 
     protected function configure(): void

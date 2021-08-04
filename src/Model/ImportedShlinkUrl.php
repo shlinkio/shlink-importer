@@ -8,40 +8,21 @@ use DateTimeInterface;
 
 class ImportedShlinkUrl
 {
-    private string $longUrl;
-    private array $tags;
-    private DateTimeInterface $createdAt;
-    private ?string $domain;
-    private string $shortCode;
-    private string $source;
-    private ?string $title;
-    /** @var ImportedShlinkVisit[]|iterable */
-    private iterable $visits;
-    private ?int $visitsCount;
-    private ImportedShlinkUrlMeta $meta;
-
+    /**
+     * @param iterable<ImportedShlinkVisit> $visits
+     */
     public function __construct(
-        string $source,
-        string $longUrl,
-        array $tags,
-        DateTimeInterface $createdAt,
-        ?string $domain,
-        string $shortCode,
-        ?string $title,
-        iterable $visits = [],
-        ?int $visitsCount = null,
-        ?ImportedShlinkUrlMeta $meta = null
+        private string $source,
+        private string $longUrl,
+        private array $tags,
+        private DateTimeInterface $createdAt,
+        private ?string $domain,
+        private string $shortCode,
+        private ?string $title,
+        private iterable $visits = [],
+        private ?int $visitsCount = null,
+        private ?ImportedShlinkUrlMeta $meta = null
     ) {
-        $this->source = $source;
-        $this->longUrl = $longUrl;
-        $this->tags = $tags;
-        $this->createdAt = $createdAt;
-        $this->domain = $domain;
-        $this->shortCode = $shortCode;
-        $this->title = $title;
-        $this->visits = $visits;
-        $this->visitsCount = $visitsCount;
-        $this->meta = $meta ?? ImportedShlinkUrlMeta::emptyInstance();
     }
 
     public function source(): string
@@ -80,7 +61,7 @@ class ImportedShlinkUrl
     }
 
     /**
-     * @return ImportedShlinkVisit[]|iterable
+     * @return iterable<ImportedShlinkVisit>
      */
     public function visits(): iterable
     {
@@ -94,6 +75,7 @@ class ImportedShlinkUrl
 
     public function meta(): ImportedShlinkUrlMeta
     {
+        $this->meta = $this->meta ?? ImportedShlinkUrlMeta::emptyInstance();
         return $this->meta;
     }
 }

@@ -6,30 +6,15 @@ namespace Shlinkio\Shlink\Importer\Model;
 
 class ImportedShlinkVisitLocation
 {
-    private string $countryCode;
-    private string $countryName;
-    private string $regionName;
-    private string $cityName;
-    private string $timezone;
-    private float $latitude;
-    private float $longitude;
-
     public function __construct(
-        string $countryCode,
-        string $countryName,
-        string $regionName,
-        string $cityName,
-        string $timezone,
-        float $latitude,
-        float $longitude
+        private string $countryCode,
+        private string $countryName,
+        private string $regionName,
+        private string $cityName,
+        private string $timezone,
+        private float $latitude,
+        private float $longitude,
     ) {
-        $this->countryCode = $countryCode;
-        $this->countryName = $countryName;
-        $this->regionName = $regionName;
-        $this->cityName = $cityName;
-        $this->timezone = $timezone;
-        $this->latitude = $latitude;
-        $this->longitude = $longitude;
     }
 
     public function countryCode(): string
