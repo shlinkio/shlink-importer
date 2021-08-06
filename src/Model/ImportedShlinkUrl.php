@@ -21,7 +21,7 @@ class ImportedShlinkUrl
         private ?string $title,
         private iterable $visits = [],
         private ?int $visitsCount = null,
-        private ?ImportedShlinkUrlMeta $meta = null
+        private ?ImportedShlinkUrlMeta $meta = null,
     ) {
     }
 

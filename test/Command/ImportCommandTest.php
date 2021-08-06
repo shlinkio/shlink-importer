@@ -124,7 +124,7 @@ class ImportCommandTest extends TestCase
         ImportException $e,
         int $verbosity,
         array $expectedOutputs,
-        array $notExpectedOutputs
+        array $notExpectedOutputs,
     ): void {
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
         $import = $this->importerStrategy->import([

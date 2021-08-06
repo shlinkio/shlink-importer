@@ -69,7 +69,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
     private function loadUrlsForGroup(
         string $groupId,
         BitlyApiParams $params,
-        BitlyApiProgressTracker $progressTracker
+        BitlyApiProgressTracker $progressTracker,
     ): iterable {
         $pagination = [];
         $archived = $params->ignoreArchived() ? 'off' : 'both';
@@ -119,7 +119,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
     private function callToBitlyApi(
         string $url,
         BitlyApiParams $params,
-        BitlyApiProgressTracker $progressTracker
+        BitlyApiProgressTracker $progressTracker,
     ): array {
         $url = str_starts_with($url, 'http') ? $url : sprintf('https://api-ssl.bitly.com/v4%s', $url);
 

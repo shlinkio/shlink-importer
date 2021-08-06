@@ -28,12 +28,12 @@
         "phpunit/phpunit": "^9.5",
         "psr/http-factory": "^1.0",
         "roave/security-advisories": "dev-master",
-        "shlinkio/php-coding-standard": "~2.1.1",
+        "shlinkio/php-coding-standard": "~2.2.0",
         "symfony/var-dumper": "^5.3"
     },
     "suggest": {
-        "psr/http-client": "If you want to be able to import URLs from Bit.ly",
-        "psr/http-factory": "If you want to be able to import URLs from Bit.ly"
+        "psr/http-client": "If you want to be able to import URLs from Bit.ly or another Shlink instance",
+        "psr/http-factory": "If you want to be able to import URLs from Bit.ly or another Shlink instance"
     },
     "autoload": {
         "psr-4": {

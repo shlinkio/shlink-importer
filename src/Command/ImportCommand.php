@@ -36,7 +36,7 @@ class ImportCommand extends Command
     public function __construct(
         private ImporterStrategyManagerInterface $importerStrategyManager,
         private ConsoleHelperManagerInterface $consoleHelperManager,
-        private ImportedLinksProcessorInterface $importedLinksProcessor
+        private ImportedLinksProcessorInterface $importedLinksProcessor,
     ) {
         $this->validSources = ImportSources::getAll();
         parent::__construct();

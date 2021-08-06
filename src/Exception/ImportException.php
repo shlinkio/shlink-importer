@@ -13,7 +13,7 @@ class ImportException extends RuntimeException implements ExceptionInterface
         string $message,
         private ?string $continueToken,
         int $code = 0,
-        ?Throwable $previous = null
+        ?Throwable $previous = null,
     ) {
         parent::__construct($message, $code, $previous);
     }

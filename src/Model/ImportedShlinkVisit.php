@@ -12,7 +12,7 @@ class ImportedShlinkVisit
         private string $referer,
         private string $userAgent,
         private DateTimeInterface $date,
-        private ?ImportedShlinkVisitLocation $location
+        private ?ImportedShlinkVisitLocation $location,
     ) {
     }
 
