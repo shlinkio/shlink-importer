@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * Moved ci workflow to external repo and reused
+* Updated to phpstan 1.0
 
 ### Deprecated
 * *Nothing*
