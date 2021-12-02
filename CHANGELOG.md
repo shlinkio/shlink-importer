@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* Added support for PHP 8.1
 
 ### Changed
 * Moved ci workflow to external repo and reused
