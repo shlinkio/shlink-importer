@@ -16,14 +16,14 @@ return [
         'factories' => [
             Command\ImportCommand::class => ConfigAbstractFactory::class,
             Http\RestApiConsumer::class => ConfigAbstractFactory::class,
-            Strategy\ImporterStrategyManager::class => fn (
-                ContainerInterface $container
+            Strategy\ImporterStrategyManager::class => static fn (
+                ContainerInterface $container,
             ) => new Strategy\ImporterStrategyManager(
                 $container,
                 $container->get('config')['cli']['importer_strategies'],
             ),
-            Params\ConsoleHelper\ConsoleHelperManager::class => fn (
-                ContainerInterface $container
+            Params\ConsoleHelper\ConsoleHelperManager::class => static fn (
+                ContainerInterface $container,
             ) => new Params\ConsoleHelper\ConsoleHelperManager(
                 $container,
                 $container->get('config')['cli']['params_console_helpers'],
@@ -37,12 +37,14 @@ return [
                 Sources\Bitly\BitlyApiImporter::class => ConfigAbstractFactory::class,
                 Sources\Csv\CsvImporter::class => InvokableFactory::class,
                 Sources\ShlinkApi\ShlinkApiImporter::class => ConfigAbstractFactory::class,
+                Sources\Yourls\YourlsImporter::class => ConfigAbstractFactory::class,
             ],
 
             'aliases' => [
                 Sources\ImportSources::BITLY => Sources\Bitly\BitlyApiImporter::class,
                 Sources\ImportSources::CSV => Sources\Csv\CsvImporter::class,
                 Sources\ImportSources::SHLINK => Sources\ShlinkApi\ShlinkApiImporter::class,
+                Sources\ImportSources::YOURLS => Sources\Yourls\YourlsImporter::class,
             ],
         ],
 
@@ -51,12 +53,14 @@ return [
                 Sources\Bitly\BitlyApiParamsConsoleHelper::class => InvokableFactory::class,
                 Sources\Csv\CsvParamsConsoleHelper::class => InvokableFactory::class,
                 Sources\ShlinkApi\ShlinkApiParamsConsoleHelper::class => InvokableFactory::class,
+                Sources\Yourls\YourlsParamsConsoleHelper::class => InvokableFactory::class,
             ],
 
             'aliases' => [
                 Sources\ImportSources::BITLY => Sources\Bitly\BitlyApiParamsConsoleHelper::class,
                 Sources\ImportSources::CSV => Sources\Csv\CsvParamsConsoleHelper::class,
                 Sources\ImportSources::SHLINK => Sources\ShlinkApi\ShlinkApiParamsConsoleHelper::class,
+                Sources\ImportSources::YOURLS => Sources\Yourls\YourlsParamsConsoleHelper::class,
             ],
         ],
     ],
@@ -66,6 +70,7 @@ return [
 
         Sources\Bitly\BitlyApiImporter::class => [Http\RestApiConsumer::class],
         Sources\ShlinkApi\ShlinkApiImporter::class => [Http\RestApiConsumer::class],
+        Sources\Yourls\YourlsImporter::class => [Http\RestApiConsumer::class],
 
         Command\ImportCommand::class => [
             Strategy\ImporterStrategyManager::class,

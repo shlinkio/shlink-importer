@@ -7,3 +7,5 @@ services:
     image: composer:2
     volumes:
       - ./:/app
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

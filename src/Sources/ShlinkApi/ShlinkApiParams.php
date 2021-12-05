@@ -6,22 +6,13 @@ namespace Shlinkio\Shlink\Importer\Sources\ShlinkApi;
 
 final class ShlinkApiParams
 {
-    private string $baseUrl;
-    private string $apiKey;
-    private bool $importVisits;
-
-    private function __construct()
+    private function __construct(private string $baseUrl, private string $apiKey, private bool $importVisits)
     {
     }
 
     public static function fromRawParams(array $params): self
     {
-        $instance = new self();
-        $instance->baseUrl = $params['base_url'] ?? '';
-        $instance->apiKey = $params['api_key'] ?? '';
-        $instance->importVisits = $params['import_visits'] ?? true;
-
-        return $instance;
+        return new self($params['base_url'] ?? '', $params['api_key'] ?? '', $params['import_visits'] ?? true);
     }
 
     public function baseUrl(): string
