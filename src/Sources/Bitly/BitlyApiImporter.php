@@ -32,7 +32,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
     }
 
     /**
-     * @return ImportedShlinkUrl[]
+     * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
     public function import(array $rawParams): iterable

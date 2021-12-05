@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 interface ImporterStrategyInterface
 {
     /**
-     * @return ImportedShlinkUrl[]
+     * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
     public function import(array $rawParams): iterable;
