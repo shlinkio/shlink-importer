@@ -23,6 +23,14 @@ It imports using the API v4. The only required param is an [access token](https:
 
 Only the URLs will be imported. Visits/clicks won't be imported yet (See https://github.com/shlinkio/shlink-importer/issues/20).
 
+#### YOURLS
+
+It imports using YOURLS API. However, since it has some missing capabilities, it requires a [dedicated plugin](https://slnk.to/yourls-import) to be installed in YOURLS.
+
+The plugin covers the missing actions in the API, which allow Shlink to list the URLs and all their visits.
+
+It will import short URLs and all their visits, but any information that YOURLS does not track (like the geolocation) cannot be obtained.
+
 #### Shlink
 
 It imports from another Shlink instance using the API v2. Useful if you want to migrate to a different host or change the database engine.
@@ -54,5 +62,5 @@ The command will ask you some questions about how to import from this source, an
 This package expects some services to be registered as dependencies, as they need to be used by some of the tools.
 
 * `Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface`: It has to resolve an object implementing the interface.
-* `Psr\Http\Client\ClientInterface`: Required to be able to import from Bit.ly or another Shlink instance.
-* `Psr\Http\Message\RequestFactoryInterface`: Required to be able to import from Bit.ly or another Shlink instance.
+* `Psr\Http\Client\ClientInterface`: Required to be able to import from Bit.ly, YOURLS or another Shlink instance.
+* `Psr\Http\Message\RequestFactoryInterface`: Required to be able to import from Bit.ly, YOURLS or another Shlink instance.
