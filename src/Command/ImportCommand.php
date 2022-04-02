@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Importer\Command;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
+use Shlinkio\Shlink\Importer\Params\CommonParams;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
@@ -18,7 +19,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-use function array_merge;
 use function Functional\contains;
 use function implode;
 use function sprintf;
@@ -26,10 +26,6 @@ use function sprintf;
 class ImportCommand extends Command
 {
     public const NAME = 'short-url:import';
-    private const DEFAULT_PARAMS = [
-        'import_short_codes' => true,
-        'import_visits' => false,
-    ];
 
     private array $validSources;
 
@@ -85,11 +81,7 @@ class ImportCommand extends Command
         $importerStrategy = $this->importerStrategyManager->get($source);
 
         try {
-            $params = array_merge(
-                self::DEFAULT_PARAMS,
-                $paramsHelper->requestParams($io),
-                ['source' => $source],
-            );
+            $params = CommonParams::fromSourceAndCallableMap($source, $paramsHelper->requestParams($io));
             $links = $importerStrategy->import($params);
             $this->importedLinksProcessor->process($io, $links, $params);
         } catch (ImportException $e) {

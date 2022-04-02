@@ -12,6 +12,7 @@ use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
+use Shlinkio\Shlink\Importer\Params\CommonParams;
 use Shlinkio\Shlink\Importer\Sources\Yourls\YourlsImporter;
 use Shlinkio\Shlink\Importer\Sources\Yourls\YourlsMissingPluginException;
 use Throwable;
@@ -46,7 +47,7 @@ class YourlsImporterTest extends TestCase
         $this->expectExceptionMessage($expectedMessage);
         $callApi->shouldBeCalledOnce();
 
-        $result = $this->importer->import([]);
+        $result = $this->importer->import(CommonParams::fromSource(''));
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
         foreach ($result as $element) {
@@ -124,7 +125,7 @@ class YourlsImporterTest extends TestCase
             },
         );
 
-        $result = $this->importer->import([]);
+        $result = $this->importer->import(CommonParams::fromSource(''));
 
         foreach ($result as $urlIndex => $url) {
             self::assertEquals('keyword_' . $urlIndex, $url->shortCode());

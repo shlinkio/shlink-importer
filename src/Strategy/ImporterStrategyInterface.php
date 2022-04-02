@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Importer\Strategy;
 
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Params\CommonParams;
 
 interface ImporterStrategyInterface
 {
@@ -13,5 +14,5 @@ interface ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(array $rawParams): iterable;
+    public function import(CommonParams $rawParams): iterable;
 }

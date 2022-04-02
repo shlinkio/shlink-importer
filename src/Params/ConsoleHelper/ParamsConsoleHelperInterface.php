@@ -8,5 +8,8 @@ use Symfony\Component\Console\Style\StyleInterface;
 
 interface ParamsConsoleHelperInterface
 {
+    /**
+     * @return array<string, callable>
+     */
     public function requestParams(StyleInterface $io): array;
 }

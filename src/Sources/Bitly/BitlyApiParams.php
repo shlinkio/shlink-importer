@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
+use Shlinkio\Shlink\Importer\Params\CommonParams;
+
 final class BitlyApiParams
 {
     private string $accessToken;
@@ -17,16 +19,16 @@ final class BitlyApiParams
     {
     }
 
-    public static function fromRawParams(array $params): self
+    public static function fromRawParams(CommonParams $params): self
     {
         $instance = new self();
 
-        $instance->accessToken = $params['access_token'];
-        $instance->importTags = (bool) ($params['import_tags'] ?? true);
-        $instance->importCustomDomains = (bool) ($params['import_custom_domains'] ?? false);
-        $instance->keepCreationDate = (bool) ($params['keep_creation_date'] ?? true);
-        $instance->ignoreArchived = (bool) ($params['ignore_archived'] ?? false);
-        $instance->continueToken = $params['continue_token'] ?? null;
+        $instance->accessToken = $params->extraParam('access_token');
+        $instance->importTags = (bool) ($params->extraParam('import_tags') ?? true);
+        $instance->importCustomDomains = (bool) ($params->extraParam('import_custom_domains') ?? false);
+        $instance->keepCreationDate = (bool) ($params->extraParam('keep_creation_date') ?? true);
+        $instance->ignoreArchived = (bool) ($params->extraParam('ignore_archived') ?? false);
+        $instance->continueToken = $params->extraParam('continue_token');
 
         return $instance;
     }

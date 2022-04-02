@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Yourls;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Importer\Params\ParamsUtils;
 use Shlinkio\Shlink\Importer\Sources\Yourls\YourlsParamsConsoleHelper;
 use Symfony\Component\Console\Style\StyleInterface;
 
@@ -31,7 +32,7 @@ class YourlsParamsConsoleHelperTest extends TestCase
         $askPassword = $this->io->ask('What is your YOURLS instance password?')->willReturn('pass');
         $importVisits = $this->io->confirm('Do you want to import each short URL\'s visits too?')->willReturn(true);
 
-        $result = $this->helper->requestParams($this->io->reveal());
+        $result = ParamsUtils::invokeCallbacks($this->helper->requestParams($this->io->reveal()));
 
         self::assertEquals([
             'base_url' => 'foo.com',

@@ -9,6 +9,7 @@ use DateTimeInterface;
 use League\Csv\Reader;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Params\CommonParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 
@@ -31,7 +32,7 @@ class CsvImporter implements ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(array $rawParams): iterable
+    public function import(CommonParams $rawParams): iterable
     {
         $params = CsvParams::fromRawParams($rawParams);
         $now = $this->date ?? new DateTimeImmutable();

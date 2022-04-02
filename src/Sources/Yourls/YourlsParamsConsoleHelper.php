@@ -9,13 +9,16 @@ use Symfony\Component\Console\Style\StyleInterface;
 
 class YourlsParamsConsoleHelper implements ParamsConsoleHelperInterface
 {
+    /**
+     * @return array<string, callable>
+     */
     public function requestParams(StyleInterface $io): array
     {
         return [
-            'base_url' => $io->ask('What is your YOURLS instance base URL?'),
-            'username' => $io->ask('What is your YOURLS instance username?'),
-            'password' => $io->ask('What is your YOURLS instance password?'),
-            'import_visits' => $io->confirm('Do you want to import each short URL\'s visits too?'),
+            'base_url' => fn () => $io->ask('What is your YOURLS instance base URL?'),
+            'username' => fn () => $io->ask('What is your YOURLS instance username?'),
+            'password' => fn () => $io->ask('What is your YOURLS instance password?'),
+            'import_visits' => fn () => $io->confirm('Do you want to import each short URL\'s visits too?'),
         ];
     }
 }

@@ -1,0 +1,15 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Shlinkio\Shlink\Importer\Params;
+
+use function Functional\map;
+
+final class ParamsUtils
+{
+    public static function invokeCallbacks(array $callbacksMap): array
+    {
+        return map($callbacksMap, static fn (callable $callback) => $callback());
+    }
+}
