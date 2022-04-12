@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Sources\ShlinkApi;
 
-use Shlinkio\Shlink\Importer\Params\CommonParams;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 
 final class ShlinkApiParams
 {
@@ -12,7 +12,7 @@ final class ShlinkApiParams
     {
     }
 
-    public static function fromRawParams(CommonParams $params): self
+    public static function fromRawParams(ImportParams $params): self
     {
         return new self(
             $params->extraParam('base_url') ?? '',

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Params;
 
-final class CommonParams
+final class ImportParams
 {
+    public const IMPORT_SHORT_CODES_PARAM = 'import_short_codes';
+    public const IMPORT_VISITS_PARAM = 'import_visits';
+
     private function __construct(
         private string $source,
         private bool $importShortCodes,
@@ -19,8 +22,8 @@ final class CommonParams
      */
     public static function fromSourceAndCallableMap(string $source, array $callableMap): self
     {
-        $importShortCodes = self::extractParamWithDefault($callableMap, 'import_short_codes', true);
-        $importVisits = self::extractParamWithDefault($callableMap, 'import_visits', false);
+        $importShortCodes = self::extractParamWithDefault($callableMap, self::IMPORT_SHORT_CODES_PARAM, true);
+        $importVisits = self::extractParamWithDefault($callableMap, self::IMPORT_VISITS_PARAM, false);
 
         return new self(
             $source,

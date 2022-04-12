@@ -14,9 +14,9 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
-use Shlinkio\Shlink\Importer\Params\CommonParams;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
@@ -82,7 +82,7 @@ class ImportCommandTest extends TestCase
     public function dependenciesAreInvokedAsExpected(?string $providedSource, bool $expectSourceQuestion): void
     {
         $source = $providedSource ?? ImportSources::BITLY;
-        $params = CommonParams::fromSource($source);
+        $params = ImportParams::fromSource($source);
 
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
         $import = $this->importerStrategy->import($params)->willReturn([]);
@@ -124,7 +124,7 @@ class ImportCommandTest extends TestCase
         array $notExpectedOutputs,
     ): void {
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
-        $import = $this->importerStrategy->import(CommonParams::fromSource(ImportSources::BITLY))->willThrow($e);
+        $import = $this->importerStrategy->import(ImportParams::fromSource(ImportSources::BITLY))->willThrow($e);
         $process = $this->importedLinksProcessor->process(Argument::cetera());
 
         $exitCode = $this->commandTester->execute(['source' => ImportSources::BITLY], ['verbosity' => $verbosity]);

@@ -8,7 +8,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
-use Shlinkio\Shlink\Importer\Params\CommonParams;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\Csv\CsvImporter;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 
@@ -31,7 +31,7 @@ class CsvImporterTest extends TestCase
      */
     public function csvIsProperlyImported(string $csv, string $delimiter, array $expectedList): void
     {
-        $options = CommonParams::fromSourceAndCallableMap(
+        $options = ImportParams::fromSourceAndCallableMap(
             '',
             ['delimiter' => fn () => $delimiter, 'stream' => fn () => $this->createCsvStream($csv)],
         );

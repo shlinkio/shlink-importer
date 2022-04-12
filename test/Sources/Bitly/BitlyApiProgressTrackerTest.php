@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use DateInterval;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Importer\Params\CommonParams;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiProgressTracker;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
@@ -21,7 +21,7 @@ class BitlyApiProgressTrackerTest extends TestCase
     public function expectedContinueTokenIsGenerated(): void
     {
         $tracker = BitlyApiProgressTracker::initFromParams(BitlyApiParams::fromRawParams(
-            CommonParams::fromSourceAndCallableMap('', ['access_token' => fn () => '']),
+            ImportParams::fromSourceAndCallableMap('', ['access_token' => fn () => '']),
         ));
         self::assertNull($tracker->generateContinueToken());
 
@@ -40,7 +40,7 @@ class BitlyApiProgressTrackerTest extends TestCase
     public function initializesWithProvidedToken(): void
     {
         $tracker = BitlyApiProgressTracker::initFromParams(BitlyApiParams::fromRawParams(
-            CommonParams::fromSourceAndCallableMap('', [
+            ImportParams::fromSourceAndCallableMap('', [
                 'access_token' => fn () => '',
                 'continue_token' => fn () => base64_encode('abc123__1603378130'),
             ]),

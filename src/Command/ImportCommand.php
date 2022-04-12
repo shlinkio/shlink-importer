@@ -7,9 +7,9 @@ namespace Shlinkio\Shlink\Importer\Command;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
-use Shlinkio\Shlink\Importer\Params\CommonParams;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyManagerInterface;
@@ -81,7 +81,7 @@ class ImportCommand extends Command
         $importerStrategy = $this->importerStrategyManager->get($source);
 
         try {
-            $params = CommonParams::fromSourceAndCallableMap($source, $paramsHelper->requestParams($io));
+            $params = ImportParams::fromSourceAndCallableMap($source, $paramsHelper->requestParams($io));
             $links = $importerStrategy->import($params);
             $this->importedLinksProcessor->process($io, $links, $params);
         } catch (ImportException $e) {

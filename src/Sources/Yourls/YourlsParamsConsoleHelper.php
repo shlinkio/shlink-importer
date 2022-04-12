@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Sources\Yourls;
 
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Symfony\Component\Console\Style\StyleInterface;
 
 class YourlsParamsConsoleHelper implements ParamsConsoleHelperInterface
@@ -18,7 +19,9 @@ class YourlsParamsConsoleHelper implements ParamsConsoleHelperInterface
             'base_url' => fn () => $io->ask('What is your YOURLS instance base URL?'),
             'username' => fn () => $io->ask('What is your YOURLS instance username?'),
             'password' => fn () => $io->ask('What is your YOURLS instance password?'),
-            'import_visits' => fn () => $io->confirm('Do you want to import each short URL\'s visits too?'),
+            ImportParams::IMPORT_VISITS_PARAM => fn () => $io->confirm(
+                'Do you want to import each short URL\'s visits too?',
+            ),
         ];
     }
 }

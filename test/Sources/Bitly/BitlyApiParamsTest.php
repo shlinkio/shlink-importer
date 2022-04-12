@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Importer\Params\CommonParams;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
 
 class BitlyApiParamsTest extends TestCase
@@ -16,7 +16,7 @@ class BitlyApiParamsTest extends TestCase
      */
     public function rawParamsAreProperlyParsed(array $rawParams, callable $runAssertions): void
     {
-        $params = BitlyApiParams::fromRawParams(CommonParams::fromSourceAndCallableMap('', $rawParams));
+        $params = BitlyApiParams::fromRawParams(ImportParams::fromSourceAndCallableMap('', $rawParams));
         $runAssertions($params);
     }
 

@@ -8,6 +8,10 @@ use function Functional\map;
 
 final class ParamsUtils
 {
+    /**
+     * @param array<string, callable> $callbacksMap
+     * @return array<string, mixed>
+     */
     public static function invokeCallbacks(array $callbacksMap): array
     {
         return map($callbacksMap, static fn (callable $callback) => $callback());

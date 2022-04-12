@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
-use Shlinkio\Shlink\Importer\Params\CommonParams;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 
 final class BitlyApiParams
 {
@@ -19,7 +19,7 @@ final class BitlyApiParams
     {
     }
 
-    public static function fromRawParams(CommonParams $params): self
+    public static function fromRawParams(ImportParams $params): self
     {
         $instance = new self();
 

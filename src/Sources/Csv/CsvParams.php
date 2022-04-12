@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Sources\Csv;
 
-use Shlinkio\Shlink\Importer\Params\CommonParams;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 
 final class CsvParams
 {
@@ -16,7 +16,7 @@ final class CsvParams
     {
     }
 
-    public static function fromRawParams(CommonParams $params): self
+    public static function fromRawParams(ImportParams $params): self
     {
         $instance = new self();
         $instance->delimiter = $params->extraParam('delimiter') ?? '';

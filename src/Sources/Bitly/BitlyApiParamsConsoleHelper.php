@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Symfony\Component\Console\Style\StyleInterface;
 
 class BitlyApiParamsConsoleHelper implements ParamsConsoleHelperInterface
@@ -18,7 +19,7 @@ class BitlyApiParamsConsoleHelper implements ParamsConsoleHelperInterface
             'access_token' => fn () => $io->ask(
                 'What is your Bit.ly\'s API access token? (you can generate one here https://bitly.is/accesstoken)',
             ),
-            'import_short_codes' => fn () => $io->confirm(
+            ImportParams::IMPORT_SHORT_CODES_PARAM => fn () => $io->confirm(
                 'Do you want to import short-codes/slugs as they are? Otherwise, new unique short-codes will be '
                 . 'generated for every imported URL.',
             ),
