@@ -65,7 +65,7 @@ class YourlsImporter implements ImporterStrategyInterface
                 $url['url'] ?? '',
                 [],
                 $this->dateFromFormat(self::YOURLS_DATE_FORMAT, $url['timestamp'] ?? ''),
-                null,
+                $params->domain(),
                 $shortCode,
                 $url['title'] ?? null,
                 $params->importVisits() ? $this->loadVisits($shortCode, $params) : [],

@@ -13,6 +13,7 @@ final class YourlsParams
         private string $username,
         private string $password,
         private bool $importVisits,
+        private ?string $domain,
     ) {
     }
 
@@ -23,6 +24,7 @@ final class YourlsParams
             $params->extraParam('username') ?? '',
             $params->extraParam('password') ?? '',
             $params->extraParam('import_visits') ?? true,
+            $params->extraParam('domain'),
         );
     }
 
@@ -44,5 +46,10 @@ final class YourlsParams
     public function importVisits(): bool
     {
         return $this->importVisits;
+    }
+
+    public function domain(): ?string
+    {
+        return $this->domain;
     }
 }

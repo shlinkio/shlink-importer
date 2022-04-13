@@ -22,6 +22,9 @@ class YourlsParamsConsoleHelper implements ParamsConsoleHelperInterface
             ImportParams::IMPORT_VISITS_PARAM => fn () => $io->confirm(
                 'Do you want to import each short URL\'s visits too?',
             ),
+            'domain' => fn () => $io->ask(
+                'To what domain do you want the URLs to be linked? (leave empty to link them to default domain)',
+            ),
         ];
     }
 }
