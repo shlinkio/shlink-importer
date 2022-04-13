@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Sources\ShlinkApi;
 
+use Shlinkio\Shlink\Importer\Params\ImportParams;
+
 final class ShlinkApiParams
 {
     private function __construct(private string $baseUrl, private string $apiKey, private bool $importVisits)
     {
     }
 
-    public static function fromRawParams(array $params): self
+    public static function fromRawParams(ImportParams $params): self
     {
-        return new self($params['base_url'] ?? '', $params['api_key'] ?? '', $params['import_visits'] ?? true);
+        return new self(
+            $params->extraParam('base_url') ?? '',
+            $params->extraParam('api_key') ?? '',
+            $params->extraParam('import_visits') ?? true,
+        );
     }
 
     public function baseUrl(): string

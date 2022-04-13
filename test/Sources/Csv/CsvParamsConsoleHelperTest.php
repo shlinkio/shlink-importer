@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Importer\Params\ParamsUtils;
 use Shlinkio\Shlink\Importer\Sources\Csv\CsvParamsConsoleHelper;
 use Shlinkio\Shlink\Importer\Sources\Csv\InvalidPathException;
 use Symfony\Component\Console\Style\StyleInterface;
@@ -31,7 +32,7 @@ class CsvParamsConsoleHelperTest extends TestCase
         $ask = $this->io->ask(Argument::cetera())->willReturn('stream');
         $choice = $this->io->choice(Argument::cetera())->willReturn(';');
 
-        $result = $this->helper->requestParams($this->io->reveal());
+        $result = ParamsUtils::invokeCallbacks($this->helper->requestParams($this->io->reveal()));
 
         self::assertEquals([
             'stream' => 'stream',

@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
@@ -35,7 +36,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(array $rawParams): iterable
+    public function import(ImportParams $rawParams): iterable
     {
         $params = BitlyApiParams::fromRawParams($rawParams);
         $progressTracker = BitlyApiProgressTracker::initFromParams($params);

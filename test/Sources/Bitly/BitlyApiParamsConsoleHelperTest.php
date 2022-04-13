@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Importer\Params\ParamsUtils;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParamsConsoleHelper;
 use Symfony\Component\Console\Style\StyleInterface;
 
@@ -35,7 +36,10 @@ class BitlyApiParamsConsoleHelperTest extends TestCase
         $ask = $this->io->ask(Argument::cetera())->willReturn(...$askResponses);
         $confirm = $this->io->confirm(Argument::cetera())->willReturn(...$confirmResponses);
 
-        self::assertEquals($expected, $this->paramsHelper->requestParams($this->io->reveal()));
+        self::assertEquals(
+            $expected,
+            ParamsUtils::invokeCallbacks($this->paramsHelper->requestParams($this->io->reveal())),
+        );
         $ask->shouldHaveBeenCalledTimes(count($askResponses));
         $confirm->shouldHaveBeenCalledTimes(count($confirmResponses));
     }

@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Importer\Sources\ShlinkApi;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Shlinkio\Shlink\Importer\Params\ParamsUtils;
 use Shlinkio\Shlink\Importer\Sources\ShlinkApi\ShlinkApiParamsConsoleHelper;
 use Symfony\Component\Console\Style\StyleInterface;
 
@@ -30,7 +31,7 @@ class ShlinkApiParamsConsoleHelperTest extends TestCase
         $askApiKey = $this->io->ask('What is your Shlink instance API key?')->willReturn('abc-123');
         $importVisits = $this->io->confirm('Do you want to import each short URL\'s visits too?')->willReturn(true);
 
-        $result = $this->helper->requestParams($this->io->reveal());
+        $result = ParamsUtils::invokeCallbacks($this->helper->requestParams($this->io->reveal()));
 
         self::assertEquals([
             'base_url' => 'foo.com',

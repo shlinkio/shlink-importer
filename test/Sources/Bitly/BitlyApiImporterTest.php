@@ -13,6 +13,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl as ShlinkUrl;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiImporter;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
@@ -39,9 +40,10 @@ class BitlyApiImporterTest extends TestCase
      * @test
      * @dataProvider provideParams
      */
-    public function groupsAndUrlsAreRecursivelyFetched(array $params, array $expected): void
+    public function groupsAndUrlsAreRecursivelyFetched(array $paramsMap, array $expected): void
     {
-        $params['access_token'] = 'abc123';
+        $paramsMap['access_token'] = static fn () => 'abc123';
+        $params = ImportParams::fromSourceAndCallableMap('', $paramsMap);
 
         $sendGroupsRequest = $this->apiConsumer->callApi(
             'https://api-ssl.bitly.com/v4/groups',
@@ -146,7 +148,7 @@ class BitlyApiImporterTest extends TestCase
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
         ]];
-        yield 'ignore archived' => [['ignore_archived' => true], [
+        yield 'ignore archived' => [['ignore_archived' => fn () => true], [
             new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
@@ -172,7 +174,7 @@ class BitlyApiImporterTest extends TestCase
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
         ]];
-        yield 'ignore tags' => [['import_tags' => false], [
+        yield 'ignore tags' => [['import_tags' => fn () => false], [
             new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
@@ -198,7 +200,7 @@ class BitlyApiImporterTest extends TestCase
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
         ]];
-        yield 'import custom domains' => [['import_custom_domains' => true], [
+        yield 'import custom domains' => [['import_custom_domains' => fn () => true], [
             new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
@@ -241,7 +243,7 @@ class BitlyApiImporterTest extends TestCase
         $this->expectErrorMessage(sprintf('failed with status code "%s" and body "Error"', $statusCode));
         $sendRequest->shouldBeCalledOnce();
 
-        $list = $this->importer->import(['access_token' => 'abc']);
+        $list = $this->importer->import(ImportParams::fromSourceAndCallableMap('', ['access_token' => fn () => 'abc']));
         foreach ($list as $item) {
             // Iteration needed to trigger generator code
         }

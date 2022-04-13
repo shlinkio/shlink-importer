@@ -6,9 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#47](https://github.com/shlinkio/shlink-importer/issues/47) Added support to import from YOURLS under a specific domain.
 
 ### Changed
+* Enhanced how common config is passed to processors, avoiding raw arrays.
 * Updated to infection 0.26, enabling HTML reports.
 * Added explicitly enabled composer plugins to composer.json.
 

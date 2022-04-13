@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
 
 class BitlyApiParamsTest extends TestCase
@@ -15,19 +16,19 @@ class BitlyApiParamsTest extends TestCase
      */
     public function rawParamsAreProperlyParsed(array $rawParams, callable $runAssertions): void
     {
-        $params = BitlyApiParams::fromRawParams($rawParams);
+        $params = BitlyApiParams::fromRawParams(ImportParams::fromSourceAndCallableMap('', $rawParams));
         $runAssertions($params);
     }
 
     public function provideRawParams(): iterable
     {
         yield [[
-            'access_token' => 'token',
-            'import_tags' => true,
-            'import_custom_domains' => true,
-            'keep_creation_date' => true,
-            'ignore_archived' => true,
-            'continue_token' => null,
+            'access_token' => fn () => 'token',
+            'import_tags' => fn () => true,
+            'import_custom_domains' => fn () => true,
+            'keep_creation_date' => fn () => true,
+            'ignore_archived' => fn () => true,
+            'continue_token' => fn () => null,
         ], static function (BitlyApiParams $params): void {
             self::assertEquals('token', $params->accessToken());
             self::assertTrue($params->importTags());
@@ -37,12 +38,12 @@ class BitlyApiParamsTest extends TestCase
             self::assertNull($params->continueToken());
         }];
         yield [[
-            'access_token' => 'token',
-            'import_tags' => false,
-            'import_custom_domains' => false,
-            'keep_creation_date' => false,
-            'ignore_archived' => false,
-            'continue_token' => 'foobar',
+            'access_token' => fn () => 'token',
+            'import_tags' => fn () => false,
+            'import_custom_domains' => fn () => false,
+            'keep_creation_date' => fn () => false,
+            'ignore_archived' => fn () => false,
+            'continue_token' => fn () => 'foobar',
         ], static function (BitlyApiParams $params): void {
             self::assertEquals('token', $params->accessToken());
             self::assertFalse($params->importTags());
@@ -51,7 +52,7 @@ class BitlyApiParamsTest extends TestCase
             self::assertFalse($params->ignoreArchived());
             self::assertEquals('foobar', $params->continueToken());
         }];
-        yield [['access_token' => 'token'], static function (BitlyApiParams $params): void {
+        yield [['access_token' => fn () => 'token'], static function (BitlyApiParams $params): void {
             self::assertEquals('token', $params->accessToken());
             self::assertTrue($params->importTags());
             self::assertFalse($params->importCustomDomains());
@@ -60,11 +61,11 @@ class BitlyApiParamsTest extends TestCase
             self::assertNull($params->continueToken());
         }];
         yield [[
-            'access_token' => 'token',
-            'import_tags' => 'not bool',
-            'import_custom_domains' => 'not bool',
-            'keep_creation_date' => 'not bool',
-            'ignore_archived' => 'not bool',
+            'access_token' => fn () => 'token',
+            'import_tags' => fn () => 'not bool',
+            'import_custom_domains' => fn () => 'not bool',
+            'keep_creation_date' => fn () => 'not bool',
+            'ignore_archived' => fn () => 'not bool',
         ], static function (BitlyApiParams $params): void {
             self::assertEquals('token', $params->accessToken());
             self::assertTrue($params->importTags());
@@ -73,11 +74,11 @@ class BitlyApiParamsTest extends TestCase
             self::assertTrue($params->ignoreArchived());
         }];
         yield [[
-            'access_token' => 'token',
-            'import_tags' => 0,
-            'import_custom_domains' => 0,
-            'keep_creation_date' => 0,
-            'ignore_archived' => 0,
+            'access_token' => fn () => 'token',
+            'import_tags' => fn () => 0,
+            'import_custom_domains' => fn () => 0,
+            'keep_creation_date' => fn () => 0,
+            'ignore_archived' => fn () => 0,
         ], static function (BitlyApiParams $params): void {
             self::assertEquals('token', $params->accessToken());
             self::assertFalse($params->importTags());

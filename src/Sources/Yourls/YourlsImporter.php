@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
@@ -37,7 +38,7 @@ class YourlsImporter implements ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(array $rawParams): iterable
+    public function import(ImportParams $rawParams): iterable
     {
         try {
             yield from $this->loadUrls(YourlsParams::fromRawParams($rawParams));
@@ -64,7 +65,7 @@ class YourlsImporter implements ImporterStrategyInterface
                 $url['url'] ?? '',
                 [],
                 $this->dateFromFormat(self::YOURLS_DATE_FORMAT, $url['timestamp'] ?? ''),
-                null,
+                $params->domain(),
                 $shortCode,
                 $url['title'] ?? null,
                 $params->importVisits() ? $this->loadVisits($shortCode, $params) : [],

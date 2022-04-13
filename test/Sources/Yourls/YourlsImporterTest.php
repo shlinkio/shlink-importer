@@ -12,6 +12,7 @@ use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\Yourls\YourlsImporter;
 use Shlinkio\Shlink\Importer\Sources\Yourls\YourlsMissingPluginException;
 use Throwable;
@@ -46,7 +47,7 @@ class YourlsImporterTest extends TestCase
         $this->expectExceptionMessage($expectedMessage);
         $callApi->shouldBeCalledOnce();
 
-        $result = $this->importer->import([]);
+        $result = $this->importer->import(ImportParams::fromSource(''));
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
         foreach ($result as $element) {
@@ -77,7 +78,10 @@ class YourlsImporterTest extends TestCase
     /** @test */
     public function linksAndVisitsAreLoadedFromYourls(): void
     {
-        $loadUrls = $this->apiConsumer->callApi(Argument::containingString('action=shlink-list'))->willReturn([
+        $loadUrls = $this->apiConsumer->callApi(Argument::that(function (string $arg): bool {
+            return str_contains($arg, 'format=json&action=shlink-list')
+                && str_contains($arg, 'username=the_username&password=the_password');
+        }))->willReturn([
             'result' => [
                 [
                     'keyword' => 'keyword_0',
@@ -124,7 +128,10 @@ class YourlsImporterTest extends TestCase
             },
         );
 
-        $result = $this->importer->import([]);
+        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', [
+            'username' => fn () => 'the_username',
+            'password' => fn () => 'the_password',
+        ]));
 
         foreach ($result as $urlIndex => $url) {
             self::assertEquals('keyword_' . $urlIndex, $url->shortCode());

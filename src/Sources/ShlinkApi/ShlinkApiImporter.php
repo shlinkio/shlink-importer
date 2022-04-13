@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
@@ -43,7 +44,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(array $rawParams): iterable
+    public function import(ImportParams $rawParams): iterable
     {
         $this->importStartTime = new DateTimeImmutable();
 

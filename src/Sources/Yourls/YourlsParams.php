@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Sources\Yourls;
 
+use Shlinkio\Shlink\Importer\Params\ImportParams;
+
 final class YourlsParams
 {
     private function __construct(
@@ -11,16 +13,18 @@ final class YourlsParams
         private string $username,
         private string $password,
         private bool $importVisits,
+        private ?string $domain,
     ) {
     }
 
-    public static function fromRawParams(array $params): self
+    public static function fromRawParams(ImportParams $params): self
     {
         return new self(
-            $params['base_url'] ?? '',
-            $params['username'] ?? '',
-            $params['password'] ?? '',
-            $params['import_visits'] ?? true,
+            $params->extraParam('base_url') ?? '',
+            $params->extraParam('username') ?? '',
+            $params->extraParam('password') ?? '',
+            $params->extraParam('import_visits') ?? true,
+            $params->extraParam('domain'),
         );
     }
 
@@ -42,5 +46,10 @@ final class YourlsParams
     public function importVisits(): bool
     {
         return $this->importVisits;
+    }
+
+    public function domain(): ?string
+    {
+        return $this->domain;
     }
 }

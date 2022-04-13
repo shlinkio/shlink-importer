@@ -14,6 +14,7 @@ use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Sources\ShlinkApi\ShlinkApiImporter;
 
@@ -43,7 +44,7 @@ class ShlinkApiImporterTest extends TestCase
         $this->expectException(ImportException::class);
         $callApi->shouldBeCalledOnce();
 
-        $result = $this->importer->import([]);
+        $result = $this->importer->import(ImportParams::fromSource(''));
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
         foreach ($result as $element) {
@@ -122,7 +123,7 @@ class ShlinkApiImporterTest extends TestCase
         );
 
         /** @var ImportedShlinkUrl[] $result */
-        $result = $this->importer->import(['api_key' => $apiKey]);
+        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', ['api_key' => fn () => $apiKey]));
 
         $urls = [];
         $visits = [];
@@ -213,9 +214,9 @@ class ShlinkApiImporterTest extends TestCase
             Argument::cetera(),
         )->willReturn([]);
 
-        $result = $this->importer->import(['api_key' => 'foo']);
+        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', ['api_key' => fn () => 'foo']));
         foreach ($result as $url) {
-            // The result needs to be iterated in order to perfomr the calls
+            // The result needs to be iterated in order to perform the calls
             foreach ($url->visits() as $visit) {
             }
         }
