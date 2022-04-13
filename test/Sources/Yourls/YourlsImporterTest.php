@@ -78,7 +78,10 @@ class YourlsImporterTest extends TestCase
     /** @test */
     public function linksAndVisitsAreLoadedFromYourls(): void
     {
-        $loadUrls = $this->apiConsumer->callApi(Argument::containingString('action=shlink-list'))->willReturn([
+        $loadUrls = $this->apiConsumer->callApi(Argument::that(function (string $arg): bool {
+            return str_contains($arg, 'format=json&action=shlink-list')
+                && str_contains($arg, 'username=the_username&password=the_password');
+        }))->willReturn([
             'result' => [
                 [
                     'keyword' => 'keyword_0',
@@ -125,7 +128,10 @@ class YourlsImporterTest extends TestCase
             },
         );
 
-        $result = $this->importer->import(ImportParams::fromSource(''));
+        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', [
+            'username' => fn () => 'the_username',
+            'password' => fn () => 'the_password',
+        ]));
 
         foreach ($result as $urlIndex => $url) {
             self::assertEquals('keyword_' . $urlIndex, $url->shortCode());
