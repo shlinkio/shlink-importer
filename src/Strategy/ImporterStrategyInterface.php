@@ -14,5 +14,5 @@ interface ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(ImportParams $rawParams): iterable;
+    public function import(ImportParams $importParams): iterable;
 }

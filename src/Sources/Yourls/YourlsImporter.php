@@ -36,10 +36,10 @@ class YourlsImporter implements ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(ImportParams $rawParams): iterable
+    public function import(ImportParams $importParams): iterable
     {
         try {
-            yield from $this->loadUrls(YourlsParams::fromImportParams($rawParams));
+            yield from $this->loadUrls(YourlsParams::fromImportParams($importParams));
         } catch (InvalidRequestException $e) {
             if (str_contains($e->body(), '"message":"Unknown or missing \"action\" parameter"')) {
                 throw YourlsMissingPluginException::forMissingPlugin($e);

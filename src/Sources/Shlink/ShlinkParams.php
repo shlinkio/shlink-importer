@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Sources\ShlinkApi;
+namespace Shlinkio\Shlink\Importer\Sources\Shlink;
 
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 
-final class ShlinkApiParams
+final class ShlinkParams
 {
     private function __construct(private string $baseUrl, private string $apiKey, private bool $importVisits)
     {

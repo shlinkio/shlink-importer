@@ -34,9 +34,9 @@ class BitlyApiImporter implements ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(ImportParams $rawParams): iterable
+    public function import(ImportParams $importParams): iterable
     {
-        $params = BitlyApiParams::fromImportParams($rawParams);
+        $params = BitlyApiParams::fromImportParams($importParams);
         $progressTracker = BitlyApiProgressTracker::initFromParams($params);
         $initialGroup = $progressTracker->initialGroup();
         $initialGroupFound = $initialGroup === null;

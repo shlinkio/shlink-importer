@@ -32,9 +32,9 @@ class CsvImporter implements ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(ImportParams $rawParams): iterable
+    public function import(ImportParams $importParams): iterable
     {
-        $params = CsvParams::fromImportParams($rawParams);
+        $params = CsvParams::fromImportParams($importParams);
         $now = $this->date ?? new DateTimeImmutable();
 
         $csvReader = Reader::createFromStream($params->stream())->setDelimiter($params->delimiter())
