@@ -30,6 +30,9 @@ class KuttParamsConsoleHelperTest extends TestCase
         $askBaseUrl = $this->io->ask('What is your Kutt.it instance base URL?')->willReturn('bar.com');
         $askApiKey = $this->io->ask('What is your Kutt.it instance API key?')->willReturn('def-456');
         $importVisits = $this->io->confirm('Do you want to import each short URL\'s visits too?')->willReturn(false);
+        $importAllUrls = $this->io->confirm('Do you want to import URLs created anonymously too?', false)->willReturn(
+            true,
+        );
 
         $result = ParamsUtils::invokeCallbacks($this->paramsHelper->requestParams($this->io->reveal()));
 
@@ -37,9 +40,11 @@ class KuttParamsConsoleHelperTest extends TestCase
             'base_url' => 'bar.com',
             'api_key' => 'def-456',
             'import_visits' => false,
+            'import_all_urls' => true,
         ], $result);
         $askBaseUrl->shouldHaveBeenCalledOnce();
         $askApiKey->shouldHaveBeenCalledOnce();
         $importVisits->shouldHaveBeenCalledOnce();
+        $importAllUrls->shouldHaveBeenCalledOnce();
     }
 }

@@ -20,7 +20,7 @@ class BitlyApiProgressTrackerTest extends TestCase
     /** @test */
     public function expectedContinueTokenIsGenerated(): void
     {
-        $tracker = BitlyApiProgressTracker::initFromParams(BitlyApiParams::fromRawParams(
+        $tracker = BitlyApiProgressTracker::initFromParams(BitlyApiParams::fromImportParams(
             ImportParams::fromSourceAndCallableMap('', ['access_token' => fn () => '']),
         ));
         self::assertNull($tracker->generateContinueToken());
@@ -39,7 +39,7 @@ class BitlyApiProgressTrackerTest extends TestCase
     /** @test */
     public function initializesWithProvidedToken(): void
     {
-        $tracker = BitlyApiProgressTracker::initFromParams(BitlyApiParams::fromRawParams(
+        $tracker = BitlyApiProgressTracker::initFromParams(BitlyApiParams::fromImportParams(
             ImportParams::fromSourceAndCallableMap('', [
                 'access_token' => fn () => '',
                 'continue_token' => fn () => base64_encode('abc123__1603378130'),

@@ -16,7 +16,7 @@ class BitlyApiParamsTest extends TestCase
      */
     public function rawParamsAreProperlyParsed(array $rawParams, callable $runAssertions): void
     {
-        $params = BitlyApiParams::fromRawParams(ImportParams::fromSourceAndCallableMap('', $rawParams));
+        $params = BitlyApiParams::fromImportParams(ImportParams::fromSourceAndCallableMap('', $rawParams));
         $runAssertions($params);
     }
 

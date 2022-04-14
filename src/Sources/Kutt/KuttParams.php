@@ -8,16 +8,21 @@ use Shlinkio\Shlink\Importer\Params\ImportParams;
 
 final class KuttParams
 {
-    private function __construct(private string $baseUrl, private string $apiKey, private bool $importVisits)
-    {
+    private function __construct(
+        private string $baseUrl,
+        private string $apiKey,
+        private bool $importVisits,
+        private bool $importAllUrls,
+    ) {
     }
 
-    public static function fromRawParams(ImportParams $params): self
+    public static function fromImportParams(ImportParams $params): self
     {
         return new self(
             $params->extraParam('base_url') ?? '',
             $params->extraParam('api_key') ?? '',
             $params->importVisits(),
+            $params->extraParam('import_all_urls') ?? false,
         );
     }
 
@@ -34,5 +39,10 @@ final class KuttParams
     public function importVisits(): bool
     {
         return $this->importVisits;
+    }
+
+    public function importAllUrls(): bool
+    {
+        return $this->importAllUrls;
     }
 }

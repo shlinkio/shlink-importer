@@ -49,7 +49,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
         $this->importStartTime = new DateTimeImmutable();
 
         try {
-            yield from $this->loadUrls(ShlinkApiParams::fromRawParams($rawParams));
+            yield from $this->loadUrls(ShlinkApiParams::fromImportParams($rawParams));
         } catch (Throwable $e) {
             throw ImportException::fromError($e);
         }

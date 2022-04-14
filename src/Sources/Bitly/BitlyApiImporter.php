@@ -38,7 +38,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
      */
     public function import(ImportParams $rawParams): iterable
     {
-        $params = BitlyApiParams::fromRawParams($rawParams);
+        $params = BitlyApiParams::fromImportParams($rawParams);
         $progressTracker = BitlyApiProgressTracker::initFromParams($params);
         $initialGroup = $progressTracker->initialGroup();
         $initialGroupFound = $initialGroup === null;

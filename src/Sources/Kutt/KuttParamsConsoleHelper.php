@@ -21,6 +21,7 @@ class KuttParamsConsoleHelper implements ParamsConsoleHelperInterface
             ImportParams::IMPORT_VISITS_PARAM => fn () => $io->confirm(
                 'Do you want to import each short URL\'s visits too?',
             ),
+            'import_all_urls' => fn () => $io->confirm('Do you want to import URLs created anonymously too?', false),
         ];
     }
 }

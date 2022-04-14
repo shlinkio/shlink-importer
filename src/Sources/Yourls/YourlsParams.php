@@ -17,7 +17,7 @@ final class YourlsParams
     ) {
     }
 
-    public static function fromRawParams(ImportParams $params): self
+    public static function fromImportParams(ImportParams $params): self
     {
         return new self(
             $params->extraParam('base_url') ?? '',

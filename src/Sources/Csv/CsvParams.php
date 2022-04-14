@@ -16,7 +16,7 @@ final class CsvParams
     {
     }
 
-    public static function fromRawParams(ImportParams $params): self
+    public static function fromImportParams(ImportParams $params): self
     {
         $instance = new self();
         $instance->delimiter = $params->extraParam('delimiter') ?? '';

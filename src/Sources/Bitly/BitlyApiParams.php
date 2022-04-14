@@ -19,7 +19,7 @@ final class BitlyApiParams
     {
     }
 
-    public static function fromRawParams(ImportParams $params): self
+    public static function fromImportParams(ImportParams $params): self
     {
         $instance = new self();
 

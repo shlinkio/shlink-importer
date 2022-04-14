@@ -41,7 +41,7 @@ class YourlsImporter implements ImporterStrategyInterface
     public function import(ImportParams $rawParams): iterable
     {
         try {
-            yield from $this->loadUrls(YourlsParams::fromRawParams($rawParams));
+            yield from $this->loadUrls(YourlsParams::fromImportParams($rawParams));
         } catch (InvalidRequestException $e) {
             if (str_contains($e->body(), '"message":"Unknown or missing \"action\" parameter"')) {
                 throw YourlsMissingPluginException::forMissingPlugin($e);

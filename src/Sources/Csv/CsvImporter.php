@@ -34,7 +34,7 @@ class CsvImporter implements ImporterStrategyInterface
      */
     public function import(ImportParams $rawParams): iterable
     {
-        $params = CsvParams::fromRawParams($rawParams);
+        $params = CsvParams::fromImportParams($rawParams);
         $now = $this->date ?? new DateTimeImmutable();
 
         $csvReader = Reader::createFromStream($params->stream())->setDelimiter($params->delimiter())
