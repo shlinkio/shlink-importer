@@ -30,7 +30,7 @@ class KuttParamsConsoleHelperTest extends TestCase
         $askBaseUrl = $this->io->ask('What is your Kutt.it instance base URL?')->willReturn('bar.com');
         $askApiKey = $this->io->ask('What is your Kutt.it instance API key?')->willReturn('def-456');
         $importVisits = $this->io->confirm('Do you want to import each short URL\'s visits too?')->willReturn(false);
-        $importAllUrls = $this->io->confirm('Do you want to import URLs created anonymously too?', false)->willReturn(
+        $importAllUrls = $this->io->confirm('Do you want to import URLs created anonymously?', false)->willReturn(
             true,
         );
 

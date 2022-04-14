@@ -78,6 +78,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
      * @throws ClientExceptionInterface
      * @throws JsonException
      * @throws InvalidRequestException
+     * @return ImportedShlinkUrl[]
      */
     private function mapUrls(array $urls, ShlinkApiParams $params): array
     {
