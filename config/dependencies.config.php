@@ -38,6 +38,7 @@ return [
                 Sources\Csv\CsvImporter::class => InvokableFactory::class,
                 Sources\ShlinkApi\ShlinkApiImporter::class => ConfigAbstractFactory::class,
                 Sources\Yourls\YourlsImporter::class => ConfigAbstractFactory::class,
+                Sources\Kutt\KuttImporter::class => ConfigAbstractFactory::class,
             ],
 
             'aliases' => [
@@ -45,6 +46,7 @@ return [
                 Sources\ImportSources::CSV => Sources\Csv\CsvImporter::class,
                 Sources\ImportSources::SHLINK => Sources\ShlinkApi\ShlinkApiImporter::class,
                 Sources\ImportSources::YOURLS => Sources\Yourls\YourlsImporter::class,
+                Sources\ImportSources::KUTT => Sources\Kutt\KuttImporter::class,
             ],
         ],
 
@@ -54,6 +56,7 @@ return [
                 Sources\Csv\CsvParamsConsoleHelper::class => InvokableFactory::class,
                 Sources\ShlinkApi\ShlinkApiParamsConsoleHelper::class => InvokableFactory::class,
                 Sources\Yourls\YourlsParamsConsoleHelper::class => InvokableFactory::class,
+                Sources\Kutt\KuttParamsConsoleHelper::class => InvokableFactory::class,
             ],
 
             'aliases' => [
@@ -61,6 +64,7 @@ return [
                 Sources\ImportSources::CSV => Sources\Csv\CsvParamsConsoleHelper::class,
                 Sources\ImportSources::SHLINK => Sources\ShlinkApi\ShlinkApiParamsConsoleHelper::class,
                 Sources\ImportSources::YOURLS => Sources\Yourls\YourlsParamsConsoleHelper::class,
+                Sources\ImportSources::KUTT => Sources\Kutt\KuttParamsConsoleHelper::class,
             ],
         ],
     ],
@@ -71,6 +75,7 @@ return [
         Sources\Bitly\BitlyApiImporter::class => [Http\RestApiConsumer::class],
         Sources\ShlinkApi\ShlinkApiImporter::class => [Http\RestApiConsumer::class],
         Sources\Yourls\YourlsImporter::class => [Http\RestApiConsumer::class],
+        Sources\Kutt\KuttImporter::class => [Http\RestApiConsumer::class],
 
         Command\ImportCommand::class => [
             Strategy\ImporterStrategyManager::class,

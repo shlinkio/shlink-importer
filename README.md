@@ -31,6 +31,12 @@ The plugin covers the missing actions in the API, which allow Shlink to list the
 
 It will import short URLs and all their visits, but any information that YOURLS does not track (like the geolocation) cannot be obtained.
 
+#### Kutt.it
+
+It imports using Kutt API.
+
+It will import short URLs but not their visits, as Kutt.it does not expose individual visits but aggregate information, which is coupled with its UI and uses relative times.
+
 #### Shlink
 
 It imports from another Shlink instance using the API v2. Useful if you want to migrate to a different host or change the database engine.
@@ -59,8 +65,8 @@ The command will ask you some questions about how to import from this source, an
 
 ## Requirements
 
-This package expects some services to be registered as dependencies, as they need to be used by some of the tools.
+This package expects some services to be registered as dependencies, as they need to be used by some provided tools.
 
 * `Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface`: It has to resolve an object implementing the interface.
-* `Psr\Http\Client\ClientInterface`: Required to be able to import from Bit.ly, YOURLS or another Shlink instance.
-* `Psr\Http\Message\RequestFactoryInterface`: Required to be able to import from Bit.ly, YOURLS or another Shlink instance.
+* `Psr\Http\Client\ClientInterface`: Required to be able to import from Bit.ly, YOURLS, Kutt.it or another Shlink instance.
+* `Psr\Http\Message\RequestFactoryInterface`: Required to be able to import from Bit.ly, YOURLS, Kutt.it or another Shlink instance.

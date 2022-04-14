@@ -11,7 +11,6 @@ final class KuttParams
     private function __construct(
         private string $baseUrl,
         private string $apiKey,
-        private bool $importVisits,
         private bool $importAllUrls,
     ) {
     }
@@ -22,7 +21,6 @@ final class KuttParams
             $params->extraParam('base_url') ?? '',
             $params->extraParam('api_key') ?? '',
             $params->importVisits(),
-            $params->extraParam('import_all_urls') ?? false,
         );
     }
 
@@ -34,11 +32,6 @@ final class KuttParams
     public function apiKey(): string
     {
         return $this->apiKey;
-    }
-
-    public function importVisits(): bool
-    {
-        return $this->importVisits;
     }
 
     public function importAllUrls(): bool
