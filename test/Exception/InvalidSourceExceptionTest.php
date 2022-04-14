@@ -23,15 +23,15 @@ class InvalidSourceExceptionTest extends TestCase
     {
         yield 'foo' => [
             'foo',
-            'Provided source "foo" is not valid. Expected one of ["bitly", "yourls", "csv", "shlink"]',
+            'Provided source "foo" is not valid. Expected one of ["bitly", "yourls", "csv", "shlink", "kutt"]',
         ];
         yield 'bar' => [
             'bar',
-            'Provided source "bar" is not valid. Expected one of ["bitly", "yourls", "csv", "shlink"]',
+            'Provided source "bar" is not valid. Expected one of ["bitly", "yourls", "csv", "shlink", "kutt"]',
         ];
         yield 'baz' => [
             'baz',
-            'Provided source "baz" is not valid. Expected one of ["bitly", "yourls", "csv", "shlink"]',
+            'Provided source "baz" is not valid. Expected one of ["bitly", "yourls", "csv", "shlink", "kutt"]',
         ];
     }
 }

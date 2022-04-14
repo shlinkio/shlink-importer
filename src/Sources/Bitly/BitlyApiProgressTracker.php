@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
 use DateInterval;
 use DateTimeImmutable;
-use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
+use Shlinkio\Shlink\Importer\Util\DateHelper;
 
 use function base64_decode;
 use function base64_encode;
@@ -15,8 +15,6 @@ use function sprintf;
 
 final class BitlyApiProgressTracker
 {
-    use DateHelpersTrait;
-
     private const SEPARATOR = '__';
 
     private ?string $lastProcessedGroup = null;
@@ -77,7 +75,9 @@ final class BitlyApiProgressTracker
         }
 
         // Generate the timestamp corresponding to 1 second before the last processed URL
-        $createdBefore = $this->dateFromAtom($this->lastProcessedUrlDate)->sub(new DateInterval('PT1S'))->format('U');
+        $createdBefore = DateHelper::dateFromAtom($this->lastProcessedUrlDate)->sub(new DateInterval('PT1S'))->format(
+            'U',
+        );
 
         return base64_encode(sprintf('%s%s%s', $this->lastProcessedGroup, self::SEPARATOR, $createdBefore));
     }

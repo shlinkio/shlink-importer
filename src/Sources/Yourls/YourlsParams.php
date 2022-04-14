@@ -17,13 +17,13 @@ final class YourlsParams
     ) {
     }
 
-    public static function fromRawParams(ImportParams $params): self
+    public static function fromImportParams(ImportParams $params): self
     {
         return new self(
             $params->extraParam('base_url') ?? '',
             $params->extraParam('username') ?? '',
             $params->extraParam('password') ?? '',
-            $params->extraParam('import_visits') ?? true,
+            $params->importVisits(),
             $params->extraParam('domain'),
         );
     }

@@ -51,9 +51,14 @@ class ShlinkApiImporterTest extends TestCase
         }
     }
 
-    /** @test */
-    public function expectedAmountOfCallsIsPerformedBasedOnPaginationResults(): void
-    {
+    /**
+     * @test
+     * @dataProvider provideLoadParams
+     */
+    public function expectedAmountOfCallsIsPerformedBasedOnPaginationResults(
+        bool $doLoadVisits,
+        int $expectedVisitsCallas,
+    ): void {
         $apiKey = 'abc-123';
         $shortUrl = [
             'shortCode' => 'rY9zd',
@@ -123,7 +128,10 @@ class ShlinkApiImporterTest extends TestCase
         );
 
         /** @var ImportedShlinkUrl[] $result */
-        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', ['api_key' => fn () => $apiKey]));
+        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', [
+            'api_key' => fn () => $apiKey,
+            ImportParams::IMPORT_VISITS_PARAM => fn () => $doLoadVisits,
+        ]));
 
         $urls = [];
         $visits = [];
@@ -167,9 +175,15 @@ class ShlinkApiImporterTest extends TestCase
         }
 
         self::assertCount(9, $urls);
-        self::assertCount(9 * 5, $visits);
+        self::assertCount($expectedVisitsCallas * 5, $visits);
         $loadUrls->shouldHaveBeenCalledTimes(3);
-        $loadVisits->shouldHaveBeenCalledTimes(9);
+        $loadVisits->shouldHaveBeenCalledTimes($expectedVisitsCallas);
+    }
+
+    public function provideLoadParams(): iterable
+    {
+        yield 'visits loaded' => [true, 9];
+        yield 'no visits loaded' => [false, 0];
     }
 
     /** @test */
@@ -214,7 +228,10 @@ class ShlinkApiImporterTest extends TestCase
             Argument::cetera(),
         )->willReturn([]);
 
-        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', ['api_key' => fn () => 'foo']));
+        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', [
+            'api_key' => fn () => 'foo',
+            ImportParams::IMPORT_VISITS_PARAM => fn () => true,
+        ]));
         foreach ($result as $url) {
             // The result needs to be iterated in order to perform the calls
             foreach ($url->visits() as $visit) {

@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Sources\ShlinkApi;
+namespace Shlinkio\Shlink\Importer\Sources\Kutt;
 
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 
-final class ShlinkApiParams
+final class KuttParams
 {
-    private function __construct(private string $baseUrl, private string $apiKey, private bool $importVisits)
-    {
+    private function __construct(
+        private string $baseUrl,
+        private string $apiKey,
+        private bool $importAllUrls,
+    ) {
     }
 
     public static function fromImportParams(ImportParams $params): self
@@ -17,7 +20,7 @@ final class ShlinkApiParams
         return new self(
             $params->extraParam('base_url') ?? '',
             $params->extraParam('api_key') ?? '',
-            $params->importVisits(),
+            $params->extraParam('import_all_urls') ?? false,
         );
     }
 
@@ -31,8 +34,8 @@ final class ShlinkApiParams
         return $this->apiKey;
     }
 
-    public function importVisits(): bool
+    public function importAllUrls(): bool
     {
-        return $this->importVisits;
+        return $this->importAllUrls;
     }
 }

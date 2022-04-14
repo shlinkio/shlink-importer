@@ -32,8 +32,8 @@
         "symfony/var-dumper": "^6.0"
     },
     "suggest": {
-        "psr/http-client": "If you want to be able to import URLs from Bit.ly, YOURLS or another Shlink instance",
-        "psr/http-factory": "If you want to be able to import URLs from Bit.ly, YOURLS or another Shlink instance"
+        "psr/http-client": "If you want to be able to import URLs from Bit.ly, YOURLS, Kutt.it or another Shlink instance",
+        "psr/http-factory": "If you want to be able to import URLs from Bit.ly, YOURLS, Kutt.it or another Shlink instance"
     },
     "autoload": {
         "psr-4": {
