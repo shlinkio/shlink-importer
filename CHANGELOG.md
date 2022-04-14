@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ## [Unreleased]
 ### Added
 * [#47](https://github.com/shlinkio/shlink-importer/issues/47) Added support to import from YOURLS under a specific domain.
+* [#46](https://github.com/shlinkio/shlink-importer/issues/46) Added support to import from Kutt.it.
 
 ### Changed
 * Enhanced how common config is passed to processors, avoiding raw arrays.
