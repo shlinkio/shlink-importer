@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Sources\ShlinkApi;
+namespace Shlinkio\Shlink\Importer\Sources\Shlink;
 
 use DateTimeImmutable;
 use Generator;
@@ -27,7 +27,7 @@ use function Functional\map;
 use function http_build_query;
 use function sprintf;
 
-class ShlinkApiImporter implements ImporterStrategyInterface
+class ShlinkImporter implements ImporterStrategyInterface
 {
     private const SHORT_URLS_PER_PAGE = 50;
     private const VISITS_PER_PAGE = 300;
@@ -47,7 +47,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
         $this->importStartTime = new DateTimeImmutable();
 
         try {
-            yield from $this->loadUrls(ShlinkApiParams::fromImportParams($importParams));
+            yield from $this->loadUrls(ShlinkParams::fromImportParams($importParams));
         } catch (Throwable $e) {
             throw ImportException::fromError($e);
         }
@@ -58,7 +58,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
      * @throws JsonException
      * @throws InvalidRequestException
      */
-    private function loadUrls(ShlinkApiParams $params, int $page = 1): Generator
+    private function loadUrls(ShlinkParams $params, int $page = 1): Generator
     {
         $queryString = http_build_query(['page' => $page, 'itemsPerPage' => self::SHORT_URLS_PER_PAGE]);
         $url = sprintf('%s/rest/v2/short-urls?%s', $params->baseUrl(), $queryString);
@@ -80,7 +80,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
      * @throws InvalidRequestException
      * @return ImportedShlinkUrl[]
      */
-    private function mapUrls(array $urls, ShlinkApiParams $params): array
+    private function mapUrls(array $urls, ShlinkParams $params): array
     {
         return map($urls, function (array $url) use ($params): ImportedShlinkUrl {
             $shortCode = $url['shortCode'];
@@ -121,7 +121,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
      * @throws JsonException
      * @throws InvalidRequestException
      */
-    private function loadVisits(string $shortCode, ?string $domain, ShlinkApiParams $params, int $page): Generator
+    private function loadVisits(string $shortCode, ?string $domain, ShlinkParams $params, int $page): Generator
     {
         $queryString = http_build_query(
             ['page' => $page, 'itemsPerPage' => self::VISITS_PER_PAGE, 'domain' => $domain],

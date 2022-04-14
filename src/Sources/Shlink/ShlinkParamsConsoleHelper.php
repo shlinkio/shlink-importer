@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Importer\Sources\ShlinkApi;
+namespace Shlinkio\Shlink\Importer\Sources\Shlink;
 
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Symfony\Component\Console\Style\StyleInterface;
 
-class ShlinkApiParamsConsoleHelper implements ParamsConsoleHelperInterface
+class ShlinkParamsConsoleHelper implements ParamsConsoleHelperInterface
 {
     /**
      * @return array<string, callable>

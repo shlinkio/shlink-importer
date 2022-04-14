@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Importer\Sources\ShlinkApi;
+namespace ShlinkioTest\Shlink\Importer\Sources\Shlink;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Importer\Params\ParamsUtils;
-use Shlinkio\Shlink\Importer\Sources\ShlinkApi\ShlinkApiParamsConsoleHelper;
+use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkParamsConsoleHelper;
 use Symfony\Component\Console\Style\StyleInterface;
 
-class ShlinkApiParamsConsoleHelperTest extends TestCase
+class ShlinkParamsConsoleHelperTest extends TestCase
 {
     use ProphecyTrait;
 
-    private ShlinkApiParamsConsoleHelper $helper;
+    private ShlinkParamsConsoleHelper $helper;
     private ObjectProphecy $io;
 
     public function setUp(): void
     {
-        $this->helper = new ShlinkApiParamsConsoleHelper();
+        $this->helper = new ShlinkParamsConsoleHelper();
         $this->io = $this->prophesize(StyleInterface::class);
     }
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Importer\Sources\ShlinkApi;
+namespace ShlinkioTest\Shlink\Importer\Sources\Shlink;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\Assert;
@@ -16,23 +16,23 @@ use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
-use Shlinkio\Shlink\Importer\Sources\ShlinkApi\ShlinkApiImporter;
+use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkImporter;
 
 use function array_merge;
 use function Functional\contains;
 use function sprintf;
 
-class ShlinkApiImporterTest extends TestCase
+class ShlinkImporterTest extends TestCase
 {
     use ProphecyTrait;
 
-    private ShlinkApiImporter $importer;
+    private ShlinkImporter $importer;
     private ObjectProphecy $apiConsumer;
 
     public function setUp(): void
     {
         $this->apiConsumer = $this->prophesize(RestApiConsumerInterface::class);
-        $this->importer = new ShlinkApiImporter($this->apiConsumer->reveal());
+        $this->importer = new ShlinkImporter($this->apiConsumer->reveal());
     }
 
     /** @test */
