@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
-use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
+use Shlinkio\Shlink\Importer\Util\DateHelper;
 use Throwable;
 
 use function Functional\filter;
@@ -26,8 +26,6 @@ use function str_starts_with;
 
 class BitlyApiImporter implements ImporterStrategyInterface
 {
-    use DateHelpersTrait;
-
     public function __construct(private RestApiConsumerInterface $apiConsumer)
     {
     }
@@ -99,7 +97,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
 
                 $longUrl = $link['long_url'];
                 $date = $hasCreatedDate && $params->keepCreationDate()
-                    ? $this->dateFromAtom($link['created_at'])
+                    ? DateHelper::dateFromAtom($link['created_at'])
                     : clone $progressTracker->startDate();
                 $parsedLink = $this->parseLink($link['link'] ?? '');
                 $host = $parsedLink['host'] ?? null;

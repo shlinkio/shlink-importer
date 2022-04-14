@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
-use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
+use Shlinkio\Shlink\Importer\Util\DateHelper;
 use Throwable;
 
 use function Functional\map;
@@ -24,8 +24,6 @@ use function str_contains;
 
 class YourlsImporter implements ImporterStrategyInterface
 {
-    use DateHelpersTrait;
-
     private const LINKS_ACTION = 'shlink-list';
     private const VISITS_ACTION = 'shlink-link-visits';
     private const YOURLS_DATE_FORMAT = 'Y-m-d H:i:s';
@@ -64,7 +62,7 @@ class YourlsImporter implements ImporterStrategyInterface
                 ImportSources::YOURLS,
                 $url['url'] ?? '',
                 [],
-                $this->dateFromFormat(self::YOURLS_DATE_FORMAT, $url['timestamp'] ?? ''),
+                DateHelper::dateFromFormat(self::YOURLS_DATE_FORMAT, $url['timestamp'] ?? ''),
                 $params->domain(),
                 $shortCode,
                 $url['title'] ?? null,
@@ -84,7 +82,7 @@ class YourlsImporter implements ImporterStrategyInterface
             return new ImportedShlinkVisit(
                 $referer === 'direct' ? '' : $referer,
                 $visit['user_agent'] ?? '',
-                $this->nullableDateFromFormatWithDefault(self::YOURLS_DATE_FORMAT, $visit['click_time'] ?? null),
+                DateHelper::nullableDateFromFormatWithDefault(self::YOURLS_DATE_FORMAT, $visit['click_time'] ?? null),
                 new ImportedShlinkVisitLocation($visit['country_code'], '', '', '', '', 0.0, 0.0),
             );
         });

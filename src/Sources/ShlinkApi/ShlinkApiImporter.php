@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
-use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
+use Shlinkio\Shlink\Importer\Util\DateHelper;
 use Throwable;
 
 use function array_reverse;
@@ -29,8 +29,6 @@ use function sprintf;
 
 class ShlinkApiImporter implements ImporterStrategyInterface
 {
-    use DateHelpersTrait;
-
     private const SHORT_URLS_PER_PAGE = 50;
     private const VISITS_PER_PAGE = 300;
 
@@ -95,8 +93,8 @@ class ShlinkApiImporter implements ImporterStrategyInterface
             $expectedPages = (int) ceil($visitsCount / self::VISITS_PER_PAGE);
 
             $meta = new ImportedShlinkUrlMeta(
-                $this->nullableDateFromAtom($url['meta']['validSince'] ?? null),
-                $this->nullableDateFromAtom($url['meta']['validUntil'] ?? null),
+                DateHelper::nullableDateFromAtom($url['meta']['validSince'] ?? null),
+                DateHelper::nullableDateFromAtom($url['meta']['validUntil'] ?? null),
                 $url['meta']['maxVisits'] ?? null,
             );
 
@@ -104,7 +102,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
                 ImportSources::SHLINK,
                 $url['longUrl'] ?? '',
                 $url['tags'] ?? [],
-                $this->nullableDateFromAtom($url['dateCreated'] ?? null) ?? $this->importStartTime,
+                DateHelper::nullableDateFromAtom($url['dateCreated'] ?? null) ?? $this->importStartTime,
                 $domain,
                 $shortCode,
                 $url['title'] ?? null,
@@ -156,7 +154,7 @@ class ShlinkApiImporter implements ImporterStrategyInterface
             return new ImportedShlinkVisit(
                 $visit['referer'] ?? '',
                 $visit['userAgent'] ?? '',
-                $this->nullableDateFromAtom($visit['date'] ?? null) ?? $this->importStartTime,
+                DateHelper::nullableDateFromAtom($visit['date'] ?? null) ?? $this->importStartTime,
                 $location,
             );
         });

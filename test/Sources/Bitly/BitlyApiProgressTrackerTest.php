@@ -9,14 +9,12 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiProgressTracker;
-use Shlinkio\Shlink\Importer\Util\DateHelpersTrait;
+use Shlinkio\Shlink\Importer\Util\DateHelper;
 
 use function base64_encode;
 
 class BitlyApiProgressTrackerTest extends TestCase
 {
-    use DateHelpersTrait;
-
     /** @test */
     public function expectedContinueTokenIsGenerated(): void
     {
@@ -31,7 +29,7 @@ class BitlyApiProgressTrackerTest extends TestCase
         $date = '2020-05-01T20:00:00+0000';
         $tracker->updateLastProcessedUrlDate($date);
         self::assertEquals(
-            base64_encode('foobar__' . $this->dateFromAtom($date)->sub(new DateInterval('PT1S'))->format('U')),
+            base64_encode('foobar__' . DateHelper::dateFromAtom($date)->sub(new DateInterval('PT1S'))->format('U')),
             $tracker->generateContinueToken(),
         );
     }
