@@ -71,7 +71,7 @@ class KuttImporter implements ImporterStrategyInterface
     private function mapUrls(array $urls): array
     {
         return map($urls, function (array $url): ImportedShlinkUrl {
-            $visitsCount = $url['visit_count'] ?? 0;
+            $visitsCount = $url['visit_count'];
 
             return new ImportedShlinkUrl(
                 ImportSources::KUTT,
@@ -80,7 +80,7 @@ class KuttImporter implements ImporterStrategyInterface
                 new DateTimeImmutable($url['created_at']),
                 $url['domain'] ?? null,
                 $url['address'],
-                $url['description'],
+                $url['description'] ?? null,
                 [], // TODO
                 $visitsCount,
                 new ImportedShlinkUrlMeta(
