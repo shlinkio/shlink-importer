@@ -75,8 +75,11 @@ class YourlsImporterTest extends TestCase
         ];
     }
 
-    /** @test */
-    public function linksAndVisitsAreLoadedFromYourls(): void
+    /**
+     * @test
+     * @dataProvider provideLoadParams
+     */
+    public function linksAndVisitsAreLoadedFromYourls(bool $doLoadVisits, int $expectedVisitsCallas): void
     {
         $loadUrls = $this->apiConsumer->callApi(Argument::that(function (string $arg): bool {
             return str_contains($arg, 'format=json&action=shlink-list')
@@ -131,6 +134,7 @@ class YourlsImporterTest extends TestCase
         $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', [
             'username' => fn () => 'the_username',
             'password' => fn () => 'the_password',
+            ImportParams::IMPORT_VISITS_PARAM => fn () => $doLoadVisits,
         ]));
 
         foreach ($result as $urlIndex => $url) {
@@ -155,6 +159,12 @@ class YourlsImporterTest extends TestCase
         }
 
         $loadUrls->shouldHaveBeenCalledOnce();
-        $loadVisits->shouldHaveBeenCalledTimes(2);
+        $loadVisits->shouldHaveBeenCalledTimes($expectedVisitsCallas);
+    }
+
+    public function provideLoadParams(): iterable
+    {
+        yield 'visits loaded' => [true, 2];
+        yield 'no visits loaded' => [false, 0];
     }
 }
