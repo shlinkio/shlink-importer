@@ -23,7 +23,7 @@ final class YourlsParams
             $params->extraParam('base_url') ?? '',
             $params->extraParam('username') ?? '',
             $params->extraParam('password') ?? '',
-            $params->extraParam('import_visits') ?? true,
+            $params->importVisits(),
             $params->extraParam('domain'),
         );
     }

@@ -17,7 +17,7 @@ final class ShlinkApiParams
         return new self(
             $params->extraParam('base_url') ?? '',
             $params->extraParam('api_key') ?? '',
-            $params->extraParam('import_visits') ?? true,
+            $params->importVisits(),
         );
     }
 
