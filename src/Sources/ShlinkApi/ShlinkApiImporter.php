@@ -42,12 +42,12 @@ class ShlinkApiImporter implements ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(ImportParams $rawParams): iterable
+    public function import(ImportParams $importParams): iterable
     {
         $this->importStartTime = new DateTimeImmutable();
 
         try {
-            yield from $this->loadUrls(ShlinkApiParams::fromImportParams($rawParams));
+            yield from $this->loadUrls(ShlinkApiParams::fromImportParams($importParams));
         } catch (Throwable $e) {
             throw ImportException::fromError($e);
         }

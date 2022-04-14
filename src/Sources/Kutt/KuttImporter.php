@@ -30,10 +30,10 @@ class KuttImporter implements ImporterStrategyInterface
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(ImportParams $rawParams): iterable
+    public function import(ImportParams $importParams): iterable
     {
         try {
-            yield from $this->loadUrls(KuttParams::fromImportParams($rawParams));
+            yield from $this->loadUrls(KuttParams::fromImportParams($importParams));
         } catch (Throwable $e) {
             throw ImportException::fromError($e);
         }
