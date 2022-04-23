@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.0.0] - 2022-04-23
 ### Added
 * [#47](https://github.com/shlinkio/shlink-importer/issues/47) Added support to import from YOURLS under a specific domain.
 * [#46](https://github.com/shlinkio/shlink-importer/issues/46) Added support to import from Kutt.it.
