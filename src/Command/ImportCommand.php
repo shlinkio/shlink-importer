@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -32,7 +32,7 @@ class ImportCommand extends Command
         private readonly ConsoleHelperManagerInterface $consoleHelperManager,
         private readonly ImportedLinksProcessorInterface $importedLinksProcessor,
     ) {
-        $this->validSources = ImportSources::values();
+        $this->validSources = ImportSource::values();
         parent::__construct();
     }
 
@@ -63,7 +63,7 @@ class ImportCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $source = $input->getArgument('source');
-        if ($source !== null && ImportSources::tryFrom($source) === null) {
+        if ($source !== null && ImportSource::tryFrom($source) === null) {
             throw InvalidSourceException::fromInvalidSource($source);
         }
     }
@@ -71,7 +71,7 @@ class ImportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
-        $source = ImportSources::from($input->getArgument('source'));
+        $source = ImportSource::from($input->getArgument('source'));
 
         /** @var ParamsConsoleHelperInterface $paramsHelper */
         $paramsHelper = $this->consoleHelperManager->get($source->value);

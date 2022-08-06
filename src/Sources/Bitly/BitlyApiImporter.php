@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelper;
 use Throwable;
@@ -106,7 +106,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
                 $tags = $params->importTags ? $link['tags'] ?? [] : [];
                 $title = $link['title'] ?? null;
 
-                return new ImportedShlinkUrl(ImportSources::BITLY, $longUrl, $tags, $date, $domain, $shortCode, $title);
+                return new ImportedShlinkUrl(ImportSource::BITLY, $longUrl, $tags, $date, $domain, $shortCode, $title);
             });
         } while (! empty($pagination['next']));
     }

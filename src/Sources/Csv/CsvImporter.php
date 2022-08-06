@@ -10,7 +10,7 @@ use League\Csv\Reader;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 
 use function array_filter;
@@ -44,7 +44,7 @@ class CsvImporter implements ImporterStrategyInterface
             $record = $this->remapRecordHeaders($record);
 
             yield new ImportedShlinkUrl(
-                ImportSources::CSV,
+                ImportSource::CSV,
                 $record['longurl'],
                 $this->parseTags($record),
                 $now,

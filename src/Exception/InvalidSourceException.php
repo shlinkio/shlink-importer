@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Exception;
 
 use InvalidArgumentException;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
 use function implode;
 use function sprintf;
@@ -17,7 +17,7 @@ class InvalidSourceException extends InvalidArgumentException implements Excepti
         return new self(sprintf(
             'Provided source "%s" is not valid. Expected one of ["%s"]',
             $source,
-            implode('", "', ImportSources::values()),
+            implode('", "', ImportSource::values()),
         ));
     }
 }

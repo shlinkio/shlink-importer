@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Model;
 
 use DateTimeInterface;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
 class ImportedShlinkUrl
 {
@@ -13,7 +13,7 @@ class ImportedShlinkUrl
      * @param iterable<ImportedShlinkVisit> $visits
      */
     public function __construct(
-        public readonly ImportSources $source,
+        public readonly ImportSource $source,
         public readonly string $longUrl,
         public readonly array $tags,
         public readonly DateTimeInterface $createdAt,

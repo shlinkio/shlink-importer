@@ -42,11 +42,11 @@ return [
             ],
 
             'aliases' => [
-                Sources\ImportSources::BITLY->value => Sources\Bitly\BitlyApiImporter::class,
-                Sources\ImportSources::CSV->value => Sources\Csv\CsvImporter::class,
-                Sources\ImportSources::SHLINK->value => Sources\Shlink\ShlinkImporter::class,
-                Sources\ImportSources::YOURLS->value => Sources\Yourls\YourlsImporter::class,
-                Sources\ImportSources::KUTT->value => Sources\Kutt\KuttImporter::class,
+                Sources\ImportSource::BITLY->value => Sources\Bitly\BitlyApiImporter::class,
+                Sources\ImportSource::CSV->value => Sources\Csv\CsvImporter::class,
+                Sources\ImportSource::SHLINK->value => Sources\Shlink\ShlinkImporter::class,
+                Sources\ImportSource::YOURLS->value => Sources\Yourls\YourlsImporter::class,
+                Sources\ImportSource::KUTT->value => Sources\Kutt\KuttImporter::class,
             ],
         ],
 
@@ -60,11 +60,11 @@ return [
             ],
 
             'aliases' => [
-                Sources\ImportSources::BITLY->value => Sources\Bitly\BitlyApiParamsConsoleHelper::class,
-                Sources\ImportSources::CSV->value => Sources\Csv\CsvParamsConsoleHelper::class,
-                Sources\ImportSources::SHLINK->value => Sources\Shlink\ShlinkParamsConsoleHelper::class,
-                Sources\ImportSources::YOURLS->value => Sources\Yourls\YourlsParamsConsoleHelper::class,
-                Sources\ImportSources::KUTT->value => Sources\Kutt\KuttParamsConsoleHelper::class,
+                Sources\ImportSource::BITLY->value => Sources\Bitly\BitlyApiParamsConsoleHelper::class,
+                Sources\ImportSource::CSV->value => Sources\Csv\CsvParamsConsoleHelper::class,
+                Sources\ImportSource::SHLINK->value => Sources\Shlink\ShlinkParamsConsoleHelper::class,
+                Sources\ImportSource::YOURLS->value => Sources\Yourls\YourlsParamsConsoleHelper::class,
+                Sources\ImportSource::KUTT->value => Sources\Kutt\KuttParamsConsoleHelper::class,
             ],
         ],
     ],

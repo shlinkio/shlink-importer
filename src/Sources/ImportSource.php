@@ -8,7 +8,7 @@ use Shlinkio\Shlink\Importer\Params\ImportParams;
 
 use function Functional\map;
 
-enum ImportSources: string
+enum ImportSource: string
 {
     case BITLY = 'bitly';
     case YOURLS = 'yourls';
@@ -31,6 +31,6 @@ enum ImportSources: string
 
     public static function values(): array
     {
-        return map(self::cases(), static fn (ImportSources $source) => $source->value);
+        return map(self::cases(), static fn (ImportSource $source) => $source->value);
     }
 }

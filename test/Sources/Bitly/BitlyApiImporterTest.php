@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl as ShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiImporter;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
 use function explode;
 use function sprintf;
@@ -42,7 +42,7 @@ class BitlyApiImporterTest extends TestCase
     public function groupsAndUrlsAreRecursivelyFetched(array $paramsMap, array $expected): void
     {
         $paramsMap['access_token'] = static fn () => 'abc123';
-        $params = ImportSources::BITLY->toParamsWithCallableMap($paramsMap);
+        $params = ImportSource::BITLY->toParamsWithCallableMap($paramsMap);
 
         $sendGroupsRequest = $this->apiConsumer->callApi(
             'https://api-ssl.bitly.com/v4/groups',
@@ -119,7 +119,7 @@ class BitlyApiImporterTest extends TestCase
 
     public function provideParams(): iterable
     {
-        $source = ImportSources::BITLY;
+        $source = ImportSource::BITLY;
 
         yield 'default options' => [[], [
             new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
@@ -243,7 +243,7 @@ class BitlyApiImporterTest extends TestCase
         $sendRequest->shouldBeCalledOnce();
 
         $list = $this->importer->import(
-            ImportSources::BITLY->toParamsWithCallableMap(['access_token' => fn () => 'abc']),
+            ImportSource::BITLY->toParamsWithCallableMap(['access_token' => fn () => 'abc']),
         );
         foreach ($list as $item) {
             // Iteration needed to trigger generator code

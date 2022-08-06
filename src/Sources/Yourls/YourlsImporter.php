@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelper;
 use Throwable;
@@ -59,7 +59,7 @@ class YourlsImporter implements ImporterStrategyInterface
             $shortCode = $url['keyword'] ?? '';
 
             return new ImportedShlinkUrl(
-                ImportSources::YOURLS,
+                ImportSource::YOURLS,
                 $url['url'] ?? '',
                 [],
                 DateHelper::dateFromFormat(self::YOURLS_DATE_FORMAT, $url['timestamp'] ?? ''),

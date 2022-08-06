@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Throwable;
 
@@ -74,7 +74,7 @@ class KuttImporter implements ImporterStrategyInterface
             $visitsCount = $url['visit_count'];
 
             return new ImportedShlinkUrl(
-                ImportSources::KUTT,
+                ImportSource::KUTT,
                 $url['target'],
                 [],
                 new DateTimeImmutable($url['created_at']),

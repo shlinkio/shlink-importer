@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Params;
 
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
 final class ImportParams
 {
@@ -12,7 +12,7 @@ final class ImportParams
     public const IMPORT_VISITS_PARAM = 'import_visits';
 
     private function __construct(
-        public readonly ImportSources $source,
+        public readonly ImportSource $source,
         public readonly bool $importShortCodes,
         public readonly bool $importVisits,
         private readonly array $extraParams,
@@ -22,7 +22,7 @@ final class ImportParams
     /**
      * @param array<string, callable> $callableMap
      */
-    public static function fromSourceAndCallableMap(ImportSources $source, array $callableMap): self
+    public static function fromSourceAndCallableMap(ImportSource $source, array $callableMap): self
     {
         $importShortCodes = self::extractParamWithDefault($callableMap, self::IMPORT_SHORT_CODES_PARAM, true);
         $importVisits = self::extractParamWithDefault($callableMap, self::IMPORT_VISITS_PARAM, false);
@@ -35,7 +35,7 @@ final class ImportParams
         );
     }
 
-    public static function fromSource(ImportSources $source): self
+    public static function fromSource(ImportSource $source): self
     {
         return new self($source, true, false, []);
     }

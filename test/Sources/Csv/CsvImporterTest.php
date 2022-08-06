@@ -9,7 +9,7 @@ use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\Csv\CsvImporter;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
 use function fopen;
 use function fwrite;
@@ -30,7 +30,7 @@ class CsvImporterTest extends TestCase
      */
     public function csvIsProperlyImported(string $csv, string $delimiter, array $expectedList): void
     {
-        $options = ImportSources::CSV->toParamsWithCallableMap(
+        $options = ImportSource::CSV->toParamsWithCallableMap(
             ['delimiter' => fn () => $delimiter, 'stream' => fn () => $this->createCsvStream($csv)],
         );
 
@@ -55,7 +55,7 @@ class CsvImporterTest extends TestCase
             ',',
             [
                 new ImportedShlinkUrl(
-                    ImportSources::CSV,
+                    ImportSource::CSV,
                     'https://shlink.io',
                     ['foo', 'bar', 'baz'],
                     $this->getDate(),
@@ -64,7 +64,7 @@ class CsvImporterTest extends TestCase
                     null,
                 ),
                 new ImportedShlinkUrl(
-                    ImportSources::CSV,
+                    ImportSource::CSV,
                     'https://facebook.com',
                     [],
                     $this->getDate(),
@@ -84,7 +84,7 @@ class CsvImporterTest extends TestCase
             ';',
             [
                 new ImportedShlinkUrl(
-                    ImportSources::CSV,
+                    ImportSource::CSV,
                     'https://alejandrocelaya.blog',
                     [],
                     $this->getDate(),
@@ -93,7 +93,7 @@ class CsvImporterTest extends TestCase
                     null,
                 ),
                 new ImportedShlinkUrl(
-                    ImportSources::CSV,
+                    ImportSource::CSV,
                     'https://facebook.com',
                     ['foo', 'baz'],
                     $this->getDate(),
@@ -102,7 +102,7 @@ class CsvImporterTest extends TestCase
                     null,
                 ),
                 new ImportedShlinkUrl(
-                    ImportSources::CSV,
+                    ImportSource::CSV,
                     'https://shlink.io/documentation',
                     [],
                     $this->getDate(),

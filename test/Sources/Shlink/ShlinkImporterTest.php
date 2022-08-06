@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkImporter;
 
 use function array_merge;
@@ -44,7 +44,7 @@ class ShlinkImporterTest extends TestCase
         $this->expectException(ImportException::class);
         $callApi->shouldBeCalledOnce();
 
-        $result = $this->importer->import(ImportSources::BITLY->toParams());
+        $result = $this->importer->import(ImportSource::BITLY->toParams());
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
         foreach ($result as $element) {
@@ -128,7 +128,7 @@ class ShlinkImporterTest extends TestCase
         );
 
         /** @var ImportedShlinkUrl[] $result */
-        $result = $this->importer->import(ImportSources::SHLINK->toParamsWithCallableMap([
+        $result = $this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
             'api_key' => fn () => $apiKey,
             ImportParams::IMPORT_VISITS_PARAM => fn () => $doLoadVisits,
         ]));
@@ -138,7 +138,7 @@ class ShlinkImporterTest extends TestCase
         foreach ($result as $url) {
             $urls[] = $url;
 
-            self::assertEquals(ImportSources::SHLINK, $url->source);
+            self::assertEquals(ImportSource::SHLINK, $url->source);
             self::assertEquals('https://www.alejandrocelaya.com/foo', $url->longUrl);
             self::assertEquals(['bar', 'foo', 'website'], $url->tags);
             self::assertEquals(
@@ -228,7 +228,7 @@ class ShlinkImporterTest extends TestCase
             Argument::cetera(),
         )->willReturn([]);
 
-        $result = $this->importer->import(ImportSources::SHLINK->toParamsWithCallableMap([
+        $result = $this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
             'api_key' => fn () => 'foo',
             ImportParams::IMPORT_VISITS_PARAM => fn () => true,
         ]));
