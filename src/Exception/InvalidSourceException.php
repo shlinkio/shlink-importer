@@ -17,7 +17,7 @@ class InvalidSourceException extends InvalidArgumentException implements Excepti
         return new self(sprintf(
             'Provided source "%s" is not valid. Expected one of ["%s"]',
             $source,
-            implode('", "', ImportSources::getAll()),
+            implode('", "', ImportSources::values()),
         ));
     }
 }

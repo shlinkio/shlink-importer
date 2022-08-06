@@ -28,7 +28,7 @@ class YourlsImporter implements ImporterStrategyInterface
     private const VISITS_ACTION = 'shlink-link-visits';
     private const YOURLS_DATE_FORMAT = 'Y-m-d H:i:s';
 
-    public function __construct(private RestApiConsumerInterface $apiConsumer)
+    public function __construct(private readonly RestApiConsumerInterface $apiConsumer)
     {
     }
 
@@ -63,10 +63,10 @@ class YourlsImporter implements ImporterStrategyInterface
                 $url['url'] ?? '',
                 [],
                 DateHelper::dateFromFormat(self::YOURLS_DATE_FORMAT, $url['timestamp'] ?? ''),
-                $params->domain(),
+                $params->domain,
                 $shortCode,
                 $url['title'] ?? null,
-                $params->importVisits() ? $this->loadVisits($shortCode, $params) : [],
+                $params->importVisits ? $this->loadVisits($shortCode, $params) : [],
                 (int) ($url['clicks'] ?? 0),
             );
         });
@@ -94,10 +94,10 @@ class YourlsImporter implements ImporterStrategyInterface
             'format' => 'json',
             'action' => $action,
             'shortCode' => $shortCode,
-            'username' => $params->username(),
-            'password' => $params->password(),
+            'username' => $params->username,
+            'password' => $params->password,
         ]);
-        $resp = $this->apiConsumer->callApi(sprintf('%s/yourls-api.php?%s', $params->baseUrl(), $query));
+        $resp = $this->apiConsumer->callApi(sprintf('%s/yourls-api.php?%s', $params->baseUrl, $query));
 
         return $resp['result'] ?? [];
     }

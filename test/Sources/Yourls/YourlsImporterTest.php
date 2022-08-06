@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
+use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Sources\Yourls\YourlsImporter;
 use Shlinkio\Shlink\Importer\Sources\Yourls\YourlsMissingPluginException;
 use Throwable;
@@ -47,7 +48,7 @@ class YourlsImporterTest extends TestCase
         $this->expectExceptionMessage($expectedMessage);
         $callApi->shouldBeCalledOnce();
 
-        $result = $this->importer->import(ImportParams::fromSource(''));
+        $result = $this->importer->import(ImportSources::YOURLS->toParams());
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
         foreach ($result as $element) {
@@ -131,29 +132,29 @@ class YourlsImporterTest extends TestCase
             },
         );
 
-        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', [
+        $result = $this->importer->import(ImportSources::YOURLS->toParamsWithCallableMap([
             'username' => fn () => 'the_username',
             'password' => fn () => 'the_password',
             ImportParams::IMPORT_VISITS_PARAM => fn () => $doLoadVisits,
         ]));
 
         foreach ($result as $urlIndex => $url) {
-            self::assertEquals('keyword_' . $urlIndex, $url->shortCode());
-            self::assertEquals('url_' . $urlIndex, $url->longUrl());
-            self::assertEquals('title_' . $urlIndex, $url->title());
+            self::assertEquals('keyword_' . $urlIndex, $url->shortCode);
+            self::assertEquals('url_' . $urlIndex, $url->longUrl);
+            self::assertEquals('title_' . $urlIndex, $url->title);
 
-            foreach ($url->visits() as $visitIndex => $visit) {
-                self::assertEquals('user_agent_' . $visitIndex, $visit->userAgent());
-                self::assertEquals('country_code_' . $visitIndex, $visit->location()->countryCode());
-                self::assertEmpty($visit->location()->cityName());
-                self::assertEmpty($visit->location()->countryName());
-                self::assertEmpty($visit->location()->regionName());
-                self::assertEmpty($visit->location()->timezone());
+            foreach ($url->visits as $visitIndex => $visit) {
+                self::assertEquals('user_agent_' . $visitIndex, $visit->userAgent);
+                self::assertEquals('country_code_' . $visitIndex, $visit->location->countryCode);
+                self::assertEmpty($visit->location->cityName);
+                self::assertEmpty($visit->location->countryName);
+                self::assertEmpty($visit->location->regionName);
+                self::assertEmpty($visit->location->timezone);
 
                 if ($visitIndex === 0) {
-                    self::assertEquals('referrer_' . $visitIndex, $visit->referer());
+                    self::assertEquals('referrer_' . $visitIndex, $visit->referer);
                 } else {
-                    self::assertEmpty($visit->referer());
+                    self::assertEmpty($visit->referer);
                 }
             }
         }

@@ -8,33 +8,20 @@ use Shlinkio\Shlink\Importer\Params\ImportParams;
 
 final class CsvParams
 {
-    /** @var resource */
-    private $stream;
-    private string $delimiter;
-
-    private function __construct()
-    {
+    /**
+     * @param resource $stream
+     */
+    private function __construct(
+        public readonly mixed $stream,
+        public readonly string $delimiter,
+    ) {
     }
 
     public static function fromImportParams(ImportParams $params): self
     {
-        $instance = new self();
-        $instance->delimiter = $params->extraParam('delimiter') ?? '';
-        $instance->stream = $params->extraParam('stream') ?? '';
-
-        return $instance;
-    }
-
-    /**
-     * @return resource
-     */
-    public function stream()
-    {
-        return $this->stream;
-    }
-
-    public function delimiter(): string
-    {
-        return $this->delimiter;
+        return new self(
+            $params->extraParam('stream') ?? '',
+            $params->extraParam('delimiter') ?? '',
+        );
     }
 }

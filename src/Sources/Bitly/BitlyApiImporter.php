@@ -26,7 +26,7 @@ use function str_starts_with;
 
 class BitlyApiImporter implements ImporterStrategyInterface
 {
-    public function __construct(private RestApiConsumerInterface $apiConsumer)
+    public function __construct(private readonly RestApiConsumerInterface $apiConsumer)
     {
     }
 
@@ -71,7 +71,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
         BitlyApiProgressTracker $progressTracker,
     ): iterable {
         $pagination = [];
-        $archived = $params->ignoreArchived() ? 'off' : 'both';
+        $archived = $params->ignoreArchived ? 'off' : 'both';
         $createdBefore = $groupId === $progressTracker->initialGroup() ? $progressTracker->createdBefore() : '';
 
         do {
@@ -96,14 +96,14 @@ class BitlyApiImporter implements ImporterStrategyInterface
                 }
 
                 $longUrl = $link['long_url'];
-                $date = $hasCreatedDate && $params->keepCreationDate()
+                $date = $hasCreatedDate && $params->keepCreationDate
                     ? DateHelper::dateFromAtom($link['created_at'])
                     : clone $progressTracker->startDate();
                 $parsedLink = $this->parseLink($link['link'] ?? '');
                 $host = $parsedLink['host'] ?? null;
-                $domain = $host !== 'bit.ly' && $params->importCustomDomains() ? $host : null;
+                $domain = $host !== 'bit.ly' && $params->importCustomDomains ? $host : null;
                 $shortCode = ltrim($parsedLink['path'] ?? '', '/');
-                $tags = $params->importTags() ? $link['tags'] ?? [] : [];
+                $tags = $params->importTags ? $link['tags'] ?? [] : [];
                 $title = $link['title'] ?? null;
 
                 return new ImportedShlinkUrl(ImportSources::BITLY, $longUrl, $tags, $date, $domain, $shortCode, $title);
@@ -123,11 +123,11 @@ class BitlyApiImporter implements ImporterStrategyInterface
         $url = str_starts_with($url, 'http') ? $url : sprintf('https://api-ssl.bitly.com/v4%s', $url);
 
         try {
-            return $this->apiConsumer->callApi($url, ['Authorization' => sprintf('Bearer %s', $params->accessToken())]);
+            return $this->apiConsumer->callApi($url, ['Authorization' => sprintf('Bearer %s', $params->accessToken)]);
         } catch (InvalidRequestException $e) {
             throw BitlyApiException::fromInvalidRequest(
                 $e,
-                $progressTracker->generateContinueToken() ?? $params->continueToken(),
+                $progressTracker->generateContinueToken() ?? $params->continueToken,
             );
         }
     }

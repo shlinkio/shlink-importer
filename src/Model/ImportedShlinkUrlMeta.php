@@ -9,29 +9,9 @@ use DateTimeInterface;
 class ImportedShlinkUrlMeta
 {
     public function __construct(
-        private ?DateTimeInterface $validSince,
-        private ?DateTimeInterface $validUntil,
-        private ?int $maxVisits,
+        public readonly ?DateTimeInterface $validSince = null,
+        public readonly ?DateTimeInterface $validUntil = null,
+        public readonly ?int $maxVisits = null,
     ) {
-    }
-
-    public static function emptyInstance(): self
-    {
-        return new self(null, null, null);
-    }
-
-    public function validSince(): ?DateTimeInterface
-    {
-        return $this->validSince;
-    }
-
-    public function validUntil(): ?DateTimeInterface
-    {
-        return $this->validUntil;
-    }
-
-    public function maxVisits(): ?int
-    {
-        return $this->maxVisits;
     }
 }

@@ -4,20 +4,33 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Sources;
 
-final class ImportSources
-{
-    public const BITLY = 'bitly';
-    public const YOURLS = 'yourls';
-    public const CSV = 'csv';
-    public const SHLINK = 'shlink';
-    public const KUTT = 'kutt';
+use Shlinkio\Shlink\Importer\Params\ImportParams;
 
-    public static function getAll(): array
+use function Functional\map;
+
+enum ImportSources: string
+{
+    case BITLY = 'bitly';
+    case YOURLS = 'yourls';
+    case CSV = 'csv';
+    case SHLINK = 'shlink';
+    case KUTT = 'kutt';
+
+    public function toParams(): ImportParams
     {
-        return [self::BITLY, self::YOURLS, self::CSV, self::SHLINK, self::KUTT];
+        return ImportParams::fromSource($this);
     }
 
-    private function __construct()
+    /**
+     * @param array<string, callable> $callableMap
+     */
+    public function toParamsWithCallableMap(array $callableMap): ImportParams
     {
+        return ImportParams::fromSourceAndCallableMap($this, $callableMap);
+    }
+
+    public static function values(): array
+    {
+        return map(self::cases(), static fn (ImportSources $source) => $source->value);
     }
 }

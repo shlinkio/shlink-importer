@@ -42,11 +42,11 @@ return [
             ],
 
             'aliases' => [
-                Sources\ImportSources::BITLY => Sources\Bitly\BitlyApiImporter::class,
-                Sources\ImportSources::CSV => Sources\Csv\CsvImporter::class,
-                Sources\ImportSources::SHLINK => Sources\Shlink\ShlinkImporter::class,
-                Sources\ImportSources::YOURLS => Sources\Yourls\YourlsImporter::class,
-                Sources\ImportSources::KUTT => Sources\Kutt\KuttImporter::class,
+                Sources\ImportSources::BITLY->value => Sources\Bitly\BitlyApiImporter::class,
+                Sources\ImportSources::CSV->value => Sources\Csv\CsvImporter::class,
+                Sources\ImportSources::SHLINK->value => Sources\Shlink\ShlinkImporter::class,
+                Sources\ImportSources::YOURLS->value => Sources\Yourls\YourlsImporter::class,
+                Sources\ImportSources::KUTT->value => Sources\Kutt\KuttImporter::class,
             ],
         ],
 
@@ -60,11 +60,11 @@ return [
             ],
 
             'aliases' => [
-                Sources\ImportSources::BITLY => Sources\Bitly\BitlyApiParamsConsoleHelper::class,
-                Sources\ImportSources::CSV => Sources\Csv\CsvParamsConsoleHelper::class,
-                Sources\ImportSources::SHLINK => Sources\Shlink\ShlinkParamsConsoleHelper::class,
-                Sources\ImportSources::YOURLS => Sources\Yourls\YourlsParamsConsoleHelper::class,
-                Sources\ImportSources::KUTT => Sources\Kutt\KuttParamsConsoleHelper::class,
+                Sources\ImportSources::BITLY->value => Sources\Bitly\BitlyApiParamsConsoleHelper::class,
+                Sources\ImportSources::CSV->value => Sources\Csv\CsvParamsConsoleHelper::class,
+                Sources\ImportSources::SHLINK->value => Sources\Shlink\ShlinkParamsConsoleHelper::class,
+                Sources\ImportSources::YOURLS->value => Sources\Yourls\YourlsParamsConsoleHelper::class,
+                Sources\ImportSources::KUTT->value => Sources\Kutt\KuttParamsConsoleHelper::class,
             ],
         ],
     ],

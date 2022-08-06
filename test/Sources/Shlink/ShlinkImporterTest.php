@@ -44,7 +44,7 @@ class ShlinkImporterTest extends TestCase
         $this->expectException(ImportException::class);
         $callApi->shouldBeCalledOnce();
 
-        $result = $this->importer->import(ImportParams::fromSource(''));
+        $result = $this->importer->import(ImportSources::BITLY->toParams());
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
         foreach ($result as $element) {
@@ -128,7 +128,7 @@ class ShlinkImporterTest extends TestCase
         );
 
         /** @var ImportedShlinkUrl[] $result */
-        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', [
+        $result = $this->importer->import(ImportSources::SHLINK->toParamsWithCallableMap([
             'api_key' => fn () => $apiKey,
             ImportParams::IMPORT_VISITS_PARAM => fn () => $doLoadVisits,
         ]));
@@ -138,39 +138,39 @@ class ShlinkImporterTest extends TestCase
         foreach ($result as $url) {
             $urls[] = $url;
 
-            self::assertEquals(ImportSources::SHLINK, $url->source());
-            self::assertEquals('https://www.alejandrocelaya.com/foo', $url->longUrl());
-            self::assertEquals(['bar', 'foo', 'website'], $url->tags());
+            self::assertEquals(ImportSources::SHLINK, $url->source);
+            self::assertEquals('https://www.alejandrocelaya.com/foo', $url->longUrl);
+            self::assertEquals(['bar', 'foo', 'website'], $url->tags);
             self::assertEquals(
                 DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, '2016-05-02T17:49:53+02:00'),
-                $url->createdAt(),
+                $url->createdAt,
             );
-            self::assertNull($url->domain());
-            self::assertEquals('rY9zd', $url->shortCode());
-            self::assertEquals('', $url->title());
-            self::assertEquals(48, $url->visitsCount());
-            self::assertNull($url->meta()->validSince());
+            self::assertNull($url->domain);
+            self::assertEquals('rY9zd', $url->shortCode);
+            self::assertEquals('', $url->title);
+            self::assertEquals(48, $url->visitsCount);
+            self::assertNull($url->meta->validSince);
             self::assertEquals(
                 DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, '2020-05-02T17:49:53+02:00'),
-                $url->meta()->validUntil(),
+                $url->meta->validUntil,
             );
-            self::assertNull($url->meta()->maxVisits());
+            self::assertNull($url->meta->maxVisits);
 
-            foreach ($url->visits() as $index => $visit) {
+            foreach ($url->visits as $index => $visit) {
                 $visits[] = $visit;
 
-                self::assertEquals(contains([3, 4], $index) ? 'visit1' : 'visit2', $visit->referer());
+                self::assertEquals(contains([3, 4], $index) ? 'visit1' : 'visit2', $visit->referer);
                 self::assertEquals(
                     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.10',
-                    $visit->userAgent(),
+                    $visit->userAgent,
                 );
-                self::assertEquals('countryCode', $visit->location()->countryCode());
-                self::assertEquals('countryName', $visit->location()->countryName());
-                self::assertEquals('regionName', $visit->location()->regionName());
-                self::assertEquals('cityName', $visit->location()->cityName());
-                self::assertEquals('timezone', $visit->location()->timezone());
-                self::assertEquals(0.0, $visit->location()->latitude());
-                self::assertEquals(0.0, $visit->location()->longitude());
+                self::assertEquals('countryCode', $visit->location->countryCode);
+                self::assertEquals('countryName', $visit->location->countryName);
+                self::assertEquals('regionName', $visit->location->regionName);
+                self::assertEquals('cityName', $visit->location->cityName);
+                self::assertEquals('timezone', $visit->location->timezone);
+                self::assertEquals(0.0, $visit->location->latitude);
+                self::assertEquals(0.0, $visit->location->longitude);
             }
         }
 
@@ -228,13 +228,13 @@ class ShlinkImporterTest extends TestCase
             Argument::cetera(),
         )->willReturn([]);
 
-        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', [
+        $result = $this->importer->import(ImportSources::SHLINK->toParamsWithCallableMap([
             'api_key' => fn () => 'foo',
             ImportParams::IMPORT_VISITS_PARAM => fn () => true,
         ]));
         foreach ($result as $url) {
             // The result needs to be iterated in order to perform the calls
-            foreach ($url->visits() as $visit) {
+            foreach ($url->visits as $visit) {
             }
         }
 

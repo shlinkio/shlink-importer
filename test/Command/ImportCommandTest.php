@@ -81,8 +81,8 @@ class ImportCommandTest extends TestCase
      */
     public function dependenciesAreInvokedAsExpected(?string $providedSource, bool $expectSourceQuestion): void
     {
-        $source = $providedSource ?? ImportSources::BITLY;
-        $params = ImportParams::fromSource($source);
+        $source = $providedSource ?? ImportSources::BITLY->value;
+        $params = ImportParams::fromSource(ImportSources::from($source));
 
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
         $import = $this->importerStrategy->import($params)->willReturn([]);
@@ -109,7 +109,7 @@ class ImportCommandTest extends TestCase
 
     public function provideSource(): iterable
     {
-        yield 'provided source' => [ImportSources::BITLY, false];
+        yield 'provided source' => [ImportSources::BITLY->value, false];
         yield 'not provided source' => [null, true];
     }
 
@@ -124,10 +124,13 @@ class ImportCommandTest extends TestCase
         array $notExpectedOutputs,
     ): void {
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
-        $import = $this->importerStrategy->import(ImportParams::fromSource(ImportSources::BITLY))->willThrow($e);
+        $import = $this->importerStrategy->import(ImportSources::BITLY->toParams())->willThrow($e);
         $process = $this->importedLinksProcessor->process(Argument::cetera());
 
-        $exitCode = $this->commandTester->execute(['source' => ImportSources::BITLY], ['verbosity' => $verbosity]);
+        $exitCode = $this->commandTester->execute(
+            ['source' => ImportSources::BITLY->value],
+            ['verbosity' => $verbosity],
+        );
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(ImportCommand::FAILURE, $exitCode);

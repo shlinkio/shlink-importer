@@ -24,7 +24,7 @@ class CsvImporter implements ImporterStrategyInterface
 {
     private const TAG_SEPARATOR = '|';
 
-    public function __construct(private ?DateTimeInterface $date = null)
+    public function __construct(private readonly ?DateTimeInterface $date = null)
     {
     }
 
@@ -37,8 +37,8 @@ class CsvImporter implements ImporterStrategyInterface
         $params = CsvParams::fromImportParams($importParams);
         $now = $this->date ?? new DateTimeImmutable();
 
-        $csvReader = Reader::createFromStream($params->stream())->setDelimiter($params->delimiter())
-                                                                ->setHeaderOffset(0);
+        $csvReader = Reader::createFromStream($params->stream)->setDelimiter($params->delimiter)
+                                                              ->setHeaderOffset(0);
 
         foreach ($csvReader as $record) {
             $record = $this->remapRecordHeaders($record);

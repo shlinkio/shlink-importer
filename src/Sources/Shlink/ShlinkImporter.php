@@ -34,7 +34,7 @@ class ShlinkImporter implements ImporterStrategyInterface
 
     private DateTimeImmutable $importStartTime;
 
-    public function __construct(private RestApiConsumerInterface $apiConsumer)
+    public function __construct(private readonly RestApiConsumerInterface $apiConsumer)
     {
     }
 
@@ -61,10 +61,10 @@ class ShlinkImporter implements ImporterStrategyInterface
     private function loadUrls(ShlinkParams $params, int $page = 1): Generator
     {
         $queryString = http_build_query(['page' => $page, 'itemsPerPage' => self::SHORT_URLS_PER_PAGE]);
-        $url = sprintf('%s/rest/v2/short-urls?%s', $params->baseUrl(), $queryString);
+        $url = sprintf('%s/rest/v2/short-urls?%s', $params->baseUrl, $queryString);
         $parsedBody = $this->apiConsumer->callApi(
             $url,
-            ['X-Api-Key' => $params->apiKey(), 'Accept' => 'application/json'],
+            ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
         );
 
         yield from $this->mapUrls($parsedBody['shortUrls']['data'] ?? [], $params);
@@ -107,7 +107,7 @@ class ShlinkImporter implements ImporterStrategyInterface
                 $domain,
                 $shortCode,
                 $url['title'] ?? null,
-                $params->importVisits() && $expectedPages > 0
+                $params->importVisits && $expectedPages > 0
                     ? $this->loadVisits($shortCode, $domain, $params, $expectedPages)
                     : [],
                 $visitsCount,
@@ -126,10 +126,10 @@ class ShlinkImporter implements ImporterStrategyInterface
         $queryString = http_build_query(
             ['page' => $page, 'itemsPerPage' => self::VISITS_PER_PAGE, 'domain' => $domain],
         );
-        $url = sprintf('%s/rest/v2/short-urls/%s/visits?%s', $params->baseUrl(), $shortCode, $queryString);
+        $url = sprintf('%s/rest/v2/short-urls/%s/visits?%s', $params->baseUrl, $shortCode, $queryString);
         $parsedBody = $this->apiConsumer->callApi(
             $url,
-            ['X-Api-Key' => $params->apiKey(), 'Accept' => 'application/json'],
+            ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
         );
 
         yield from array_reverse($this->mapVisits($parsedBody['visits']['data'] ?? []));

@@ -15,7 +15,6 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
-use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSources;
 use Shlinkio\Shlink\Importer\Sources\Kutt\KuttImporter;
 
@@ -43,7 +42,7 @@ class KuttImporterTest extends TestCase
         $this->expectException(ImportException::class);
         $callApi->shouldBeCalledOnce();
 
-        $result = $this->importer->import(ImportParams::fromSource(''));
+        $result = $this->importer->import(ImportSources::BITLY->toParams());
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
         foreach ($result as $element) {
@@ -93,33 +92,33 @@ class KuttImporterTest extends TestCase
         );
 
         /** @var ImportedShlinkUrl[] $result */
-        $result = $this->importer->import(ImportParams::fromSourceAndCallableMap('', [
+        $result = $this->importer->import(ImportSources::BITLY->toParamsWithCallableMap([
             'api_key' => static fn () => 'my_api_key',
             'import_all_urls' => static fn () => $loadAll,
         ]));
 
         foreach ($result as $index => $url) {
-            self::assertEquals(ImportSources::KUTT, $url->source());
+            self::assertEquals(ImportSources::KUTT, $url->source);
 
             if ($index % 2 === 0) {
-                self::assertEquals(3, $url->visitsCount());
-                self::assertEquals('https://longurl.com', $url->longUrl());
-                self::assertEquals('doma.in', $url->domain());
-                self::assertEquals(new DateTimeImmutable('2022-04-14T08:28:57.155Z'), $url->createdAt());
-                self::assertEquals('short-code', $url->shortCode());
-                self::assertNull($url->title());
+                self::assertEquals(3, $url->visitsCount);
+                self::assertEquals('https://longurl.com', $url->longUrl);
+                self::assertEquals('doma.in', $url->domain);
+                self::assertEquals(new DateTimeImmutable('2022-04-14T08:28:57.155Z'), $url->createdAt);
+                self::assertEquals('short-code', $url->shortCode);
+                self::assertNull($url->title);
                 self::assertEquals(
                     new ImportedShlinkUrlMeta(null, new DateTimeImmutable('2023-04-16T00:00:00.000Z'), null),
-                    $url->meta(),
+                    $url->meta,
                 );
             } else {
-                self::assertEquals(25, $url->visitsCount());
-                self::assertEquals('https://longurl-2.com', $url->longUrl());
-                self::assertNull($url->domain());
-                self::assertEquals(new DateTimeImmutable('2022-04-16T00:00:00.000Z'), $url->createdAt());
-                self::assertEquals('short-code-2', $url->shortCode());
-                self::assertEquals('foo link', $url->title());
-                self::assertEquals(new ImportedShlinkUrlMeta(null, null, null), $url->meta());
+                self::assertEquals(25, $url->visitsCount);
+                self::assertEquals('https://longurl-2.com', $url->longUrl);
+                self::assertNull($url->domain);
+                self::assertEquals(new DateTimeImmutable('2022-04-16T00:00:00.000Z'), $url->createdAt);
+                self::assertEquals('short-code-2', $url->shortCode);
+                self::assertEquals('foo link', $url->title);
+                self::assertEquals(new ImportedShlinkUrlMeta(null, null, null), $url->meta);
             }
         }
 
