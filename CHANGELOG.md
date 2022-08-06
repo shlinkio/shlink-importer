@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.0.0] - 2022-08-06
+### Added
+* *Nothing*
+
+### Changed
+* Used PHP 8.1 syntax wherever possible (readonly, enums, etc).
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* Dropped support for PHP 8.0
+
+### Fixed
+* *Nothing*
+
+
 ## [3.0.0] - 2022-04-23
 ### Added
 * [#47](https://github.com/shlinkio/shlink-importer/issues/47) Added support to import from YOURLS under a specific domain.
