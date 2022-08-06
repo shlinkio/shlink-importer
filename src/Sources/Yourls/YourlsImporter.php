@@ -20,7 +20,6 @@ use Throwable;
 use function Functional\map;
 use function http_build_query;
 use function sprintf;
-use function str_contains;
 
 class YourlsImporter implements ImporterStrategyInterface
 {
@@ -41,7 +40,7 @@ class YourlsImporter implements ImporterStrategyInterface
         try {
             yield from $this->loadUrls(YourlsParams::fromImportParams($importParams));
         } catch (InvalidRequestException $e) {
-            if (str_contains($e->body(), '"message":"Unknown or missing \"action\" parameter"')) {
+            if ($e->isShlinkPluginMissingError()) {
                 throw YourlsMissingPluginException::forMissingPlugin($e);
             }
 

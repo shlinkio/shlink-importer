@@ -19,6 +19,6 @@ class ImportExceptionTest extends TestCase
         self::assertEquals('An error occurred while importing URLs', $e->getMessage());
         self::assertEquals($prev, $e->getPrevious());
         self::assertEquals(-1, $e->getCode());
-        self::assertNull($e->continueToken());
+        self::assertNull($e->continueToken);
     }
 }

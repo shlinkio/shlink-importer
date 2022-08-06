@@ -92,7 +92,7 @@ class ImportCommand extends Command
 
     private function handleImportError(ImportException $e, SymfonyStyle $io): void
     {
-        $continueToken = $e->continueToken();
+        $continueToken = $e->continueToken;
 
         if ($continueToken === null) {
             $io->error('An error occurred while importing URLs.');

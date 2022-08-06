@@ -15,8 +15,10 @@ use const JSON_THROW_ON_ERROR;
 
 class RestApiConsumer implements RestApiConsumerInterface
 {
-    public function __construct(private ClientInterface $httpClient, private RequestFactoryInterface $requestFactory)
-    {
+    public function __construct(
+        private readonly ClientInterface $httpClient,
+        private readonly RequestFactoryInterface $requestFactory,
+    ) {
     }
 
     /**

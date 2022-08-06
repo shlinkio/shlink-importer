@@ -11,7 +11,7 @@ class ImportException extends RuntimeException implements ExceptionInterface
 {
     protected function __construct(
         string $message,
-        private ?string $continueToken,
+        public readonly ?string $continueToken,
         int $code = 0,
         ?Throwable $previous = null,
     ) {
@@ -21,10 +21,5 @@ class ImportException extends RuntimeException implements ExceptionInterface
     public static function fromError(Throwable $e): self
     {
         return new self('An error occurred while importing URLs', null, -1, $e);
-    }
-
-    public function continueToken(): ?string
-    {
-        return $this->continueToken;
     }
 }

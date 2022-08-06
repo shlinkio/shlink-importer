@@ -15,9 +15,9 @@ class BitlyApiException extends ImportException
     {
         return new self(sprintf(
             'Request to Bitly API v4 to URL "%s" failed with status code "%s" and body "%s"',
-            $e->url(),
-            $e->statusCode(),
-            $e->body(),
+            $e->url,
+            $e->statusCode,
+            $e->body,
         ), $continueToken);
     }
 }
