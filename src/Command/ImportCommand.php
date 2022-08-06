@@ -9,8 +9,7 @@ use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
-use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -19,7 +18,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-use function Functional\contains;
 use function implode;
 use function sprintf;
 
@@ -30,11 +28,11 @@ class ImportCommand extends Command
     private array $validSources;
 
     public function __construct(
-        private ImporterStrategyManagerInterface $importerStrategyManager,
-        private ConsoleHelperManagerInterface $consoleHelperManager,
-        private ImportedLinksProcessorInterface $importedLinksProcessor,
+        private readonly ImporterStrategyManagerInterface $importerStrategyManager,
+        private readonly ConsoleHelperManagerInterface $consoleHelperManager,
+        private readonly ImportedLinksProcessorInterface $importedLinksProcessor,
     ) {
-        $this->validSources = ImportSources::getAll();
+        $this->validSources = ImportSource::values();
         parent::__construct();
     }
 
@@ -47,14 +45,6 @@ class ImportCommand extends Command
                 'The source from which you want to import. Supported sources: [<info>%s</info>]',
                 implode('</info>, <info>', $this->validSources),
             ));
-    }
-
-    protected function initialize(InputInterface $input, OutputInterface $output): void
-    {
-        $source = $input->getArgument('source');
-        if ($source !== null && ! contains($this->validSources, $source)) {
-            throw InvalidSourceException::fromInvalidSource($source);
-        }
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
@@ -70,18 +60,26 @@ class ImportCommand extends Command
         }
     }
 
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        $source = $input->getArgument('source');
+        if ($source !== null && ImportSource::tryFrom($source) === null) {
+            throw InvalidSourceException::fromInvalidSource($source);
+        }
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
-        $source = $input->getArgument('source');
+        $source = ImportSource::from($input->getArgument('source'));
 
         /** @var ParamsConsoleHelperInterface $paramsHelper */
-        $paramsHelper = $this->consoleHelperManager->get($source);
+        $paramsHelper = $this->consoleHelperManager->get($source->value);
         /** @var ImporterStrategyInterface $importerStrategy */
-        $importerStrategy = $this->importerStrategyManager->get($source);
+        $importerStrategy = $this->importerStrategyManager->get($source->value);
 
         try {
-            $params = ImportParams::fromSourceAndCallableMap($source, $paramsHelper->requestParams($io));
+            $params = $source->toParamsWithCallableMap($paramsHelper->requestParams($io));
             $links = $importerStrategy->import($params);
             $this->importedLinksProcessor->process($io, $links, $params);
         } catch (ImportException $e) {
@@ -94,7 +92,7 @@ class ImportCommand extends Command
 
     private function handleImportError(ImportException $e, SymfonyStyle $io): void
     {
-        $continueToken = $e->continueToken();
+        $continueToken = $e->continueToken;
 
         if ($continueToken === null) {
             $io->error('An error occurred while importing URLs.');

@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Throwable;
 
@@ -22,7 +22,7 @@ class KuttImporter implements ImporterStrategyInterface
 {
     private const SHORT_URLS_PER_PAGE = 50;
 
-    public function __construct(private RestApiConsumerInterface $apiConsumer)
+    public function __construct(private readonly RestApiConsumerInterface $apiConsumer)
     {
     }
 
@@ -47,12 +47,12 @@ class KuttImporter implements ImporterStrategyInterface
         $queryString = http_build_query([
             'limit' => self::SHORT_URLS_PER_PAGE,
             'skip' => $skip,
-            'all' => $params->importAllUrls() ? 'true' : 'false',
+            'all' => $params->importAllUrls ? 'true' : 'false',
         ]);
         ['data' => $urls, 'total' => $total] = $this->apiConsumer->callApi(
-            sprintf('%s/api/v2/links?%s', $params->baseUrl(), $queryString),
+            sprintf('%s/api/v2/links?%s', $params->baseUrl, $queryString),
             [
-                'X-Api-Key' => $params->apiKey(),
+                'X-Api-Key' => $params->apiKey,
                 'Accept' => 'application/json',
             ],
         );
@@ -74,7 +74,7 @@ class KuttImporter implements ImporterStrategyInterface
             $visitsCount = $url['visit_count'];
 
             return new ImportedShlinkUrl(
-                ImportSources::KUTT,
+                ImportSource::KUTT,
                 $url['target'],
                 [],
                 new DateTimeImmutable($url['created_at']),

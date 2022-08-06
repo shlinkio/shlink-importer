@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelper;
 use Throwable;
@@ -20,7 +20,6 @@ use Throwable;
 use function Functional\map;
 use function http_build_query;
 use function sprintf;
-use function str_contains;
 
 class YourlsImporter implements ImporterStrategyInterface
 {
@@ -28,7 +27,7 @@ class YourlsImporter implements ImporterStrategyInterface
     private const VISITS_ACTION = 'shlink-link-visits';
     private const YOURLS_DATE_FORMAT = 'Y-m-d H:i:s';
 
-    public function __construct(private RestApiConsumerInterface $apiConsumer)
+    public function __construct(private readonly RestApiConsumerInterface $apiConsumer)
     {
     }
 
@@ -41,7 +40,7 @@ class YourlsImporter implements ImporterStrategyInterface
         try {
             yield from $this->loadUrls(YourlsParams::fromImportParams($importParams));
         } catch (InvalidRequestException $e) {
-            if (str_contains($e->body(), '"message":"Unknown or missing \"action\" parameter"')) {
+            if ($e->isShlinkPluginMissingError()) {
                 throw YourlsMissingPluginException::forMissingPlugin($e);
             }
 
@@ -59,14 +58,14 @@ class YourlsImporter implements ImporterStrategyInterface
             $shortCode = $url['keyword'] ?? '';
 
             return new ImportedShlinkUrl(
-                ImportSources::YOURLS,
+                ImportSource::YOURLS,
                 $url['url'] ?? '',
                 [],
                 DateHelper::dateFromFormat(self::YOURLS_DATE_FORMAT, $url['timestamp'] ?? ''),
-                $params->domain(),
+                $params->domain,
                 $shortCode,
                 $url['title'] ?? null,
-                $params->importVisits() ? $this->loadVisits($shortCode, $params) : [],
+                $params->importVisits ? $this->loadVisits($shortCode, $params) : [],
                 (int) ($url['clicks'] ?? 0),
             );
         });
@@ -94,10 +93,10 @@ class YourlsImporter implements ImporterStrategyInterface
             'format' => 'json',
             'action' => $action,
             'shortCode' => $shortCode,
-            'username' => $params->username(),
-            'password' => $params->password(),
+            'username' => $params->username,
+            'password' => $params->password,
         ]);
-        $resp = $this->apiConsumer->callApi(sprintf('%s/yourls-api.php?%s', $params->baseUrl(), $query));
+        $resp = $this->apiConsumer->callApi(sprintf('%s/yourls-api.php?%s', $params->baseUrl, $query));
 
         return $resp['result'] ?? [];
     }

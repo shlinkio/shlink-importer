@@ -9,9 +9,9 @@ use Shlinkio\Shlink\Importer\Params\ImportParams;
 final class KuttParams
 {
     private function __construct(
-        private string $baseUrl,
-        private string $apiKey,
-        private bool $importAllUrls,
+        public readonly string $baseUrl,
+        public readonly string $apiKey,
+        public readonly bool $importAllUrls,
     ) {
     }
 
@@ -22,20 +22,5 @@ final class KuttParams
             $params->extraParam('api_key') ?? '',
             $params->extraParam('import_all_urls') ?? false,
         );
-    }
-
-    public function baseUrl(): string
-    {
-        return $this->baseUrl;
-    }
-
-    public function apiKey(): string
-    {
-        return $this->apiKey;
-    }
-
-    public function importAllUrls(): bool
-    {
-        return $this->importAllUrls;
     }
 }

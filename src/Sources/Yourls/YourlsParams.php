@@ -9,11 +9,11 @@ use Shlinkio\Shlink\Importer\Params\ImportParams;
 final class YourlsParams
 {
     private function __construct(
-        private string $baseUrl,
-        private string $username,
-        private string $password,
-        private bool $importVisits,
-        private ?string $domain,
+        public readonly string $baseUrl,
+        public readonly string $username,
+        public readonly string $password,
+        public readonly bool $importVisits,
+        public readonly ?string $domain,
     ) {
     }
 
@@ -23,33 +23,8 @@ final class YourlsParams
             $params->extraParam('base_url') ?? '',
             $params->extraParam('username') ?? '',
             $params->extraParam('password') ?? '',
-            $params->importVisits(),
+            $params->importVisits,
             $params->extraParam('domain'),
         );
-    }
-
-    public function baseUrl(): string
-    {
-        return $this->baseUrl;
-    }
-
-    public function username(): string
-    {
-        return $this->username;
-    }
-
-    public function password(): string
-    {
-        return $this->password;
-    }
-
-    public function importVisits(): bool
-    {
-        return $this->importVisits;
-    }
-
-    public function domain(): ?string
-    {
-        return $this->domain;
     }
 }

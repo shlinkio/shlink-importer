@@ -13,10 +13,9 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl as ShlinkUrl;
-use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiImporter;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
 use function explode;
 use function sprintf;
@@ -43,7 +42,7 @@ class BitlyApiImporterTest extends TestCase
     public function groupsAndUrlsAreRecursivelyFetched(array $paramsMap, array $expected): void
     {
         $paramsMap['access_token'] = static fn () => 'abc123';
-        $params = ImportParams::fromSourceAndCallableMap('', $paramsMap);
+        $params = ImportSource::BITLY->toParamsWithCallableMap($paramsMap);
 
         $sendGroupsRequest = $this->apiConsumer->callApi(
             'https://api-ssl.bitly.com/v4/groups',
@@ -120,7 +119,7 @@ class BitlyApiImporterTest extends TestCase
 
     public function provideParams(): iterable
     {
-        $source = ImportSources::BITLY;
+        $source = ImportSource::BITLY;
 
         yield 'default options' => [[], [
             new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
@@ -243,7 +242,9 @@ class BitlyApiImporterTest extends TestCase
         $this->expectErrorMessage(sprintf('failed with status code "%s" and body "Error"', $statusCode));
         $sendRequest->shouldBeCalledOnce();
 
-        $list = $this->importer->import(ImportParams::fromSourceAndCallableMap('', ['access_token' => fn () => 'abc']));
+        $list = $this->importer->import(
+            ImportSource::BITLY->toParamsWithCallableMap(['access_token' => fn () => 'abc']),
+        );
         foreach ($list as $item) {
             // Iteration needed to trigger generator code
         }

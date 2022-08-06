@@ -25,7 +25,7 @@ class BitlyApiExceptionTest extends TestCase
             'Request to Bitly API v4 to URL "something.com" failed with status code "500" and body "Error body"',
             $e->getMessage(),
         );
-        self::assertEquals($continueToken, $e->continueToken());
+        self::assertEquals($continueToken, $e->continueToken);
     }
 
     public function provideContinueToken(): iterable

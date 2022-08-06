@@ -8,11 +8,16 @@ use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ExceptionInterface;
 
 use function sprintf;
+use function str_contains;
 
 class InvalidRequestException extends RuntimeException implements ExceptionInterface
 {
-    private function __construct(string $message, private string $url, private int $statusCode, private string $body)
-    {
+    private function __construct(
+        string $message,
+        public readonly string $url,
+        public readonly int $statusCode,
+        public readonly string $body,
+    ) {
         parent::__construct($message);
     }
 
@@ -26,18 +31,8 @@ class InvalidRequestException extends RuntimeException implements ExceptionInter
         );
     }
 
-    public function url(): string
+    public function isShlinkPluginMissingError(): bool
     {
-        return $this->url;
-    }
-
-    public function statusCode(): int
-    {
-        return $this->statusCode;
-    }
-
-    public function body(): string
-    {
-        return $this->body;
+        return str_contains($this->body, '"message":"Unknown or missing \"action\" parameter"');
     }
 }

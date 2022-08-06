@@ -10,7 +10,7 @@ use League\Csv\Reader;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 
 use function array_filter;
@@ -24,7 +24,7 @@ class CsvImporter implements ImporterStrategyInterface
 {
     private const TAG_SEPARATOR = '|';
 
-    public function __construct(private ?DateTimeInterface $date = null)
+    public function __construct(private readonly ?DateTimeInterface $date = null)
     {
     }
 
@@ -37,14 +37,14 @@ class CsvImporter implements ImporterStrategyInterface
         $params = CsvParams::fromImportParams($importParams);
         $now = $this->date ?? new DateTimeImmutable();
 
-        $csvReader = Reader::createFromStream($params->stream())->setDelimiter($params->delimiter())
-                                                                ->setHeaderOffset(0);
+        $csvReader = Reader::createFromStream($params->stream)->setDelimiter($params->delimiter)
+                                                              ->setHeaderOffset(0);
 
         foreach ($csvReader as $record) {
             $record = $this->remapRecordHeaders($record);
 
             yield new ImportedShlinkUrl(
-                ImportSources::CSV,
+                ImportSource::CSV,
                 $record['longurl'],
                 $this->parseTags($record),
                 $now,

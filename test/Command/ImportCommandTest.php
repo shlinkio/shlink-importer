@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
-use Shlinkio\Shlink\Importer\Sources\ImportSources;
+use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyManagerInterface;
 use Symfony\Component\Console\Application;
@@ -81,8 +81,8 @@ class ImportCommandTest extends TestCase
      */
     public function dependenciesAreInvokedAsExpected(?string $providedSource, bool $expectSourceQuestion): void
     {
-        $source = $providedSource ?? ImportSources::BITLY;
-        $params = ImportParams::fromSource($source);
+        $source = $providedSource ?? ImportSource::BITLY->value;
+        $params = ImportParams::fromSource(ImportSource::from($source));
 
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
         $import = $this->importerStrategy->import($params)->willReturn([]);
@@ -109,7 +109,7 @@ class ImportCommandTest extends TestCase
 
     public function provideSource(): iterable
     {
-        yield 'provided source' => [ImportSources::BITLY, false];
+        yield 'provided source' => [ImportSource::BITLY->value, false];
         yield 'not provided source' => [null, true];
     }
 
@@ -124,10 +124,13 @@ class ImportCommandTest extends TestCase
         array $notExpectedOutputs,
     ): void {
         $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
-        $import = $this->importerStrategy->import(ImportParams::fromSource(ImportSources::BITLY))->willThrow($e);
+        $import = $this->importerStrategy->import(ImportSource::BITLY->toParams())->willThrow($e);
         $process = $this->importedLinksProcessor->process(Argument::cetera());
 
-        $exitCode = $this->commandTester->execute(['source' => ImportSources::BITLY], ['verbosity' => $verbosity]);
+        $exitCode = $this->commandTester->execute(
+            ['source' => ImportSource::BITLY->value],
+            ['verbosity' => $verbosity],
+        );
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(ImportCommand::FAILURE, $exitCode);

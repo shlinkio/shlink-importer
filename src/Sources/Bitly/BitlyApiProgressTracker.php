@@ -29,7 +29,7 @@ final class BitlyApiProgressTracker
 
     public static function initFromParams(BitlyApiParams $params): self
     {
-        $providedContinueToken = $params->continueToken();
+        $providedContinueToken = $params->continueToken;
         $instance = new self();
         if ($providedContinueToken === null) {
             return $instance;

@@ -19,8 +19,8 @@ class InvalidRequestExceptionTest extends TestCase
         $e = InvalidRequestException::fromResponseData($url, $statusCode, $body);
 
         self::assertEquals('Request to foo.com failed with status code 403', $e->getMessage());
-        self::assertEquals($url, $e->url());
-        self::assertEquals($statusCode, $e->statusCode());
-        self::assertEquals($body, $e->body());
+        self::assertEquals($url, $e->url);
+        self::assertEquals($statusCode, $e->statusCode);
+        self::assertEquals($body, $e->body);
     }
 }

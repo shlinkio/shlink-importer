@@ -19,7 +19,7 @@ class CsvParamsConsoleHelper implements ParamsConsoleHelperInterface
     {
         return [
             'stream' => fn () =>
-                $io->ask('What\'s the path for the CSV file you want to import', null, [$this, 'pathToStream']),
+                $io->ask('What\'s the path for the CSV file you want to import', null, $this->pathToStream(...)),
             'delimiter' => fn () => $io->choice('What\'s the delimiter used to separate values?', [
                 ',' => 'Comma',
                 ';' => 'Semicolon',
