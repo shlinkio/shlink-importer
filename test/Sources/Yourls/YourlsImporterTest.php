@@ -30,6 +30,7 @@ class YourlsImporterTest extends TestCase
     }
 
     /**
+     * @param class-string<Throwable> $expectedException
      * @test
      * @dataProvider provideExceptions
      */
@@ -142,11 +143,11 @@ class YourlsImporterTest extends TestCase
 
             foreach ($url->visits as $visitIndex => $visit) {
                 self::assertEquals('user_agent_' . $visitIndex, $visit->userAgent);
-                self::assertEquals('country_code_' . $visitIndex, $visit->location->countryCode);
-                self::assertEmpty($visit->location->cityName);
-                self::assertEmpty($visit->location->countryName);
-                self::assertEmpty($visit->location->regionName);
-                self::assertEmpty($visit->location->timezone);
+                self::assertEquals('country_code_' . $visitIndex, $visit->location?->countryCode);
+                self::assertEmpty($visit->location?->cityName);
+                self::assertEmpty($visit->location?->countryName);
+                self::assertEmpty($visit->location?->regionName);
+                self::assertEmpty($visit->location?->timezone);
 
                 if ($visitIndex === 0) {
                     self::assertEquals('referrer_' . $visitIndex, $visit->referer);

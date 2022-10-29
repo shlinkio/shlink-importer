@@ -120,10 +120,10 @@ class CsvImporterTest extends TestCase
     private function createCsvStream(string $csv)
     {
         $stream = fopen('php://memory', 'rb+');
-        fwrite($stream, $csv);
-        rewind($stream);
+        fwrite($stream, $csv); // @phpstan-ignore-line
+        rewind($stream); // @phpstan-ignore-line
 
-        return $stream;
+        return $stream; // @phpstan-ignore-line
     }
 
     private function getDate(): DateTimeInterface

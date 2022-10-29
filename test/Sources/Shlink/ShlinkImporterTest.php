@@ -151,13 +151,13 @@ class ShlinkImporterTest extends TestCase
                     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.10',
                     $visit->userAgent,
                 );
-                self::assertEquals('countryCode', $visit->location->countryCode);
-                self::assertEquals('countryName', $visit->location->countryName);
-                self::assertEquals('regionName', $visit->location->regionName);
-                self::assertEquals('cityName', $visit->location->cityName);
-                self::assertEquals('timezone', $visit->location->timezone);
-                self::assertEquals(0.0, $visit->location->latitude);
-                self::assertEquals(0.0, $visit->location->longitude);
+                self::assertEquals('countryCode', $visit->location?->countryCode);
+                self::assertEquals('countryName', $visit->location?->countryName);
+                self::assertEquals('regionName', $visit->location?->regionName);
+                self::assertEquals('cityName', $visit->location?->cityName);
+                self::assertEquals('timezone', $visit->location?->timezone);
+                self::assertEquals(0.0, $visit->location?->latitude);
+                self::assertEquals(0.0, $visit->location?->longitude);
             }
         }
 

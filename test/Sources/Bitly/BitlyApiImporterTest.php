@@ -253,6 +253,6 @@ class BitlyApiImporterTest extends TestCase
 
     private function createDate(string $date): DateTimeInterface
     {
-        return DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $date);
+        return DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $date); // @phpstan-ignore-line
     }
 }
