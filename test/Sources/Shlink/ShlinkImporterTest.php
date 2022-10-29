@@ -6,10 +6,8 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Shlink;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
@@ -21,34 +19,29 @@ use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkImporter;
 use function array_merge;
 use function Functional\contains;
 use function sprintf;
+use function str_contains;
 
 class ShlinkImporterTest extends TestCase
 {
-    use ProphecyTrait;
-
     private ShlinkImporter $importer;
-    private ObjectProphecy $apiConsumer;
+    private MockObject & RestApiConsumerInterface $apiConsumer;
 
     public function setUp(): void
     {
-        $this->apiConsumer = $this->prophesize(RestApiConsumerInterface::class);
-        $this->importer = new ShlinkImporter($this->apiConsumer->reveal());
+        $this->apiConsumer = $this->createMock(RestApiConsumerInterface::class);
+        $this->importer = new ShlinkImporter($this->apiConsumer);
     }
 
     /** @test */
     public function exceptionsThrownByApiConsumerAreWrapped(): void
     {
         $e = new RuntimeException('Error');
-        $callApi = $this->apiConsumer->callApi(Argument::cetera())->willThrow($e);
+        $this->apiConsumer->expects($this->once())->method('callApi')->willThrowException($e);
 
         $this->expectException(ImportException::class);
-        $callApi->shouldBeCalledOnce();
-
-        $result = $this->importer->import(ImportSource::BITLY->toParams());
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
-        foreach ($result as $element) {
-        }
+        [...$this->importer->import(ImportSource::BITLY->toParams())];
     }
 
     /**
@@ -57,7 +50,7 @@ class ShlinkImporterTest extends TestCase
      */
     public function expectedAmountOfCallsIsPerformedBasedOnPaginationResults(
         bool $doLoadVisits,
-        int $expectedVisitsCallas,
+        int $expectedVisitsCalls,
     ): void {
         $apiKey = 'abc-123';
         $shortUrl = [
@@ -89,41 +82,35 @@ class ShlinkImporterTest extends TestCase
         $visit2 = array_merge($visit1, ['referer' => 'visit2']);
 
         $urlsCallNum = 0;
-        $loadUrls = $this->apiConsumer->callApi(
-            Argument::containingString('short-urls?'),
-            ['X-Api-Key' => $apiKey, 'Accept' => 'application/json'],
-        )->will(
-            function (array $args) use (&$urlsCallNum, $shortUrl): array {
-                $urlsCallNum++;
+        $this->apiConsumer->expects($this->exactly($expectedVisitsCalls + 3))->method('callApi')->willReturnCallback(
+            function (string $url) use (&$urlsCallNum, $shortUrl, $visit1, $visit2): array {
+                if (str_contains($url, 'short-urls?')) {
+                    $urlsCallNum++;
 
-                [$url] = $args;
-                Assert::assertEquals(sprintf('/rest/v2/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
+                    Assert::assertEquals(sprintf('/rest/v2/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
 
-                return [
-                    'shortUrls' => [
-                        'data' => [$shortUrl, $shortUrl, $shortUrl],
-                        'pagination' => [
-                            'currentPage' => $urlsCallNum,
-                            'pagesCount' => 3,
+                    return [
+                        'shortUrls' => [
+                            'data' => [$shortUrl, $shortUrl, $shortUrl],
+                            'pagination' => [
+                                'currentPage' => $urlsCallNum,
+                                'pagesCount' => 3,
+                            ],
                         ],
-                    ],
-                ];
-            },
-        );
+                    ];
+                }
 
-        $loadVisits = $this->apiConsumer->callApi(
-            Argument::containingString('visits'),
-            ['X-Api-Key' => $apiKey, 'Accept' => 'application/json'],
-        )->will(
-            function (array $args) use ($visit1, $visit2): array {
-                [$url] = $args;
-                Assert::assertEquals('/rest/v2/short-urls/rY9zd/visits?page=1&itemsPerPage=300', $url);
+                if (str_contains($url, 'visits')) {
+                    Assert::assertEquals('/rest/v2/short-urls/rY9zd/visits?page=1&itemsPerPage=300', $url);
 
-                return [
-                    'visits' => [
-                        'data' => [$visit1, $visit1, $visit2, $visit2, $visit2],
-                    ],
-                ];
+                    return [
+                        'visits' => [
+                            'data' => [$visit1, $visit1, $visit2, $visit2, $visit2],
+                        ],
+                    ];
+                }
+
+                return [];
             },
         );
 
@@ -175,9 +162,7 @@ class ShlinkImporterTest extends TestCase
         }
 
         self::assertCount(9, $urls);
-        self::assertCount($expectedVisitsCallas * 5, $visits);
-        $loadUrls->shouldHaveBeenCalledTimes(3);
-        $loadVisits->shouldHaveBeenCalledTimes($expectedVisitsCallas);
+        self::assertCount($expectedVisitsCalls * 5, $visits);
     }
 
     public function provideLoadParams(): iterable
@@ -201,14 +186,14 @@ class ShlinkImporterTest extends TestCase
             'title' => '',
         ];
 
-        $loadUrls = $this->apiConsumer->callApi(
-            Argument::containingString('short-urls?'),
-            Argument::cetera(),
-        )->will(
-            function (array $args) use (&$urlsCallNum, $shortUrl): array {
+        $this->apiConsumer->expects($this->exactly(3))->method('callApi')->with(
+            $this->stringContains('short-urls?'),
+            $this->anything(),
+            $this->anything(),
+        )->willReturnCallback(
+            function (string $url) use (&$urlsCallNum, $shortUrl): array {
                 $urlsCallNum++;
 
-                [$url] = $args;
                 Assert::assertEquals(sprintf('/rest/v2/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
 
                 return [
@@ -223,22 +208,10 @@ class ShlinkImporterTest extends TestCase
             },
         );
 
-        $loadVisits = $this->apiConsumer->callApi(
-            Argument::containingString('visits'),
-            Argument::cetera(),
-        )->willReturn([]);
-
-        $result = $this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
+        // The result needs to be iterated in order to perform the calls
+        [...$this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
             'api_key' => fn () => 'foo',
             ImportParams::IMPORT_VISITS_PARAM => fn () => true,
-        ]));
-        foreach ($result as $url) {
-            // The result needs to be iterated in order to perform the calls
-            foreach ($url->visits as $visit) {
-            }
-        }
-
-        $loadUrls->shouldHaveBeenCalledTimes(3);
-        $loadVisits->shouldNotHaveBeenCalled();
+        ]))];
     }
 }
