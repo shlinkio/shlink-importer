@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Importer\Params\ParamsUtils;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParamsConsoleHelper;
 use Symfony\Component\Console\Style\StyleInterface;
@@ -16,15 +14,13 @@ use function count;
 
 class BitlyApiParamsConsoleHelperTest extends TestCase
 {
-    use ProphecyTrait;
-
     private BitlyApiParamsConsoleHelper $paramsHelper;
-    private ObjectProphecy $io;
+    private MockObject & StyleInterface $io;
 
     public function setUp(): void
     {
         $this->paramsHelper = new BitlyApiParamsConsoleHelper();
-        $this->io = $this->prophesize(StyleInterface::class);
+        $this->io = $this->createMock(StyleInterface::class);
     }
 
     /**
@@ -33,15 +29,17 @@ class BitlyApiParamsConsoleHelperTest extends TestCase
      */
     public function generatesExpectedParams(array $askResponses, array $confirmResponses, array $expected): void
     {
-        $ask = $this->io->ask(Argument::cetera())->willReturn(...$askResponses);
-        $confirm = $this->io->confirm(Argument::cetera())->willReturn(...$confirmResponses);
+        $this->io->expects($this->exactly(count($askResponses)))->method('ask')->willReturnOnConsecutiveCalls(
+            ...$askResponses,
+        );
+        $this->io->expects($this->exactly(count($confirmResponses)))->method('confirm')->willReturnOnConsecutiveCalls(
+            ...$confirmResponses,
+        );
 
         self::assertEquals(
             $expected,
-            ParamsUtils::invokeCallbacks($this->paramsHelper->requestParams($this->io->reveal())),
+            ParamsUtils::invokeCallbacks($this->paramsHelper->requestParams($this->io)),
         );
-        $ask->shouldHaveBeenCalledTimes(count($askResponses));
-        $confirm->shouldHaveBeenCalledTimes(count($confirmResponses));
     }
 
     public function provideResponses(): iterable
