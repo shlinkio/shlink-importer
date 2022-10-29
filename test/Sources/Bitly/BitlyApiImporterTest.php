@@ -6,10 +6,8 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl as ShlinkUrl;
@@ -24,15 +22,13 @@ use function str_starts_with;
 
 class BitlyApiImporterTest extends TestCase
 {
-    use ProphecyTrait;
-
     private BitlyApiImporter $importer;
-    private ObjectProphecy $apiConsumer;
+    private MockObject & RestApiConsumerInterface $apiConsumer;
 
     public function setUp(): void
     {
-        $this->apiConsumer = $this->prophesize(RestApiConsumerInterface::class);
-        $this->importer = new BitlyApiImporter($this->apiConsumer->reveal());
+        $this->apiConsumer = $this->createMock(RestApiConsumerInterface::class);
+        $this->importer = new BitlyApiImporter($this->apiConsumer);
     }
 
     /**
@@ -44,67 +40,68 @@ class BitlyApiImporterTest extends TestCase
         $paramsMap['access_token'] = static fn () => 'abc123';
         $params = ImportSource::BITLY->toParamsWithCallableMap($paramsMap);
 
-        $sendGroupsRequest = $this->apiConsumer->callApi(
-            'https://api-ssl.bitly.com/v4/groups',
-            Argument::cetera(),
-        )->willReturn([
-            'groups' => [
-                ['guid' => 'abc'],
-                ['guid' => 'def'],
-                ['guid' => 'ghi'],
-            ],
-        ]);
-
         $callCounts = [];
-        $sendUrlsRequest = $this->apiConsumer->callApi(
-            Argument::that(fn (string $uri) => str_starts_with($uri, 'https://api-ssl.bitly.com/v4/groups/')),
-            Argument::cetera(),
-        )->will(function (array $args) use (&$callCounts): array {
-            [$uri] = $args;
-            [$url] = explode('?', $uri);
-            $callCounts[$url] = ($callCounts[$url] ?? 0) + 1;
+        $this->apiConsumer->expects($this->exactly(5))->method('callApi')->willReturnCallback(
+            function (string $uri) use (&$callCounts) {
+                if ($uri === 'https://api-ssl.bitly.com/v4/groups') {
+                    return [
+                        'groups' => [
+                            ['guid' => 'abc'],
+                            ['guid' => 'def'],
+                            ['guid' => 'ghi'],
+                        ],
+                    ];
+                }
 
-            if ($callCounts[$url] === 1 && str_contains($url, 'def')) {
+                if (! str_starts_with($uri, 'https://api-ssl.bitly.com/v4/groups/')) {
+                    return [];
+                }
+
+                [$url] = explode('?', $uri);
+                $callCounts[$url] = ($callCounts[$url] ?? 0) + 1;
+
+                if ($callCounts[$url] === 1 && str_contains($url, 'def')) {
+                    return [
+                        'links' => [
+                            [
+                                'created_at' => '2020-03-01T00:00:00+0000',
+                                'link' => 'http://bit.ly/ccc',
+                                'long_url' => 'https://shlink.io',
+                                'title' => 'Cool title',
+                            ],
+                            [
+                                'created_at' => '2020-04-01T00:00:00+0000',
+                                'link' => 'http://customdom.com/ddd',
+                                'long_url' => 'https://github.com',
+                                'tags' => ['bar'],
+                            ],
+                        ],
+                        'pagination' => [
+                            'next' => 'https://api-ssl.bitly.com/v4/groups/def/bitlinks',
+                        ],
+                    ];
+                }
+
                 return [
                     'links' => [
                         [
-                            'created_at' => '2020-03-01T00:00:00+0000',
-                            'link' => 'http://bit.ly/ccc',
+                            'created_at' => '2020-01-01T00:00:00+0000',
+                            'link' => 'http://bit.ly/aaa',
                             'long_url' => 'https://shlink.io',
-                            'title' => 'Cool title',
                         ],
                         [
-                            'created_at' => '2020-04-01T00:00:00+0000',
-                            'link' => 'http://customdom.com/ddd',
+                            'created_at' => '2020-02-01T00:00:00+0000',
+                            'link' => 'http://bit.ly/bbb',
                             'long_url' => 'https://github.com',
-                            'tags' => ['bar'],
+                            'tags' => ['foo', 'bar'],
                         ],
                     ],
                     'pagination' => [
-                        'next' => 'https://api-ssl.bitly.com/v4/groups/def/bitlinks',
+                        'next' => '',
                     ],
                 ];
-            }
-
-            return [
-                'links' => [
-                    [
-                        'created_at' => '2020-01-01T00:00:00+0000',
-                        'link' => 'http://bit.ly/aaa',
-                        'long_url' => 'https://shlink.io',
-                    ],
-                    [
-                        'created_at' => '2020-02-01T00:00:00+0000',
-                        'link' => 'http://bit.ly/bbb',
-                        'long_url' => 'https://github.com',
-                        'tags' => ['foo', 'bar'],
-                    ],
-                ],
-                'pagination' => [
-                    'next' => '',
-                ],
-            ];
-        });
+            },
+        );
 
         $generator = $this->importer->import($params);
         $urls = [];
@@ -113,8 +110,6 @@ class BitlyApiImporterTest extends TestCase
         }
 
         self::assertEquals($expected, $urls);
-        $sendGroupsRequest->shouldHaveBeenCalledOnce();
-        $sendUrlsRequest->shouldHaveBeenCalledTimes(4);
     }
 
     public function provideParams(): iterable
@@ -233,21 +228,18 @@ class BitlyApiImporterTest extends TestCase
      */
     public function throwsExceptionWhenStatusCodeReturnedByApiIsError(int $statusCode): void
     {
-        $sendRequest = $this->apiConsumer->callApi(Argument::cetera())->willThrow(
+        $this->apiConsumer->expects($this->once())->method('callApi')->willThrowException(
             InvalidRequestException::fromResponseData('', $statusCode, 'Error'),
         );
 
         $this->expectException(BitlyApiException::class);
         $this->expectErrorMessage('Request to Bitly API v4 to URL');
         $this->expectErrorMessage(sprintf('failed with status code "%s" and body "Error"', $statusCode));
-        $sendRequest->shouldBeCalledOnce();
 
-        $list = $this->importer->import(
+        // Iteration needed to trigger generator code
+        [...$this->importer->import(
             ImportSource::BITLY->toParamsWithCallableMap(['access_token' => fn () => 'abc']),
-        );
-        foreach ($list as $item) {
-            // Iteration needed to trigger generator code
-        }
+        )];
     }
 
     public function provideErrorStatusCodes(): iterable
