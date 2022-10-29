@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Yourls;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
@@ -22,15 +20,13 @@ use function str_contains;
 
 class YourlsImporterTest extends TestCase
 {
-    use ProphecyTrait;
-
     private YourlsImporter $importer;
-    private ObjectProphecy $apiConsumer;
+    private MockObject & RestApiConsumerInterface $apiConsumer;
 
     public function setUp(): void
     {
-        $this->apiConsumer = $this->prophesize(RestApiConsumerInterface::class);
-        $this->importer = new YourlsImporter($this->apiConsumer->reveal());
+        $this->apiConsumer = $this->createMock(RestApiConsumerInterface::class);
+        $this->importer = new YourlsImporter($this->apiConsumer);
     }
 
     /**
@@ -42,17 +38,13 @@ class YourlsImporterTest extends TestCase
         string $expectedException,
         string $expectedMessage,
     ): void {
-        $callApi = $this->apiConsumer->callApi(Argument::cetera())->willThrow($e);
+        $this->apiConsumer->expects($this->once())->method('callApi')->willThrowException($e);
 
         $this->expectException($expectedException);
         $this->expectExceptionMessage($expectedMessage);
-        $callApi->shouldBeCalledOnce();
-
-        $result = $this->importer->import(ImportSource::YOURLS->toParams());
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
-        foreach ($result as $element) {
-        }
+        [...$this->importer->import(ImportSource::YOURLS->toParams())];
     }
 
     public function provideExceptions(): iterable
@@ -82,53 +74,58 @@ class YourlsImporterTest extends TestCase
      */
     public function linksAndVisitsAreLoadedFromYourls(bool $doLoadVisits, int $expectedVisitsCallas): void
     {
-        $loadUrls = $this->apiConsumer->callApi(Argument::that(function (string $arg): bool {
-            return str_contains($arg, 'format=json&action=shlink-list')
-                && str_contains($arg, 'username=the_username&password=the_password');
-        }))->willReturn([
-            'result' => [
-                [
-                    'keyword' => 'keyword_0',
-                    'url' => 'url_0',
-                    'timestamp' => '2021-01-01 00:00:00',
-                    'title' => 'title_0',
-                    'clicks' => 0,
-                ],
-                [
-                    'keyword' => 'keyword_1',
-                    'url' => 'url_1',
-                    'timestamp' => '2021-01-01 00:00:00',
-                    'title' => 'title_1',
-                    'clicks' => 3,
-                ],
-            ],
-        ]);
-        $loadVisits = $this->apiConsumer->callApi(Argument::containingString('action=shlink-link-visits'))->will(
-            function (array $args) {
-                [$url] = $args;
+        $this->apiConsumer->expects($this->exactly($expectedVisitsCallas + 1))->method('callApi')->willReturnCallback(
+            function (string $url) {
+                if (
+                    str_contains($url, 'format=json&action=shlink-list')
+                    && str_contains($url, 'username=the_username&password=the_password')
+                ) {
+                    return [
+                        'result' => [
+                            [
+                                'keyword' => 'keyword_0',
+                                'url' => 'url_0',
+                                'timestamp' => '2021-01-01 00:00:00',
+                                'title' => 'title_0',
+                                'clicks' => 0,
+                            ],
+                            [
+                                'keyword' => 'keyword_1',
+                                'url' => 'url_1',
+                                'timestamp' => '2021-01-01 00:00:00',
+                                'title' => 'title_1',
+                                'clicks' => 3,
+                            ],
+                        ],
+                    ];
+                }
 
-                $result = str_contains($url, 'keyword_1') ? [] : [
-                    [
-                        'referrer' => 'referrer_0',
-                        'user_agent' => 'user_agent_0',
-                        'click_time' => '2021-01-01 00:00:00',
-                        'country_code' => 'country_code_0',
-                    ],
-                    [
-                        'referrer' => 'direct',
-                        'user_agent' => 'user_agent_1',
-                        'click_time' => '2021-01-01 00:00:00',
-                        'country_code' => 'country_code_1',
-                    ],
-                    [
-                        'referrer' => 'direct',
-                        'user_agent' => 'user_agent_2',
-                        'click_time' => '2021-01-01 00:00:00',
-                        'country_code' => 'country_code_2',
-                    ],
-                ];
+                if (str_contains($url, 'action=shlink-link-visits')) {
+                    $result = str_contains($url, 'keyword_1') ? [] : [
+                        [
+                            'referrer' => 'referrer_0',
+                            'user_agent' => 'user_agent_0',
+                            'click_time' => '2021-01-01 00:00:00',
+                            'country_code' => 'country_code_0',
+                        ],
+                        [
+                            'referrer' => 'direct',
+                            'user_agent' => 'user_agent_1',
+                            'click_time' => '2021-01-01 00:00:00',
+                            'country_code' => 'country_code_1',
+                        ],
+                        [
+                            'referrer' => 'direct',
+                            'user_agent' => 'user_agent_2',
+                            'click_time' => '2021-01-01 00:00:00',
+                            'country_code' => 'country_code_2',
+                        ],
+                    ];
 
-                return ['result' => $result];
+                    return ['result' => $result];
+                }
+
+                return [];
             },
         );
 
@@ -158,9 +155,6 @@ class YourlsImporterTest extends TestCase
                 }
             }
         }
-
-        $loadUrls->shouldHaveBeenCalledOnce();
-        $loadVisits->shouldHaveBeenCalledTimes($expectedVisitsCallas);
     }
 
     public function provideLoadParams(): iterable
