@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Command;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Command\ImportCommand;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
@@ -30,31 +28,29 @@ use function putenv;
 
 class ImportCommandTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private ObjectProphecy $importerStrategyManager;
-    private ObjectProphecy $consoleHelperManager;
-    private ObjectProphecy $importedLinksProcessor;
-    private ObjectProphecy $paramsHelper;
-    private ObjectProphecy $importerStrategy;
+    private MockObject & ImporterStrategyManagerInterface $importerStrategyManager;
+    private MockObject & ConsoleHelperManagerInterface $consoleHelperManager;
+    private MockObject & ImportedLinksProcessorInterface $importedLinksProcessor;
+    private MockObject & ParamsConsoleHelperInterface $paramsHelper;
+    private MockObject & ImporterStrategyInterface $importerStrategy;
     private CommandTester $commandTester;
 
     public function setUp(): void
     {
         putenv('COLUMNS=120'); // This ensures a consistent output length
 
-        $this->importerStrategyManager = $this->prophesize(ImporterStrategyManagerInterface::class);
-        $this->consoleHelperManager = $this->prophesize(ConsoleHelperManagerInterface::class);
-        $this->importedLinksProcessor = $this->prophesize(ImportedLinksProcessorInterface::class);
-        $this->paramsHelper = $this->prophesize(ParamsConsoleHelperInterface::class);
-        $this->importerStrategy = $this->prophesize(ImporterStrategyInterface::class);
-        $this->consoleHelperManager->get(Argument::any())->willReturn($this->paramsHelper->reveal());
-        $this->importerStrategyManager->get(Argument::any())->willReturn($this->importerStrategy->reveal());
+        $this->importerStrategyManager = $this->createMock(ImporterStrategyManagerInterface::class);
+        $this->consoleHelperManager = $this->createMock(ConsoleHelperManagerInterface::class);
+        $this->importedLinksProcessor = $this->createMock(ImportedLinksProcessorInterface::class);
+        $this->paramsHelper = $this->createMock(ParamsConsoleHelperInterface::class);
+        $this->importerStrategy = $this->createMock(ImporterStrategyInterface::class);
+        $this->consoleHelperManager->method('get')->willReturn($this->paramsHelper);
+        $this->importerStrategyManager->method('get')->willReturn($this->importerStrategy);
 
         $command = new ImportCommand(
-            $this->importerStrategyManager->reveal(),
-            $this->consoleHelperManager->reveal(),
-            $this->importedLinksProcessor->reveal(),
+            $this->importerStrategyManager,
+            $this->consoleHelperManager,
+            $this->importedLinksProcessor,
         );
         $app = new Application();
         $app->add($command);
@@ -84,9 +80,17 @@ class ImportCommandTest extends TestCase
         $source = $providedSource ?? ImportSource::BITLY->value;
         $params = ImportParams::fromSource(ImportSource::from($source));
 
-        $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
-        $import = $this->importerStrategy->import($params)->willReturn([]);
-        $process = $this->importedLinksProcessor->process(Argument::type(StyleInterface::class), [], $params);
+        $this->paramsHelper->expects($this->once())->method('requestParams')->with(
+            $this->isInstanceOf(StyleInterface::class),
+        )->willReturn([]);
+        $this->importerStrategy->expects($this->once())->method('import')->with($params)->willReturn([]);
+        $this->importedLinksProcessor->expects($this->once())->method('process')->with(
+            $this->isInstanceOf(StyleInterface::class),
+            [],
+            $params,
+        );
+        $this->importerStrategyManager->expects($this->once())->method('get')->with($source);
+        $this->consoleHelperManager->expects($this->once())->method('get')->with($source);
 
         if ($expectSourceQuestion) {
             $this->commandTester->setInputs(['0']);
@@ -95,11 +99,6 @@ class ImportCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(ImportCommand::SUCCESS, $exitCode);
-        $this->consoleHelperManager->get($source)->shouldHaveBeenCalledOnce();
-        $this->importerStrategyManager->get($source)->shouldHaveBeenCalledOnce();
-        $requestParams->shouldHaveBeenCalledOnce();
-        $import->shouldHaveBeenCalledOnce();
-        $process->shouldHaveBeenCalledOnce();
         if ($expectSourceQuestion) {
             self::assertStringContainsString('What is the source you want to import from:', $output);
         } else {
@@ -123,9 +122,13 @@ class ImportCommandTest extends TestCase
         array $expectedOutputs,
         array $notExpectedOutputs,
     ): void {
-        $requestParams = $this->paramsHelper->requestParams(Argument::type(StyleInterface::class))->willReturn([]);
-        $import = $this->importerStrategy->import(ImportSource::BITLY->toParams())->willThrow($e);
-        $process = $this->importedLinksProcessor->process(Argument::cetera());
+        $this->paramsHelper->expects($this->once())->method('requestParams')->with(
+            $this->isInstanceOf(StyleInterface::class),
+        )->willReturn([]);
+        $this->importerStrategy->expects($this->once())->method('import')->with(
+            ImportSource::BITLY->toParams(),
+        )->willThrowException($e);
+        $this->importedLinksProcessor->expects($this->never())->method('process');
 
         $exitCode = $this->commandTester->execute(
             ['source' => ImportSource::BITLY->value],
@@ -140,9 +143,6 @@ class ImportCommandTest extends TestCase
         foreach ($notExpectedOutputs as $notExpectedOutput) {
             self::assertStringNotContainsString($notExpectedOutput, $output);
         }
-        $requestParams->shouldHaveBeenCalledOnce();
-        $import->shouldHaveBeenCalledOnce();
-        $process->shouldNotHaveBeenCalled();
     }
 
     public function provideImportExceptions(): iterable

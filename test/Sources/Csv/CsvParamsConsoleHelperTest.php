@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Csv;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Shlinkio\Shlink\Importer\Params\ParamsUtils;
 use Shlinkio\Shlink\Importer\Sources\Csv\CsvParamsConsoleHelper;
 use Shlinkio\Shlink\Importer\Sources\Csv\InvalidPathException;
@@ -15,31 +13,27 @@ use Symfony\Component\Console\Style\StyleInterface;
 
 class CsvParamsConsoleHelperTest extends TestCase
 {
-    use ProphecyTrait;
-
     private CsvParamsConsoleHelper $helper;
-    private ObjectProphecy $io;
+    private MockObject & StyleInterface $io;
 
     public function setUp(): void
     {
         $this->helper = new CsvParamsConsoleHelper();
-        $this->io = $this->prophesize(StyleInterface::class);
+        $this->io = $this->createMock(StyleInterface::class);
     }
 
     /** @test */
     public function requestsParams(): void
     {
-        $ask = $this->io->ask(Argument::cetera())->willReturn('stream');
-        $choice = $this->io->choice(Argument::cetera())->willReturn(';');
+        $this->io->expects($this->once())->method('ask')->willReturn('stream');
+        $this->io->expects($this->once())->method('choice')->willReturn(';');
 
-        $result = ParamsUtils::invokeCallbacks($this->helper->requestParams($this->io->reveal()));
+        $result = ParamsUtils::invokeCallbacks($this->helper->requestParams($this->io));
 
         self::assertEquals([
             'stream' => 'stream',
             'delimiter' => ';',
         ], $result);
-        $ask->shouldHaveBeenCalledOnce();
-        $choice->shouldHaveBeenCalledOnce();
     }
 
     /**
