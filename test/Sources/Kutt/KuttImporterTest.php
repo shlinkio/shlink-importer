@@ -6,10 +6,8 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Kutt;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
@@ -22,31 +20,25 @@ use function sprintf;
 
 class KuttImporterTest extends TestCase
 {
-    use ProphecyTrait;
-
     private KuttImporter $importer;
-    private ObjectProphecy $apiConsumer;
+    private MockObject & RestApiConsumerInterface $apiConsumer;
 
     public function setUp(): void
     {
-        $this->apiConsumer = $this->prophesize(RestApiConsumerInterface::class);
-        $this->importer = new KuttImporter($this->apiConsumer->reveal());
+        $this->apiConsumer = $this->createMock(RestApiConsumerInterface::class);
+        $this->importer = new KuttImporter($this->apiConsumer);
     }
 
     /** @test */
     public function exceptionsThrownByApiConsumerAreWrapped(): void
     {
         $e = new RuntimeException('Error');
-        $callApi = $this->apiConsumer->callApi(Argument::cetera())->willThrow($e);
+        $this->apiConsumer->expects($this->once())->method('callApi')->willThrowException($e);
 
         $this->expectException(ImportException::class);
-        $callApi->shouldBeCalledOnce();
-
-        $result = $this->importer->import(ImportSource::BITLY->toParams());
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
-        foreach ($result as $element) {
-        }
+        [...$this->importer->import(ImportSource::BITLY->toParams())];
     }
 
     /**
@@ -56,12 +48,11 @@ class KuttImporterTest extends TestCase
     public function expectedAmountOfCallsIsPerformed(bool $loadAll): void
     {
         $urlsCallNum = 0;
-        $loadUrls = $this->apiConsumer->callApi(Argument::containingString('/api/v2/links'), [
-            'X-Api-Key' => 'my_api_key',
-            'Accept' => 'application/json',
-        ])->will(
-            function (array $args) use (&$urlsCallNum, $loadAll): array {
-                [$url] = $args;
+        $this->apiConsumer->expects($this->exactly(2))->method('callApi')->with(
+            $this->stringContains('/api/v2/links'),
+            ['X-Api-Key' => 'my_api_key', 'Accept' => 'application/json'],
+        )->willReturnCallback(
+            function (string $url) use (&$urlsCallNum, $loadAll): array {
                 Assert::assertEquals(
                     sprintf('/api/v2/links?limit=50&skip=%s&all=%s', $urlsCallNum * 50, $loadAll ? 'true' : 'false'),
                     $url,
@@ -121,8 +112,6 @@ class KuttImporterTest extends TestCase
                 self::assertEquals(new ImportedShlinkUrlMeta(null, null, null), $url->meta);
             }
         }
-
-        $loadUrls->shouldHaveBeenCalledTimes(2);
     }
 
     public function provideParams(): iterable
