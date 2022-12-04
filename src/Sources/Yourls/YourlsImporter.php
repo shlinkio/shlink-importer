@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
+use Shlinkio\Shlink\Importer\Model\ImportResult;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
@@ -32,13 +33,22 @@ class YourlsImporter implements ImporterStrategyInterface
     }
 
     /**
+     * @throws ImportException
+     */
+    public function import(ImportParams $importParams): ImportResult
+    {
+        $params = YourlsParams::fromImportParams($importParams);
+        return ImportResult::withShortUrls($this->importShortUrls($params));
+    }
+
+    /**
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(ImportParams $importParams): iterable
+    private function importShortUrls(YourlsParams $params): iterable
     {
         try {
-            yield from $this->loadUrls(YourlsParams::fromImportParams($importParams));
+            yield from $this->loadUrls($params);
         } catch (InvalidRequestException $e) {
             if ($e->isShlinkPluginMissingError()) {
                 throw YourlsMissingPluginException::forMissingPlugin($e);

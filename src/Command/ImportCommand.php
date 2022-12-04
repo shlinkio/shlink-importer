@@ -80,8 +80,8 @@ class ImportCommand extends Command
 
         try {
             $params = $source->toParamsWithCallableMap($paramsHelper->requestParams($io));
-            $links = $importerStrategy->import($params);
-            $this->importedLinksProcessor->process($io, $links, $params);
+            $result = $importerStrategy->import($params);
+            $this->importedLinksProcessor->process($io, $result, $params);
         } catch (ImportException $e) {
             $this->handleImportError($e, $io);
             return self::FAILURE;

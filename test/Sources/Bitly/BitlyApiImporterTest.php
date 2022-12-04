@@ -103,11 +103,7 @@ class BitlyApiImporterTest extends TestCase
             },
         );
 
-        $generator = $this->importer->import($params);
-        $urls = [];
-        foreach ($generator as $url) {
-            $urls[] = $url;
-        }
+        $urls = [...$this->importer->import($params)->shlinkUrls];
 
         self::assertEquals($expected, $urls);
     }
@@ -239,7 +235,7 @@ class BitlyApiImporterTest extends TestCase
         // Iteration needed to trigger generator code
         [...$this->importer->import(
             ImportSource::BITLY->toParamsWithCallableMap(['access_token' => fn () => 'abc']),
-        )];
+        )->shlinkUrls];
     }
 
     public function provideErrorStatusCodes(): iterable

@@ -11,14 +11,11 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
-use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
-use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
-use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
+use Shlinkio\Shlink\Importer\Model\ImportResult;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
-use Shlinkio\Shlink\Importer\Util\DateHelper;
 use Throwable;
 
 use function array_reverse;
@@ -34,20 +31,34 @@ class ShlinkImporter implements ImporterStrategyInterface
 
     private DateTimeImmutable $importStartTime;
 
-    public function __construct(private readonly RestApiConsumerInterface $apiConsumer)
+    public function __construct(
+        private readonly RestApiConsumerInterface $apiConsumer,
+        private readonly ShlinkMapperInterface $mapper,
+    ) {
+    }
+
+    /**
+     * @throws ImportException
+     */
+    public function import(ImportParams $importParams): ImportResult
     {
+        $this->importStartTime = new DateTimeImmutable();
+        $params = ShlinkParams::fromImportParams($importParams);
+
+        return ImportResult::withShortUrlsAndOrphanVisits(
+            $this->importShortUrls($params),
+            $this->importOrphanVisits($params),
+        );
     }
 
     /**
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(ImportParams $importParams): iterable
+    private function importShortUrls(ShlinkParams $params): iterable
     {
-        $this->importStartTime = new DateTimeImmutable();
-
         try {
-            yield from $this->loadUrls(ShlinkParams::fromImportParams($importParams));
+            yield from $this->loadUrls($params);
         } catch (Throwable $e) {
             throw ImportException::fromError($e);
         }
@@ -74,6 +85,14 @@ class ShlinkImporter implements ImporterStrategyInterface
         }
     }
 
+    private function shouldContinue(array $pagination): bool
+    {
+        $currentPage = $pagination['currentPage'];
+        $pagesCount = $pagination['pagesCount'];
+
+        return $currentPage < $pagesCount;
+    }
+
     /**
      * @throws ClientExceptionInterface
      * @throws JsonException
@@ -83,35 +102,19 @@ class ShlinkImporter implements ImporterStrategyInterface
     private function mapUrls(array $urls, ShlinkParams $params): array
     {
         return map($urls, function (array $url) use ($params): ImportedShlinkUrl {
-            $shortCode = $url['shortCode'];
-            $domain = $url['domain'] ?? null;
-            $visitsCount = $url['visitsCount'];
-
             // Shlink returns visits ordered from newer to older. To keep stats working once imported, we need to
             // reverse them.
             // In order to do that, we calculate the amount of pages we will get, and start from last to first.
             // Then, each page's result set gets reversed individually.
+            $visitsCount = $url['visitsCount'];
             $expectedPages = (int) ceil($visitsCount / self::VISITS_PER_PAGE);
 
-            $meta = new ImportedShlinkUrlMeta(
-                DateHelper::nullableDateFromAtom($url['meta']['validSince'] ?? null),
-                DateHelper::nullableDateFromAtom($url['meta']['validUntil'] ?? null),
-                $url['meta']['maxVisits'] ?? null,
-            );
-
-            return new ImportedShlinkUrl(
-                ImportSource::SHLINK,
-                $url['longUrl'] ?? '',
-                $url['tags'] ?? [],
-                DateHelper::nullableDateFromAtom($url['dateCreated'] ?? null) ?? $this->importStartTime,
-                $domain,
-                $shortCode,
-                $url['title'] ?? null,
+            return $this->mapper->mapShortUrl(
+                $url,
                 $params->importVisits && $expectedPages > 0
-                    ? $this->loadVisits($shortCode, $domain, $params, $expectedPages)
+                    ? $this->loadVisits($url['shortCode'], $url['domain'] ?? null, $params, $expectedPages)
                     : [],
-                $visitsCount,
-                $meta,
+                $this->importStartTime,
             );
         });
     }
@@ -132,40 +135,67 @@ class ShlinkImporter implements ImporterStrategyInterface
             ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
         );
 
-        yield from array_reverse($this->mapVisits($parsedBody['visits']['data'] ?? []));
+        yield from array_reverse(map(
+            $parsedBody['visits']['data'] ?? [],
+            fn (array $visit) => $this->mapper->mapVisit($visit, $this->importStartTime),
+        ));
 
         if ($page > 1) {
             yield from $this->loadVisits($shortCode, $domain, $params, $page - 1);
         }
     }
 
-    private function mapVisits(array $visits): array
+    /**
+     * @return iterable<ImportedShlinkOrphanVisit>
+     * @throws ImportException
+     */
+    private function importOrphanVisits(ShlinkParams $params): iterable
     {
-        return map($visits, function (array $visit): ImportedShlinkVisit {
-            $location = ! isset($visit['visitLocation']) ? null : new ImportedShlinkVisitLocation(
-                $visit['visitLocation']['countryCode'] ?? '',
-                $visit['visitLocation']['countryName'] ?? '',
-                $visit['visitLocation']['regionName'] ?? '',
-                $visit['visitLocation']['cityName'] ?? '',
-                $visit['visitLocation']['timezone'] ?? '',
-                $visit['visitLocation']['latitude'] ?? 0.0,
-                $visit['visitLocation']['longitude'] ?? 0.0,
-            );
+        if (! $params->importOrphanVisits) {
+            return [];
+        }
 
-            return new ImportedShlinkVisit(
-                $visit['referer'] ?? '',
-                $visit['userAgent'] ?? '',
-                DateHelper::nullableDateFromAtom($visit['date'] ?? null) ?? $this->importStartTime,
-                $location,
-            );
-        });
+        try {
+            // Shlink returns visits ordered from newer to older. To keep stats working once imported, we need to
+            // reverse them.
+            // In order to do that, we calculate the amount of pages we will get, and start from last to first.
+            // Then, each page's result set gets reversed individually.
+            $visitsCount = $this->getOrphanVisitsCount($params);
+            $expectedPages = (int) ceil($visitsCount / self::VISITS_PER_PAGE);
+
+            yield from $this->loadOrphanVisits($params, $expectedPages);
+        } catch (Throwable $e) {
+            throw ImportException::fromError($e);
+        }
     }
 
-    private function shouldContinue(array $pagination): bool
+    private function getOrphanVisitsCount(ShlinkParams $params): int
     {
-        $currentPage = $pagination['currentPage'];
-        $pagesCount = $pagination['pagesCount'];
+        $url = sprintf('%s/rest/v2/visits', $params->baseUrl);
+        $parsedBody = $this->apiConsumer->callApi(
+            $url,
+            ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
+        );
 
-        return $currentPage < $pagesCount;
+        return (int) ($parsedBody['visits']['orphanVisitsCount'] ?? 0);
+    }
+
+    private function loadOrphanVisits(ShlinkParams $params, int $page): iterable
+    {
+        $queryString = http_build_query(['page' => $page, 'itemsPerPage' => self::VISITS_PER_PAGE]);
+        $url = sprintf('%s/rest/v2/visits/orphan?%s', $params->baseUrl, $queryString);
+        $parsedBody = $this->apiConsumer->callApi(
+            $url,
+            ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
+        );
+
+        yield from array_reverse(map(
+            $parsedBody['visits']['data'] ?? [],
+            fn (array $visit) => $this->mapper->mapOrphanVisit($visit, $this->importStartTime),
+        ));
+
+        if ($page > 1) {
+            yield from $this->loadOrphanVisits($params, $page - 1);
+        }
     }
 }

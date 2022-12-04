@@ -16,10 +16,13 @@ class ShlinkParamsConsoleHelper implements ParamsConsoleHelperInterface
     public function requestParams(StyleInterface $io): array
     {
         return [
-            'base_url' => fn () => $io->ask('What is your Shlink instance base URL?'),
-            'api_key' => fn () => $io->ask('What is your Shlink instance API key?'),
+            ShlinkParams::BASE_URL => fn () => $io->ask('What is your Shlink instance base URL?'),
+            ShlinkParams::API_KEY => fn () => $io->ask('What is your Shlink instance API key?'),
             ImportParams::IMPORT_VISITS_PARAM => fn () => $io->confirm(
                 'Do you want to import each short URL\'s visits too?',
+            ),
+            ImportParams::IMPORT_ORPHAN_VISITS_PARAM => fn () => $io->confirm(
+                'Do you want to import orphan visits too?',
             ),
         ];
     }

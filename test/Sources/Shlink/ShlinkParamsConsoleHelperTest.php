@@ -28,9 +28,10 @@ class ShlinkParamsConsoleHelperTest extends TestCase
             ['What is your Shlink instance base URL?', null, null, 'foo.com'],
             ['What is your Shlink instance API key?', null, null, 'abc-123'],
         ]);
-        $this->io->expects($this->once())->method('confirm')->with(
-            'Do you want to import each short URL\'s visits too?',
-        )->willReturn(true);
+        $this->io->expects($this->exactly(2))->method('confirm')->willReturnMap([
+            ['Do you want to import each short URL\'s visits too?', true, true],
+            ['Do you want to import orphan visits too?', true, true],
+        ]);
 
         $result = ParamsUtils::invokeCallbacks($this->helper->requestParams($this->io));
 
@@ -38,6 +39,7 @@ class ShlinkParamsConsoleHelperTest extends TestCase
             'base_url' => 'foo.com',
             'api_key' => 'abc-123',
             'import_visits' => true,
+            'import_orphan_visits' => true,
         ], $result);
     }
 }

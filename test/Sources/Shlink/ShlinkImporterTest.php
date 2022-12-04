@@ -11,10 +11,11 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
-use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkImporter;
+use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkMapper;
 
 use function array_merge;
 use function Functional\contains;
@@ -29,7 +30,7 @@ class ShlinkImporterTest extends TestCase
     public function setUp(): void
     {
         $this->apiConsumer = $this->createMock(RestApiConsumerInterface::class);
-        $this->importer = new ShlinkImporter($this->apiConsumer);
+        $this->importer = new ShlinkImporter($this->apiConsumer, new ShlinkMapper());
     }
 
     /** @test */
@@ -41,7 +42,7 @@ class ShlinkImporterTest extends TestCase
         $this->expectException(ImportException::class);
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
-        [...$this->importer->import(ImportSource::BITLY->toParams())];
+        [...$this->importer->import(ImportSource::SHLINK->toParams())->shlinkUrls];
     }
 
     /**
@@ -114,7 +115,6 @@ class ShlinkImporterTest extends TestCase
             },
         );
 
-        /** @var ImportedShlinkUrl[] $result */
         $result = $this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
             'api_key' => fn () => $apiKey,
             ImportParams::IMPORT_VISITS_PARAM => fn () => $doLoadVisits,
@@ -122,7 +122,7 @@ class ShlinkImporterTest extends TestCase
 
         $urls = [];
         $visits = [];
-        foreach ($result as $url) {
+        foreach ($result->shlinkUrls as $url) {
             $urls[] = $url;
 
             self::assertEquals(ImportSource::SHLINK, $url->source);
@@ -163,6 +163,7 @@ class ShlinkImporterTest extends TestCase
 
         self::assertCount(9, $urls);
         self::assertCount($expectedVisitsCalls * 5, $visits);
+        self::assertEmpty([...$result->orphanVisits]);
     }
 
     public function provideLoadParams(): iterable
@@ -212,6 +213,89 @@ class ShlinkImporterTest extends TestCase
         [...$this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
             'api_key' => fn () => 'foo',
             ImportParams::IMPORT_VISITS_PARAM => fn () => true,
-        ]))];
+        ]))->shlinkUrls];
+    }
+
+    /** @test */
+    public function orphanVisitsAreImportedWhenRequested(): void
+    {
+        $visit1 = [
+            'referer' => 'visit1',
+            'date' => '2020-09-12T11:49:59+02:00',
+            'userAgent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.10',
+            'type' => 'base_url',
+            'visitedUrl' => 'https://doma.in',
+            'visitLocation' => null,
+        ];
+        $visit2 = [
+            'referer' => 'visit2',
+            'date' => '2020-09-12T11:49:59+02:00',
+            'userAgent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.10',
+            'type' => 'regular_not_found',
+            'visitedUrl' => 'https://doma.in/foo/bar/baz',
+            'visitLocation' => [
+                'countryCode' => 'countryCode',
+                'countryName' => 'countryName',
+                'regionName' => 'regionName',
+                'cityName' => 'cityName',
+                'timezone' => 'timezone',
+                'latitude' => 33.33,
+                'longitude' => 44.44,
+            ],
+        ];
+
+        $this->apiConsumer->expects($this->exactly(4))->method('callApi')->willReturnCallback(
+            function (string $url) use ($visit1, $visit2) {
+                if (! str_contains($url, 'orphan')) {
+                    return [
+                        'visits' => ['orphanVisitsCount' => 800],
+                    ];
+                }
+
+                return [
+                    'visits' => [
+                        'data' => [$visit1, $visit2],
+                    ],
+                ];
+            },
+        );
+
+        $result = $this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
+            'api_key' => fn () => 'foo',
+            ImportParams::IMPORT_ORPHAN_VISITS_PARAM => fn () => true,
+        ]));
+        /** @var ImportedShlinkOrphanVisit[] $orphanVisits */
+        $orphanVisits = [...$result->orphanVisits];
+
+        self::assertCount(6, $orphanVisits);
+        foreach ($orphanVisits as $index => $visit) {
+            $isEven = $index % 2 === 0;
+
+            self::assertEquals($isEven ? 'visit2' : 'visit1', $visit->referer);
+            self::assertEquals(
+                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.10',
+                $visit->userAgent,
+            );
+            self::assertEquals($isEven ? 'regular_not_found' : 'base_url', $visit->type);
+            self::assertEquals($isEven ? 'https://doma.in/foo/bar/baz' : 'https://doma.in', $visit->visitedUrl);
+
+            if ($isEven) {
+                self::assertEquals('countryCode', $visit->location?->countryCode);
+                self::assertEquals('countryName', $visit->location?->countryName);
+                self::assertEquals('regionName', $visit->location?->regionName);
+                self::assertEquals('cityName', $visit->location?->cityName);
+                self::assertEquals('timezone', $visit->location?->timezone);
+                self::assertEquals(33.33, $visit->location?->latitude);
+                self::assertEquals(44.44, $visit->location?->longitude);
+            } else {
+                self::assertEmpty($visit->location?->countryCode);
+                self::assertEmpty($visit->location?->countryName);
+                self::assertEmpty($visit->location?->regionName);
+                self::assertEmpty($visit->location?->cityName);
+                self::assertEmpty($visit->location?->timezone);
+                self::assertEquals(0.0, $visit->location?->latitude);
+                self::assertEquals(0.0, $visit->location?->longitude);
+            }
+        }
     }
 }
