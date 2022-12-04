@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Sources\Shlink;
 
 use DateTimeInterface;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
@@ -38,21 +39,36 @@ final class ShlinkMapper implements ShlinkMapperInterface
 
     public function mapVisit(array $visit, DateTimeInterface $fallbackDate): ImportedShlinkVisit
     {
-        $location = ! isset($visit['visitLocation']) ? null : new ImportedShlinkVisitLocation(
-            $visit['visitLocation']['countryCode'] ?? '',
-            $visit['visitLocation']['countryName'] ?? '',
-            $visit['visitLocation']['regionName'] ?? '',
-            $visit['visitLocation']['cityName'] ?? '',
-            $visit['visitLocation']['timezone'] ?? '',
-            $visit['visitLocation']['latitude'] ?? 0.0,
-            $visit['visitLocation']['longitude'] ?? 0.0,
-        );
-
         return new ImportedShlinkVisit(
             $visit['referer'] ?? '',
             $visit['userAgent'] ?? '',
             DateHelper::nullableDateFromAtom($visit['date'] ?? null) ?? $fallbackDate,
-            $location,
+            $this->mapVisitLocation($visit['visitLocation'] ?? null),
+        );
+    }
+
+    public function mapOrphanVisit(array $visit, DateTimeInterface $fallbackDate): ImportedShlinkOrphanVisit
+    {
+        return new ImportedShlinkOrphanVisit(
+            $visit['referer'] ?? '',
+            $visit['userAgent'] ?? '',
+            DateHelper::nullableDateFromAtom($visit['date'] ?? null) ?? $fallbackDate,
+            $visit['visitedUrl'] ?? '',
+            $visit['type'] ?? '',
+            $this->mapVisitLocation($visit['visitLocation'] ?? null),
+        );
+    }
+
+    private function mapVisitLocation(?array $visitLocation): ?ImportedShlinkVisitLocation
+    {
+        return $visitLocation === null ? null : new ImportedShlinkVisitLocation(
+            $visitLocation['countryCode'] ?? '',
+            $visitLocation['countryName'] ?? '',
+            $visitLocation['regionName'] ?? '',
+            $visitLocation['cityName'] ?? '',
+            $visitLocation['timezone'] ?? '',
+            $visitLocation['latitude'] ?? 0.0,
+            $visitLocation['longitude'] ?? 0.0,
         );
     }
 }

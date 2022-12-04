@@ -6,10 +6,12 @@ namespace Shlinkio\Shlink\Importer\Model;
 
 final class ImportResult
 {
+    /**
+     * @param iterable<ImportedShlinkUrl> $shlinkUrls
+     * @param iterable<ImportedShlinkOrphanVisit> $orphanVisits
+     */
     private function __construct(
-        /** @var ImportedShlinkUrl[] $shlinkUrls */
         public readonly iterable $shlinkUrls,
-        /** @var ImportedShlinkOrphanVisit[] $shlinkUrls */
         public readonly iterable $orphanVisits,
     ) {
     }
