@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkImporter;
+use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkMapper;
 
 use function array_merge;
 use function Functional\contains;
@@ -29,7 +30,7 @@ class ShlinkImporterTest extends TestCase
     public function setUp(): void
     {
         $this->apiConsumer = $this->createMock(RestApiConsumerInterface::class);
-        $this->importer = new ShlinkImporter($this->apiConsumer);
+        $this->importer = new ShlinkImporter($this->apiConsumer, new ShlinkMapper());
     }
 
     /** @test */
@@ -41,7 +42,7 @@ class ShlinkImporterTest extends TestCase
         $this->expectException(ImportException::class);
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
-        [...$this->importer->import(ImportSource::BITLY->toParams())];
+        [...$this->importer->import(ImportSource::SHLINK->toParams())];
     }
 
     /**

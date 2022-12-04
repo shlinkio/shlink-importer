@@ -8,19 +8,25 @@ use Shlinkio\Shlink\Importer\Params\ImportParams;
 
 final class ShlinkParams
 {
+    public const BASE_URL = 'base_url';
+    public const API_KEY = 'api_key';
+    public const IMPORT_ORPHAN_VISITS = 'import_orphan_visits';
+
     private function __construct(
         public readonly string $baseUrl,
         public readonly string $apiKey,
         public readonly bool $importVisits,
+        public readonly bool $importOrphanVisits,
     ) {
     }
 
     public static function fromImportParams(ImportParams $params): self
     {
         return new self(
-            $params->extraParam('base_url') ?? '',
-            $params->extraParam('api_key') ?? '',
+            $params->extraParam(self::BASE_URL) ?? '',
+            $params->extraParam(self::API_KEY) ?? '',
             $params->importVisits,
+            $params->extraParam(self::IMPORT_ORPHAN_VISITS) ?? false,
         );
     }
 }

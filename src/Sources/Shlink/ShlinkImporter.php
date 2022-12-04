@@ -12,13 +12,8 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
-use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
-use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
-use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
-use Shlinkio\Shlink\Importer\Util\DateHelper;
 use Throwable;
 
 use function array_reverse;
@@ -34,8 +29,10 @@ class ShlinkImporter implements ImporterStrategyInterface
 
     private DateTimeImmutable $importStartTime;
 
-    public function __construct(private readonly RestApiConsumerInterface $apiConsumer)
-    {
+    public function __construct(
+        private readonly RestApiConsumerInterface $apiConsumer,
+        private readonly ShlinkMapperInterface $mapper,
+    ) {
     }
 
     /**
@@ -93,25 +90,12 @@ class ShlinkImporter implements ImporterStrategyInterface
             // Then, each page's result set gets reversed individually.
             $expectedPages = (int) ceil($visitsCount / self::VISITS_PER_PAGE);
 
-            $meta = new ImportedShlinkUrlMeta(
-                DateHelper::nullableDateFromAtom($url['meta']['validSince'] ?? null),
-                DateHelper::nullableDateFromAtom($url['meta']['validUntil'] ?? null),
-                $url['meta']['maxVisits'] ?? null,
-            );
-
-            return new ImportedShlinkUrl(
-                ImportSource::SHLINK,
-                $url['longUrl'] ?? '',
-                $url['tags'] ?? [],
-                DateHelper::nullableDateFromAtom($url['dateCreated'] ?? null) ?? $this->importStartTime,
-                $domain,
-                $shortCode,
-                $url['title'] ?? null,
+            return $this->mapper->mapShortUrl(
+                $url,
                 $params->importVisits && $expectedPages > 0
                     ? $this->loadVisits($shortCode, $domain, $params, $expectedPages)
                     : [],
-                $visitsCount,
-                $meta,
+                $this->importStartTime,
             );
         });
     }
@@ -141,24 +125,7 @@ class ShlinkImporter implements ImporterStrategyInterface
 
     private function mapVisits(array $visits): array
     {
-        return map($visits, function (array $visit): ImportedShlinkVisit {
-            $location = ! isset($visit['visitLocation']) ? null : new ImportedShlinkVisitLocation(
-                $visit['visitLocation']['countryCode'] ?? '',
-                $visit['visitLocation']['countryName'] ?? '',
-                $visit['visitLocation']['regionName'] ?? '',
-                $visit['visitLocation']['cityName'] ?? '',
-                $visit['visitLocation']['timezone'] ?? '',
-                $visit['visitLocation']['latitude'] ?? 0.0,
-                $visit['visitLocation']['longitude'] ?? 0.0,
-            );
-
-            return new ImportedShlinkVisit(
-                $visit['referer'] ?? '',
-                $visit['userAgent'] ?? '',
-                DateHelper::nullableDateFromAtom($visit['date'] ?? null) ?? $this->importStartTime,
-                $location,
-            );
-        });
+        return map($visits, fn (array $visit) => $this->mapper->mapVisit($visit, $this->importStartTime));
     }
 
     private function shouldContinue(array $pagination): bool
