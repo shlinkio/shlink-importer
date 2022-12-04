@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#30](https://github.com/shlinkio/shlink-importer/issues/30) Added support to import orphan visits from Shlink.
 
 ### Changed
 * Migrated infection config to json5.
