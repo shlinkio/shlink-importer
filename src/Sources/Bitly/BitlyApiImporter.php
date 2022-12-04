@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
+use Shlinkio\Shlink\Importer\Model\ImportResult;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
@@ -31,12 +32,20 @@ class BitlyApiImporter implements ImporterStrategyInterface
     }
 
     /**
+     * @throws ImportException
+     */
+    public function import(ImportParams $importParams): ImportResult
+    {
+        $params = BitlyApiParams::fromImportParams($importParams);
+        return ImportResult::withShortUrls($this->importShortUrls($params));
+    }
+
+    /**
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(ImportParams $importParams): iterable
+    private function importShortUrls(BitlyApiParams $params): iterable
     {
-        $params = BitlyApiParams::fromImportParams($importParams);
         $progressTracker = BitlyApiProgressTracker::initFromParams($params);
         $initialGroup = $progressTracker->initialGroup();
         $initialGroupFound = $initialGroup === null;

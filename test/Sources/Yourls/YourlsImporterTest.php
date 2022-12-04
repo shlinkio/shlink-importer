@@ -45,7 +45,7 @@ class YourlsImporterTest extends TestCase
         $this->expectExceptionMessage($expectedMessage);
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
-        [...$this->importer->import(ImportSource::YOURLS->toParams())];
+        [...$this->importer->import(ImportSource::YOURLS->toParams())->shlinkUrls];
     }
 
     public function provideExceptions(): iterable
@@ -136,7 +136,7 @@ class YourlsImporterTest extends TestCase
             ImportParams::IMPORT_VISITS_PARAM => fn () => $doLoadVisits,
         ]));
 
-        foreach ($result as $urlIndex => $url) {
+        foreach ($result->shlinkUrls as $urlIndex => $url) {
             self::assertEquals('keyword_' . $urlIndex, $url->shortCode);
             self::assertEquals('url_' . $urlIndex, $url->longUrl);
             self::assertEquals('title_' . $urlIndex, $url->title);

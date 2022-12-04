@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
-use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Sources\Kutt\KuttImporter;
@@ -38,7 +37,7 @@ class KuttImporterTest extends TestCase
         $this->expectException(ImportException::class);
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
-        [...$this->importer->import(ImportSource::BITLY->toParams())];
+        [...$this->importer->import(ImportSource::BITLY->toParams())->shlinkUrls];
     }
 
     /**
@@ -82,13 +81,12 @@ class KuttImporterTest extends TestCase
             },
         );
 
-        /** @var ImportedShlinkUrl[] $result */
         $result = $this->importer->import(ImportSource::BITLY->toParamsWithCallableMap([
             'api_key' => static fn () => 'my_api_key',
             'import_all_urls' => static fn () => $loadAll,
         ]));
 
-        foreach ($result as $index => $url) {
+        foreach ($result->shlinkUrls as $index => $url) {
             self::assertEquals(ImportSource::KUTT, $url->source);
 
             if ($index % 2 === 0) {

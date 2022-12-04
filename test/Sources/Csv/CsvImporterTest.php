@@ -35,11 +35,7 @@ class CsvImporterTest extends TestCase
         );
 
         $result = $this->importer->import($options);
-
-        $urls = [];
-        foreach ($result as $item) {
-            $urls[] = $item;
-        }
+        $urls = [...$result->shlinkUrls];
 
         self::assertEquals($expectedList, $urls);
     }

@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
-use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkImporter;
@@ -42,7 +41,7 @@ class ShlinkImporterTest extends TestCase
         $this->expectException(ImportException::class);
 
         // The result is a generator, so we need to iterate it in order to trigger its logic
-        [...$this->importer->import(ImportSource::SHLINK->toParams())];
+        [...$this->importer->import(ImportSource::SHLINK->toParams())->shlinkUrls];
     }
 
     /**
@@ -115,7 +114,6 @@ class ShlinkImporterTest extends TestCase
             },
         );
 
-        /** @var ImportedShlinkUrl[] $result */
         $result = $this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
             'api_key' => fn () => $apiKey,
             ImportParams::IMPORT_VISITS_PARAM => fn () => $doLoadVisits,
@@ -123,7 +121,7 @@ class ShlinkImporterTest extends TestCase
 
         $urls = [];
         $visits = [];
-        foreach ($result as $url) {
+        foreach ($result->shlinkUrls as $url) {
             $urls[] = $url;
 
             self::assertEquals(ImportSource::SHLINK, $url->source);
@@ -213,6 +211,6 @@ class ShlinkImporterTest extends TestCase
         [...$this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
             'api_key' => fn () => 'foo',
             ImportParams::IMPORT_VISITS_PARAM => fn () => true,
-        ]))];
+        ]))->shlinkUrls];
     }
 }

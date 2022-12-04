@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
+use Shlinkio\Shlink\Importer\Model\ImportResult;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
@@ -27,13 +28,22 @@ class KuttImporter implements ImporterStrategyInterface
     }
 
     /**
+     * @throws ImportException
+     */
+    public function import(ImportParams $importParams): ImportResult
+    {
+        $params = KuttParams::fromImportParams($importParams);
+        return ImportResult::withShortUrls($this->importShortUrls($params));
+    }
+
+    /**
      * @return iterable<ImportedShlinkUrl>
      * @throws ImportException
      */
-    public function import(ImportParams $importParams): iterable
+    private function importShortUrls(KuttParams $params): iterable
     {
         try {
-            yield from $this->loadUrls(KuttParams::fromImportParams($importParams));
+            yield from $this->loadUrls($params);
         } catch (Throwable $e) {
             throw ImportException::fromError($e);
         }

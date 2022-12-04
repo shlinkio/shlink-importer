@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
+use Shlinkio\Shlink\Importer\Model\ImportResult;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManagerInterface;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
@@ -83,10 +84,12 @@ class ImportCommandTest extends TestCase
         $this->paramsHelper->expects($this->once())->method('requestParams')->with(
             $this->isInstanceOf(StyleInterface::class),
         )->willReturn([]);
-        $this->importerStrategy->expects($this->once())->method('import')->with($params)->willReturn([]);
+        $this->importerStrategy->expects($this->once())->method('import')->with($params)->willReturn(
+            ImportResult::emptyInstance(),
+        );
         $this->importedLinksProcessor->expects($this->once())->method('process')->with(
             $this->isInstanceOf(StyleInterface::class),
-            [],
+            ImportResult::emptyInstance(),
             $params,
         );
         $this->importerStrategyManager->expects($this->once())->method('get')->with($source);
