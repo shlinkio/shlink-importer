@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Importer\Model;
 use DateTimeInterface;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
-class ImportedShlinkUrl
+final class ImportedShlinkUrl
 {
     /**
      * @param iterable<ImportedShlinkVisit> $visits

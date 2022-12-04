@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Model;
 
-class ImportedShlinkVisitLocation
+final class ImportedShlinkVisitLocation
 {
     public function __construct(
         public readonly string $countryCode,

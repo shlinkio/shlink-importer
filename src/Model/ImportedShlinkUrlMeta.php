@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Importer\Model;
 
 use DateTimeInterface;
 
-class ImportedShlinkUrlMeta
+final class ImportedShlinkUrlMeta
 {
     public function __construct(
         public readonly ?DateTimeInterface $validSince = null,

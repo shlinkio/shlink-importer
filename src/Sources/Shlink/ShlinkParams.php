@@ -10,7 +10,6 @@ final class ShlinkParams
 {
     public const BASE_URL = 'base_url';
     public const API_KEY = 'api_key';
-    public const IMPORT_ORPHAN_VISITS = 'import_orphan_visits';
 
     private function __construct(
         public readonly string $baseUrl,
@@ -26,7 +25,7 @@ final class ShlinkParams
             $params->extraParam(self::BASE_URL) ?? '',
             $params->extraParam(self::API_KEY) ?? '',
             $params->importVisits,
-            $params->extraParam(self::IMPORT_ORPHAN_VISITS) ?? false,
+            $params->importOrphanVisits,
         );
     }
 }
