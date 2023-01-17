@@ -224,7 +224,7 @@ class ShlinkImporterTest extends TestCase
             'date' => '2020-09-12T11:49:59+02:00',
             'userAgent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.10',
             'type' => 'base_url',
-            'visitedUrl' => 'https://doma.in',
+            'visitedUrl' => 'https://s.test',
             'visitLocation' => null,
         ];
         $visit2 = [
@@ -232,7 +232,7 @@ class ShlinkImporterTest extends TestCase
             'date' => '2020-09-12T11:49:59+02:00',
             'userAgent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.10',
             'type' => 'regular_not_found',
-            'visitedUrl' => 'https://doma.in/foo/bar/baz',
+            'visitedUrl' => 'https://s.test/foo/bar/baz',
             'visitLocation' => [
                 'countryCode' => 'countryCode',
                 'countryName' => 'countryName',
@@ -277,7 +277,7 @@ class ShlinkImporterTest extends TestCase
                 $visit->userAgent,
             );
             self::assertEquals($isEven ? 'regular_not_found' : 'base_url', $visit->type);
-            self::assertEquals($isEven ? 'https://doma.in/foo/bar/baz' : 'https://doma.in', $visit->visitedUrl);
+            self::assertEquals($isEven ? 'https://s.test/foo/bar/baz' : 'https://s.test', $visit->visitedUrl);
 
             if ($isEven) {
                 self::assertEquals('countryCode', $visit->location?->countryCode);
