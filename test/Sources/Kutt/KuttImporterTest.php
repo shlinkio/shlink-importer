@@ -65,7 +65,7 @@ class KuttImporterTest extends TestCase
                             'visit_count' => 3,
                             'target' => 'https://longurl.com',
                             'created_at' => '2022-04-14T08:28:57.155Z',
-                            'domain' => 'doma.in',
+                            'domain' => 's.test',
                             'address' => 'short-code',
                             'expire_in' => '2023-04-16T00:00:00.000Z',
                         ],
@@ -92,7 +92,7 @@ class KuttImporterTest extends TestCase
             if ($index % 2 === 0) {
                 self::assertEquals(3, $url->visitsCount);
                 self::assertEquals('https://longurl.com', $url->longUrl);
-                self::assertEquals('doma.in', $url->domain);
+                self::assertEquals('s.test', $url->domain);
                 self::assertEquals(new DateTimeImmutable('2022-04-14T08:28:57.155Z'), $url->createdAt);
                 self::assertEquals('short-code', $url->shortCode);
                 self::assertNull($url->title);
