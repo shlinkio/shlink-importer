@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Kutt;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Params\ParamsUtils;
@@ -21,7 +22,7 @@ class KuttParamsConsoleHelperTest extends TestCase
         $this->paramsHelper = new KuttParamsConsoleHelper();
     }
 
-    /** @test */
+    #[Test]
     public function expectedQuestionsAreAsked(): void
     {
         $this->io->expects($this->exactly(2))->method('ask')->willReturnMap([

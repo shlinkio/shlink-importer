@@ -8,6 +8,8 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use JsonException;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
@@ -30,10 +32,7 @@ class RestApiConsumerTest extends TestCase
         $this->apiConsumer = new RestApiConsumer($this->httpClient, $this->requestFactory);
     }
 
-    /**
-     * @test
-     * @dataProvider provideFailureStatuses
-     */
+    #[Test, DataProvider('provideFailureStatuses')]
     public function exceptionIsThrownWhenRequestReturnsNonSuccessfulResponse(int $status): void
     {
         $req = new Request('GET', '');
@@ -57,7 +56,7 @@ class RestApiConsumerTest extends TestCase
         yield '504' => [504];
     }
 
-    /** @test */
+    #[Test]
     public function exceptionIsThrownIfResponseBodyIsNotValidJson(): void
     {
         $req = new Request('GET', '');
@@ -71,7 +70,7 @@ class RestApiConsumerTest extends TestCase
         $this->apiConsumer->callApi('/foo/bar');
     }
 
-    /** @test */
+    #[Test]
     public function responseBodyIsParsedWhenProperJsonIsReturned(): void
     {
         $req = new Request('GET', '');

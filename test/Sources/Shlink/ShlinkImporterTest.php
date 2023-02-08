@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Shlink;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -33,7 +35,7 @@ class ShlinkImporterTest extends TestCase
         $this->importer = new ShlinkImporter($this->apiConsumer, new ShlinkMapper());
     }
 
-    /** @test */
+    #[Test]
     public function exceptionsThrownByApiConsumerAreWrapped(): void
     {
         $e = new RuntimeException('Error');
@@ -45,10 +47,7 @@ class ShlinkImporterTest extends TestCase
         [...$this->importer->import(ImportSource::SHLINK->toParams())->shlinkUrls];
     }
 
-    /**
-     * @test
-     * @dataProvider provideLoadParams
-     */
+    #[Test, DataProvider('provideLoadParams')]
     public function expectedAmountOfCallsIsPerformedBasedOnPaginationResults(
         bool $doLoadVisits,
         int $expectedVisitsCalls,
@@ -172,7 +171,7 @@ class ShlinkImporterTest extends TestCase
         yield 'no visits loaded' => [false, 0];
     }
 
-    /** @test */
+    #[Test]
     public function noVisitsApiCallsArePerformedForShortUrlsWithoutVisits(): void
     {
         $shortUrl = [
@@ -216,7 +215,7 @@ class ShlinkImporterTest extends TestCase
         ]))->shlinkUrls];
     }
 
-    /** @test */
+    #[Test]
     public function orphanVisitsAreImportedWhenRequested(): void
     {
         $visit1 = [

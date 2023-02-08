@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use DateInterval;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiProgressTracker;
@@ -15,7 +16,7 @@ use function base64_encode;
 
 class BitlyApiProgressTrackerTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function expectedContinueTokenIsGenerated(): void
     {
         $tracker = BitlyApiProgressTracker::initFromParams(BitlyApiParams::fromImportParams(
@@ -34,7 +35,7 @@ class BitlyApiProgressTrackerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function initializesWithProvidedToken(): void
     {
         $tracker = BitlyApiProgressTracker::initFromParams(BitlyApiParams::fromImportParams(

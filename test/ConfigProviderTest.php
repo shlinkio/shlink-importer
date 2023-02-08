@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Importer;
 
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\ConfigProvider;
 
@@ -17,7 +18,7 @@ class ConfigProviderTest extends TestCase
         $this->provider = new ConfigProvider();
     }
 
-    /** @test */
+    #[Test]
     public function configIsReturnedAsExpected(): void
     {
         $config = ($this->provider)();

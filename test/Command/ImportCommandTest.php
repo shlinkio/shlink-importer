@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Command;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -64,7 +66,7 @@ class ImportCommandTest extends TestCase
         putenv('COLUMNS');
     }
 
-    /** @test */
+    #[Test]
     public function exceptionIsThrownWhenInvalidSourceIsProvided(): void
     {
         $this->expectException(InvalidSourceException::class);
@@ -72,10 +74,7 @@ class ImportCommandTest extends TestCase
         $this->commandTester->execute(['source' => 'invalid']);
     }
 
-    /**
-     * @test
-     * @dataProvider provideSource
-     */
+    #[Test, DataProvider('provideSource')]
     public function dependenciesAreInvokedAsExpected(?string $providedSource, bool $expectSourceQuestion): void
     {
         $source = $providedSource ?? ImportSource::BITLY->value;
@@ -115,10 +114,7 @@ class ImportCommandTest extends TestCase
         yield 'not provided source' => [null, true];
     }
 
-    /**
-     * @test
-     * @dataProvider provideImportExceptions
-     */
+    #[Test, DataProvider('provideImportExceptions')]
     public function importErrorsAreProperlyHandled(
         ImportException $e,
         int $verbosity,

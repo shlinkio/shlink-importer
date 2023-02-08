@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Csv;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Params\ParamsUtils;
@@ -22,7 +24,7 @@ class CsvParamsConsoleHelperTest extends TestCase
         $this->io = $this->createMock(StyleInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function requestsParams(): void
     {
         $this->io->expects($this->once())->method('ask')->willReturn('stream');
@@ -36,10 +38,7 @@ class CsvParamsConsoleHelperTest extends TestCase
         ], $result);
     }
 
-    /**
-     * @test
-     * @dataProvider provideEmptyStreamValues
-     */
+    #[Test, DataProvider('provideEmptyStreamValues')]
     public function pathToStreamThrowsExceptionWithInvalidValue(?string $value, string $expectedMessage): void
     {
         $this->expectException(InvalidPathException::class);
@@ -58,7 +57,7 @@ class CsvParamsConsoleHelperTest extends TestCase
         ];
     }
 
-    /** @test */
+    #[Test]
     public function pathIsProperlyParsedToStream(): void
     {
         $result = $this->helper->pathToStream(__FILE__);

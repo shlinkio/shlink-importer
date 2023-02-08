@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Yourls;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -31,9 +33,8 @@ class YourlsImporterTest extends TestCase
 
     /**
      * @param class-string<Throwable> $expectedException
-     * @test
-     * @dataProvider provideExceptions
      */
+    #[Test, DataProvider('provideExceptions')]
     public function exceptionsThrownByApiConsumerAreWrapped(
         Throwable $e,
         string $expectedException,
@@ -69,10 +70,7 @@ class YourlsImporterTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideLoadParams
-     */
+    #[Test, DataProvider('provideLoadParams')]
     public function linksAndVisitsAreLoadedFromYourls(bool $doLoadVisits, int $expectedVisitsCallas): void
     {
         $this->apiConsumer->expects($this->exactly($expectedVisitsCallas + 1))->method('callApi')->willReturnCallback(

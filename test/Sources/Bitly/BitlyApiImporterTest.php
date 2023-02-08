@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
@@ -31,10 +33,7 @@ class BitlyApiImporterTest extends TestCase
         $this->importer = new BitlyApiImporter($this->apiConsumer);
     }
 
-    /**
-     * @test
-     * @dataProvider provideParams
-     */
+    #[Test, DataProvider('provideParams')]
     public function groupsAndUrlsAreRecursivelyFetched(array $paramsMap, array $expected): void
     {
         $paramsMap['access_token'] = static fn () => 'abc123';
@@ -218,10 +217,7 @@ class BitlyApiImporterTest extends TestCase
         ]];
     }
 
-    /**
-     * @test
-     * @dataProvider provideErrorStatusCodes
-     */
+    #[Test, DataProvider('provideErrorStatusCodes')]
     public function throwsExceptionWhenStatusCodeReturnedByApiIsError(int $statusCode): void
     {
         $this->apiConsumer->expects($this->once())->method('callApi')->willThrowException(

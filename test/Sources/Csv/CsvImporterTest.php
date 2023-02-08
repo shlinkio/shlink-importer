@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Csv;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\Csv\CsvImporter;
@@ -24,10 +26,7 @@ class CsvImporterTest extends TestCase
         $this->importer = new CsvImporter(self::getDate());
     }
 
-    /**
-     * @test
-     * @dataProvider provideCSVs
-     */
+    #[Test, DataProvider('provideCSVs')]
     public function csvIsProperlyImported(string $csv, string $delimiter, array $expectedList): void
     {
         $options = ImportSource::CSV->toParamsWithCallableMap(
