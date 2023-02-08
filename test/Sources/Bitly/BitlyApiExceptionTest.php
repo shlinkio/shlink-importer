@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
 
 class BitlyApiExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideContinueToken
-     */
+    #[Test, DataProvider('provideContinueToken')]
     public function generatesExpectedMessage(?string $continueToken): void
     {
         $e = BitlyApiException::fromInvalidRequest(
@@ -28,7 +27,7 @@ class BitlyApiExceptionTest extends TestCase
         self::assertEquals($continueToken, $e->continueToken);
     }
 
-    public function provideContinueToken(): iterable
+    public static function provideContinueToken(): iterable
     {
         yield 'no token' => [null];
         yield 'some token' => ['foobar'];

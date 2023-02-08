@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Exception;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 
 class ImportExceptionTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function fromErrorCreatesExceptionWithPrevious(): void
     {
         $prev = new RuntimeException('Some error');

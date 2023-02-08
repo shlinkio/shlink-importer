@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Yourls;
 
 use DomainException;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
@@ -14,10 +16,7 @@ use Throwable;
 
 class YourlsMissingPluginExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider providePrevious
-     */
+    #[Test, DataProvider('providePrevious')]
     public function createsExceptionProperly(Throwable $prev): void
     {
         $e = YourlsMissingPluginException::forMissingPlugin($prev);
@@ -32,7 +31,7 @@ class YourlsMissingPluginExceptionTest extends TestCase
         self::assertSame($e->getCode(), $prev->getCode());
     }
 
-    public function providePrevious(): iterable
+    public static function providePrevious(): iterable
     {
         yield [new RuntimeException('', -3)];
         yield [new DomainException('', 33)];

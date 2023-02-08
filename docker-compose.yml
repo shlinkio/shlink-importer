@@ -4,7 +4,8 @@ version: '3'
 services:
   shlink_importer_php:
     container_name: shlink_importer_php
-    image: composer:2
+    build:
+      context: .
     volumes:
       - ./:/app
     extra_hosts:

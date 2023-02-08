@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Http;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 
 class InvalidRequestExceptionTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function exceptionIsCreatedAsExpected(): void
     {
         $url = 'foo.com';

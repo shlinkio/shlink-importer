@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Yourls;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Params\ParamsUtils;
@@ -21,7 +22,7 @@ class YourlsParamsConsoleHelperTest extends TestCase
         $this->io = $this->createMock(StyleInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function expectedQuestionsAreAsked(): void
     {
         $this->io->expects($this->exactly(4))->method('ask')->willReturnMap([

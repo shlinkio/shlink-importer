@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Params\ParamsUtils;
@@ -23,10 +25,7 @@ class BitlyApiParamsConsoleHelperTest extends TestCase
         $this->io = $this->createMock(StyleInterface::class);
     }
 
-    /**
-     * @test
-     * @dataProvider provideResponses
-     */
+    #[Test, DataProvider('provideResponses')]
     public function generatesExpectedParams(array $askResponses, array $confirmResponses, array $expected): void
     {
         $this->io->expects($this->exactly(count($askResponses)))->method('ask')->willReturnOnConsecutiveCalls(
@@ -42,7 +41,7 @@ class BitlyApiParamsConsoleHelperTest extends TestCase
         );
     }
 
-    public function provideResponses(): iterable
+    public static function provideResponses(): iterable
     {
         yield [
             ['foobar', null],

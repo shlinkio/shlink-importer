@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Kutt;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -28,7 +30,7 @@ class KuttImporterTest extends TestCase
         $this->importer = new KuttImporter($this->apiConsumer);
     }
 
-    /** @test */
+    #[Test]
     public function exceptionsThrownByApiConsumerAreWrapped(): void
     {
         $e = new RuntimeException('Error');
@@ -40,10 +42,7 @@ class KuttImporterTest extends TestCase
         [...$this->importer->import(ImportSource::BITLY->toParams())->shlinkUrls];
     }
 
-    /**
-     * @test
-     * @dataProvider provideParams
-     */
+    #[Test, DataProvider('provideParams')]
     public function expectedAmountOfCallsIsPerformed(bool $loadAll): void
     {
         $urlsCallNum = 0;
@@ -112,7 +111,7 @@ class KuttImporterTest extends TestCase
         }
     }
 
-    public function provideParams(): iterable
+    public static function provideParams(): iterable
     {
         yield 'all URLs' => [true];
         yield 'not all URLs' => [false];

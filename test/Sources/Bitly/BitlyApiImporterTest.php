@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
@@ -31,10 +33,7 @@ class BitlyApiImporterTest extends TestCase
         $this->importer = new BitlyApiImporter($this->apiConsumer);
     }
 
-    /**
-     * @test
-     * @dataProvider provideParams
-     */
+    #[Test, DataProvider('provideParams')]
     public function groupsAndUrlsAreRecursivelyFetched(array $paramsMap, array $expected): void
     {
         $paramsMap['access_token'] = static fn () => 'abc123';
@@ -108,120 +107,117 @@ class BitlyApiImporterTest extends TestCase
         self::assertEquals($expected, $urls);
     }
 
-    public function provideParams(): iterable
+    public static function provideParams(): iterable
     {
         $source = ImportSource::BITLY;
 
         yield 'default options' => [[], [
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-03-01T00:00:00+0000',
             ), null, 'ccc', 'Cool title'),
-            new ShlinkUrl($source, 'https://github.com', ['bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['bar'], self::createDate(
                 '2020-04-01T00:00:00+0000',
             ), null, 'ddd', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
         ]];
         yield 'ignore archived' => [['ignore_archived' => fn () => true], [
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-03-01T00:00:00+0000',
             ), null, 'ccc', 'Cool title'),
-            new ShlinkUrl($source, 'https://github.com', ['bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['bar'], self::createDate(
                 '2020-04-01T00:00:00+0000',
             ), null, 'ddd', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
         ]];
         yield 'ignore tags' => [['import_tags' => fn () => false], [
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', [], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', [], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-03-01T00:00:00+0000',
             ), null, 'ccc', 'Cool title'),
-            new ShlinkUrl($source, 'https://github.com', [], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', [], self::createDate(
                 '2020-04-01T00:00:00+0000',
             ), null, 'ddd', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', [], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', [], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', [], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', [], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
         ]];
         yield 'import custom domains' => [['import_custom_domains' => fn () => true], [
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-03-01T00:00:00+0000',
             ), null, 'ccc', 'Cool title'),
-            new ShlinkUrl($source, 'https://github.com', ['bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['bar'], self::createDate(
                 '2020-04-01T00:00:00+0000',
             ), 'customdom.com', 'ddd', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
-            new ShlinkUrl($source, 'https://shlink.io', [], $this->createDate(
+            new ShlinkUrl($source, 'https://shlink.io', [], self::createDate(
                 '2020-01-01T00:00:00+0000',
             ), null, 'aaa', null),
-            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], $this->createDate(
+            new ShlinkUrl($source, 'https://github.com', ['foo', 'bar'], self::createDate(
                 '2020-02-01T00:00:00+0000',
             ), null, 'bbb', null),
         ]];
     }
 
-    /**
-     * @test
-     * @dataProvider provideErrorStatusCodes
-     */
+    #[Test, DataProvider('provideErrorStatusCodes')]
     public function throwsExceptionWhenStatusCodeReturnedByApiIsError(int $statusCode): void
     {
         $this->apiConsumer->expects($this->once())->method('callApi')->willThrowException(
@@ -229,8 +225,8 @@ class BitlyApiImporterTest extends TestCase
         );
 
         $this->expectException(BitlyApiException::class);
-        $this->expectErrorMessage('Request to Bitly API v4 to URL');
-        $this->expectErrorMessage(sprintf('failed with status code "%s" and body "Error"', $statusCode));
+        $this->expectExceptionMessage('Request to Bitly API v4 to URL');
+        $this->expectExceptionMessage(sprintf('failed with status code "%s" and body "Error"', $statusCode));
 
         // Iteration needed to trigger generator code
         [...$this->importer->import(
@@ -238,7 +234,7 @@ class BitlyApiImporterTest extends TestCase
         )->shlinkUrls];
     }
 
-    public function provideErrorStatusCodes(): iterable
+    public static function provideErrorStatusCodes(): iterable
     {
         yield '400' => [400];
         yield '401' => [401];
@@ -247,7 +243,7 @@ class BitlyApiImporterTest extends TestCase
         yield '500' => [500];
     }
 
-    private function createDate(string $date): DateTimeInterface
+    private static function createDate(string $date): DateTimeInterface
     {
         return DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $date); // @phpstan-ignore-line
     }

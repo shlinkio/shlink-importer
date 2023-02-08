@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Exception;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 
 class InvalidSourceExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideInvalidSources
-     */
+    #[Test, DataProvider('provideInvalidSources')]
     public function expectedMessageIsGenerated(string $source, string $expectedMessage): void
     {
         $e = InvalidSourceException::fromInvalidSource($source);
         self::assertEquals($expectedMessage, $e->getMessage());
     }
 
-    public function provideInvalidSources(): iterable
+    public static function provideInvalidSources(): iterable
     {
         yield 'foo' => [
             'foo',

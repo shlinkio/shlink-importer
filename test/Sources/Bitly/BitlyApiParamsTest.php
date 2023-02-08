@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiParams;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
 class BitlyApiParamsTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideRawParams
-     */
+    #[Test, DataProvider('provideRawParams')]
     public function rawParamsAreProperlyParsed(array $rawParams, callable $runAssertions): void
     {
         $params = BitlyApiParams::fromImportParams(ImportSource::BITLY->toParamsWithCallableMap($rawParams));
         $runAssertions($params);
     }
 
-    public function provideRawParams(): iterable
+    public static function provideRawParams(): iterable
     {
         yield [[
             'access_token' => fn () => 'token',
