@@ -28,7 +28,7 @@ class BitlyApiExceptionTest extends TestCase
         self::assertEquals($continueToken, $e->continueToken);
     }
 
-    public function provideContinueToken(): iterable
+    public static function provideContinueToken(): iterable
     {
         yield 'no token' => [null];
         yield 'some token' => ['foobar'];

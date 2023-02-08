@@ -109,7 +109,7 @@ class ImportCommandTest extends TestCase
         }
     }
 
-    public function provideSource(): iterable
+    public static function provideSource(): iterable
     {
         yield 'provided source' => [ImportSource::BITLY->value, false];
         yield 'not provided source' => [null, true];
@@ -148,7 +148,7 @@ class ImportCommandTest extends TestCase
         }
     }
 
-    public function provideImportExceptions(): iterable
+    public static function provideImportExceptions(): iterable
     {
         yield 'no continue token, no verbose' => [
             ImportException::fromError(new RuntimeException('')),

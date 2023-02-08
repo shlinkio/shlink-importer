@@ -19,7 +19,7 @@ class InvalidSourceExceptionTest extends TestCase
         self::assertEquals($expectedMessage, $e->getMessage());
     }
 
-    public function provideInvalidSources(): iterable
+    public static function provideInvalidSources(): iterable
     {
         yield 'foo' => [
             'foo',

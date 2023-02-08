@@ -20,7 +20,7 @@ class BitlyApiParamsTest extends TestCase
         $runAssertions($params);
     }
 
-    public function provideRawParams(): iterable
+    public static function provideRawParams(): iterable
     {
         yield [[
             'access_token' => fn () => 'token',

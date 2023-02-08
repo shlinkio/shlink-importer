@@ -41,12 +41,12 @@ class RestApiConsumerTest extends TestCase
         $this->httpClient->expects($this->once())->method('sendRequest')->with($req)->willReturn(new Response($status));
 
         $this->expectException(InvalidRequestException::class);
-        $this->expectDeprecationMessage('Request to /foo/bar failed with status code ' . $status);
+        $this->expectExceptionMessage('Request to /foo/bar failed with status code ' . $status);
 
         $this->apiConsumer->callApi('/foo/bar');
     }
 
-    public function provideFailureStatuses(): iterable
+    public static function provideFailureStatuses(): iterable
     {
         yield '400' => [400];
         yield '401' => [401];

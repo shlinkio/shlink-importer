@@ -48,7 +48,7 @@ class YourlsImporterTest extends TestCase
         [...$this->importer->import(ImportSource::YOURLS->toParams())->shlinkUrls];
     }
 
-    public function provideExceptions(): iterable
+    public static function provideExceptions(): iterable
     {
         yield 'unknown exception' => [
             new RuntimeException('Error'),
@@ -158,7 +158,7 @@ class YourlsImporterTest extends TestCase
         }
     }
 
-    public function provideLoadParams(): iterable
+    public static function provideLoadParams(): iterable
     {
         yield 'visits loaded' => [true, 2];
         yield 'no visits loaded' => [false, 0];

@@ -32,7 +32,7 @@ class YourlsMissingPluginExceptionTest extends TestCase
         self::assertSame($e->getCode(), $prev->getCode());
     }
 
-    public function providePrevious(): iterable
+    public static function providePrevious(): iterable
     {
         yield [new RuntimeException('', -3)];
         yield [new DomainException('', 33)];

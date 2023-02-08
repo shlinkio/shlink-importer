@@ -30,7 +30,7 @@ class InvalidPathExceptionTest extends TestCase
         self::assertEquals(sprintf('The file "%s" does not seem to exist. Try another one.', $path), $e->getMessage());
     }
 
-    public function providePaths(): iterable
+    public static function providePaths(): iterable
     {
         yield ['/foo'];
         yield ['/bar'];

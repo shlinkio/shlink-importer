@@ -166,7 +166,7 @@ class ShlinkImporterTest extends TestCase
         self::assertEmpty([...$result->orphanVisits]);
     }
 
-    public function provideLoadParams(): iterable
+    public static function provideLoadParams(): iterable
     {
         yield 'visits loaded' => [true, 9];
         yield 'no visits loaded' => [false, 0];

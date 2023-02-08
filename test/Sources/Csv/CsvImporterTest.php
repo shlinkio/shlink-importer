@@ -21,7 +21,7 @@ class CsvImporterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->importer = new CsvImporter($this->getDate());
+        $this->importer = new CsvImporter(self::getDate());
     }
 
     /**
@@ -40,7 +40,7 @@ class CsvImporterTest extends TestCase
         self::assertEquals($expectedList, $urls);
     }
 
-    public function provideCSVs(): iterable
+    public static function provideCSVs(): iterable
     {
         yield 'comma separator' => [
             <<<CSV
@@ -54,7 +54,7 @@ class CsvImporterTest extends TestCase
                     ImportSource::CSV,
                     'https://shlink.io',
                     ['foo', 'bar', 'baz'],
-                    $this->getDate(),
+                    self::getDate(),
                     null,
                     '123',
                     null,
@@ -63,7 +63,7 @@ class CsvImporterTest extends TestCase
                     ImportSource::CSV,
                     'https://facebook.com',
                     [],
-                    $this->getDate(),
+                    self::getDate(),
                     'example.com',
                     '456',
                     'my title',
@@ -83,7 +83,7 @@ class CsvImporterTest extends TestCase
                     ImportSource::CSV,
                     'https://alejandrocelaya.blog',
                     [],
-                    $this->getDate(),
+                    self::getDate(),
                     null,
                     'abc',
                     null,
@@ -92,7 +92,7 @@ class CsvImporterTest extends TestCase
                     ImportSource::CSV,
                     'https://facebook.com',
                     ['foo', 'baz'],
-                    $this->getDate(),
+                    self::getDate(),
                     'example.com',
                     'def',
                     null,
@@ -101,7 +101,7 @@ class CsvImporterTest extends TestCase
                     ImportSource::CSV,
                     'https://shlink.io/documentation',
                     [],
-                    $this->getDate(),
+                    self::getDate(),
                     'example.com',
                     'ghi',
                     'the title',
@@ -122,7 +122,7 @@ class CsvImporterTest extends TestCase
         return $stream; // @phpstan-ignore-line
     }
 
-    private function getDate(): DateTimeInterface
+    private static function getDate(): DateTimeInterface
     {
         static $date;
         return $date ?? ($date = new DateTimeImmutable());

@@ -42,7 +42,7 @@ class BitlyApiParamsConsoleHelperTest extends TestCase
         );
     }
 
-    public function provideResponses(): iterable
+    public static function provideResponses(): iterable
     {
         yield [
             ['foobar', null],

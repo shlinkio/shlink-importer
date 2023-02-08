@@ -112,7 +112,7 @@ class KuttImporterTest extends TestCase
         }
     }
 
-    public function provideParams(): iterable
+    public static function provideParams(): iterable
     {
         yield 'all URLs' => [true];
         yield 'not all URLs' => [false];

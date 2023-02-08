@@ -48,7 +48,7 @@ class CsvParamsConsoleHelperTest extends TestCase
         $this->helper->pathToStream($value);
     }
 
-    public function provideEmptyStreamValues(): iterable
+    public static function provideEmptyStreamValues(): iterable
     {
         yield 'null' => [null, 'The path of the file is required.'];
         yield 'empty string' => ['', 'The path of the file is required.'];
