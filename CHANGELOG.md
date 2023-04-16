@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * Replaced references to `doma.in` by `s.test`.
-* Migrated to PHPUnit 10.
+* Migrated to PHPUnit 10 and update to 10.1 config format.
 
 ### Deprecated
 * *Nothing*
