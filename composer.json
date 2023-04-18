@@ -18,6 +18,7 @@
         "league/csv": "^9.8",
         "lstrojny/functional-php": "^1.17",
         "shlinkio/shlink-config": "^2.4",
+        "shlinkio/shlink-json": "^1.0",
         "symfony/console": "^6.2"
     },
     "require-dev": {

@@ -9,9 +9,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
-use function json_decode;
-
-use const JSON_THROW_ON_ERROR;
+use function Shlinkio\Shlink\Json\json_decode;
 
 class RestApiConsumer implements RestApiConsumerInterface
 {
@@ -41,6 +39,6 @@ class RestApiConsumer implements RestApiConsumerInterface
             throw InvalidRequestException::fromResponseData($url, $statusCode, $body);
         }
 
-        return json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        return json_decode($body);
     }
 }
