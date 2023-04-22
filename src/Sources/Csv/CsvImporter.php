@@ -15,16 +15,18 @@ use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 
 use function array_filter;
+use function array_key_exists;
 use function explode;
 use function Functional\reduce_left;
+use function parse_url;
+use function str_contains;
 use function str_replace;
 use function strtolower;
+use function substr;
 use function trim;
 
 class CsvImporter implements ImporterStrategyInterface
 {
-    private const TAG_SEPARATOR = '|';
-
     public function __construct(private readonly ?DateTimeInterface $date = null)
     {
     }
@@ -50,15 +52,16 @@ class CsvImporter implements ImporterStrategyInterface
 
         foreach ($csvReader as $record) {
             $record = $this->remapRecordHeaders($record);
+            [$shortCode, $domain] = $this->parseShortCodeAndDomain($record);
 
             yield new ImportedShlinkUrl(
-                ImportSource::CSV,
-                $record['longurl'],
-                $this->parseTags($record),
-                $now,
-                $this->nonEmptyValueOrNull($record, 'domain'),
-                $record['shortcode'],
-                $this->nonEmptyValueOrNull($record, 'title'),
+                source: ImportSource::CSV,
+                longUrl: $record['longurl'],
+                tags: $this->parseTags($record),
+                createdAt: $now,
+                domain: $domain,
+                shortCode: $shortCode,
+                title: $this->nonEmptyValueOrNull($record, 'title'),
             );
         }
     }
@@ -73,23 +76,37 @@ class CsvImporter implements ImporterStrategyInterface
         }, []);
     }
 
+    /**
+     * @return non-empty-string|null
+     */
     private function nonEmptyValueOrNull(array $record, string $key): ?string
     {
-        $value = $record[$key] ?? null;
-        if (empty($value)) {
-            return null;
-        }
-
-        $trimmedValue = trim($value);
-        if (empty($trimmedValue)) {
-            return null;
-        }
-
-        return $trimmedValue;
+        $value = trim($record[$key] ?? '');
+        return empty($value) ? null : $value;
     }
 
     private function parseTags(array $record): array
     {
-        return array_filter(explode(self::TAG_SEPARATOR, $this->nonEmptyValueOrNull($record, 'tags') ?? ''));
+        $rawTags = $this->nonEmptyValueOrNull($record, 'tags') ?? '';
+        $separator = str_contains($rawTags, ',') ? ',' : '|';
+
+        return array_filter(explode($separator, $rawTags));
+    }
+
+    /**
+     * @return array{string, string | null}
+     */
+    private function parseShortCodeAndDomain(array $record): array
+    {
+        $longUrl = $record['shorturl'] ?? '';
+        $parsing = parse_url($longUrl);
+
+        // If shortCode and/or domain were not provided, try to infer them from the short URL
+        return [
+            $record['shortcode'] ?? substr($parsing['path'] ?? '', 1),
+            array_key_exists('domain', $record)
+                ? $this->nonEmptyValueOrNull($record, 'domain')
+                : $parsing['host'] ?? null,
+        ];
     }
 }

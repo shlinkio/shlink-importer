@@ -107,6 +107,60 @@ class CsvImporterTest extends TestCase
                 ),
             ],
         ];
+        yield 'comma separator in tags' => [
+            <<<CSV
+            longURL;tags;domain;short code;Title
+            https://facebook.com;foo,baz;example.com;def;
+            CSV,
+            ';',
+            [
+                new ImportedShlinkUrl(
+                    ImportSource::CSV,
+                    'https://facebook.com',
+                    ['foo', 'baz'],
+                    self::getDate(),
+                    'example.com',
+                    'def',
+                    null,
+                ),
+            ],
+        ];
+        yield 'unknown separator in tags' => [
+            <<<CSV
+            longURL;tags;domain;short code;Title
+            https://facebook.com;foo-baz;example.com;def;
+            CSV,
+            ';',
+            [
+                new ImportedShlinkUrl(
+                    ImportSource::CSV,
+                    'https://facebook.com',
+                    ['foo-baz'],
+                    self::getDate(),
+                    'example.com',
+                    'def',
+                    null,
+                ),
+            ],
+        ];
+        yield 'inferred shortCode and domain' => [
+            <<<CSV
+            longURL;tags;short URL;Title
+            https://facebook.com;foo-baz;https://example.es/inferred-short-code;
+            CSV,
+            ';',
+            [
+                new ImportedShlinkUrl(
+                    ImportSource::CSV,
+                    'https://facebook.com',
+                    ['foo-baz'],
+                    self::getDate(),
+                    'example.es',
+                    'inferred-short-code',
+                    null,
+                ),
+            ],
+        ];
     }
 
     /**

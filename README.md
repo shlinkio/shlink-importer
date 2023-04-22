@@ -47,7 +47,9 @@ It will import short URLs and all their visits. However, it won't be possible to
 
 #### Standard CSV
 
-It parses a CSV file with the `Long URL` and `Short code` columns. It can optionally contain `Domain`, `Title` and `Tags`, being the latter a pipe-separated list of items (`foo|bar|baz`).
+It parses a CSV file with the `Long URL` and `Short code` columns. It can optionally contain `Domain`, `Title` and `Tags`, being the latter a pipe-separated or comma-separated list of items (`foo|bar|baz` or `foo,bar,baz`).
+
+It is also supported that a `Short URL` column is provided, in which case the `Short code` and `Domain` will be inferred from it if not explicitly provided.
 
 Column names can have spaces and have any combination of upper and lowercase.
 
