@@ -32,8 +32,8 @@ class CsvParamsConsoleHelper implements ParamsConsoleHelperInterface
      */
     public function pathToStream(?string $value)
     {
-        $value = $value === null ? null : trim($value);
-        if ($value === null || $value === '') {
+        $value = trim($value ?? '');
+        if ($value === '') {
             throw InvalidPathException::pathNotProvided();
         }
 

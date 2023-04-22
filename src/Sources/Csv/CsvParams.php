@@ -20,8 +20,8 @@ final class CsvParams
     public static function fromImportParams(ImportParams $params): self
     {
         return new self(
-            $params->extraParam('stream') ?? '',
-            $params->extraParam('delimiter') ?? '',
+            stream: $params->extraParam('stream') ?? '',
+            delimiter: $params->extraParam('delimiter') ?? '',
         );
     }
 }
