@@ -17,7 +17,6 @@ use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use function array_filter;
 use function array_key_exists;
 use function explode;
-use function Functional\reduce_left;
 use function parse_url;
 use function str_contains;
 use function str_replace;
@@ -68,12 +67,13 @@ class CsvImporter implements ImporterStrategyInterface
 
     private function remapRecordHeaders(array $record): array
     {
-        return reduce_left($record, static function ($value, string $index, array $c, array $acc) {
+        $normalized = [];
+        foreach ($record as $index => $value) {
             $normalizedKey = strtolower(str_replace(' ', '', $index));
-            $acc[$normalizedKey] = $value;
+            $normalized[$normalizedKey] = $value;
+        }
 
-            return $acc;
-        }, []);
+        return $normalized;
     }
 
     /**

@@ -16,7 +16,6 @@
         "ext-json": "*",
         "laminas/laminas-servicemanager": "^3.22",
         "league/csv": "^9.11",
-        "lstrojny/functional-php": "^1.17",
         "shlinkio/shlink-config": "^2.4",
         "shlinkio/shlink-json": "^1.0",
         "symfony/console": "^6.3"
@@ -59,7 +58,7 @@
         "test": "phpunit --order-by=random --testdox --colors=always",
         "test:ci": "@test --coverage-clover=build/clover.xml --coverage-xml=build/coverage-xml --log-junit=build/junit.xml",
         "test:pretty": "@test --coverage-html build/coverage-html",
-        "infect": "infection --threads=4 --min-msi=75 --log-verbosity=default --only-covered",
+        "infect": "infection --threads=4 --min-msi=80 --log-verbosity=default --only-covered",
         "infect:ci": "@infect --coverage=build --skip-initial-tests",
         "infect:test": [
             "@test:ci",
