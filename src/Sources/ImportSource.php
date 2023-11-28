@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Importer\Sources;
 
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 
-use function Functional\map;
+use function array_map;
 
 enum ImportSource: string
 {
@@ -31,6 +31,6 @@ enum ImportSource: string
 
     public static function values(): array
     {
-        return map(self::cases(), static fn (ImportSource $source) => $source->value);
+        return array_map(static fn (ImportSource $source) => $source->value, self::cases());
     }
 }

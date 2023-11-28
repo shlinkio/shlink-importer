@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelper;
 use Throwable;
 
-use function Functional\map;
+use function array_map;
 use function http_build_query;
 use function sprintf;
 
@@ -64,7 +64,7 @@ class YourlsImporter implements ImporterStrategyInterface
     {
         $result = $this->callYourlsApi(self::LINKS_ACTION, $params);
 
-        yield from map($result, function (array $url) use ($params) {
+        yield from array_map(function (array $url) use ($params) {
             $shortCode = $url['keyword'] ?? '';
 
             return new ImportedShlinkUrl(
@@ -78,14 +78,14 @@ class YourlsImporter implements ImporterStrategyInterface
                 $params->importVisits ? $this->loadVisits($shortCode, $params) : [],
                 (int) ($url['clicks'] ?? 0),
             );
-        });
+        }, $result);
     }
 
     private function loadVisits(string $shortCode, YourlsParams $params): Generator
     {
         $result = $this->callYourlsApi(self::VISITS_ACTION, $params, $shortCode);
 
-        yield from map($result, function (array $visit) {
+        yield from array_map(function (array $visit) {
             $referer = $visit['referrer'] ?? '';
 
             return new ImportedShlinkVisit(
@@ -94,7 +94,7 @@ class YourlsImporter implements ImporterStrategyInterface
                 DateHelper::nullableDateFromFormatWithDefault(self::YOURLS_DATE_FORMAT, $visit['click_time'] ?? null),
                 new ImportedShlinkVisitLocation($visit['country_code'], '', '', '', '', 0.0, 0.0),
             );
-        });
+        }, $result);
     }
 
     private function callYourlsApi(string $action, YourlsParams $params, string $shortCode = ''): array

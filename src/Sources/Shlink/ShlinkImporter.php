@@ -18,9 +18,9 @@ use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Throwable;
 
+use function array_map;
 use function array_reverse;
 use function ceil;
-use function Functional\map;
 use function http_build_query;
 use function sprintf;
 
@@ -101,7 +101,7 @@ class ShlinkImporter implements ImporterStrategyInterface
      */
     private function mapUrls(array $urls, ShlinkParams $params): array
     {
-        return map($urls, function (array $url) use ($params): ImportedShlinkUrl {
+        return array_map(function (array $url) use ($params): ImportedShlinkUrl {
             // Shlink returns visits ordered from newer to older. To keep stats working once imported, we need to
             // reverse them.
             // In order to do that, we calculate the amount of pages we will get, and start from last to first.
@@ -116,7 +116,7 @@ class ShlinkImporter implements ImporterStrategyInterface
                     : [],
                 $this->importStartTime,
             );
-        });
+        }, $urls);
     }
 
     /**
@@ -135,9 +135,9 @@ class ShlinkImporter implements ImporterStrategyInterface
             ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
         );
 
-        yield from array_reverse(map(
-            $parsedBody['visits']['data'] ?? [],
+        yield from array_reverse(array_map(
             fn (array $visit) => $this->mapper->mapVisit($visit, $this->importStartTime),
+            $parsedBody['visits']['data'] ?? [],
         ));
 
         if ($page > 1) {
@@ -189,9 +189,9 @@ class ShlinkImporter implements ImporterStrategyInterface
             ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
         );
 
-        yield from array_reverse(map(
-            $parsedBody['visits']['data'] ?? [],
+        yield from array_reverse(array_map(
             fn (array $visit) => $this->mapper->mapOrphanVisit($visit, $this->importStartTime),
+            $parsedBody['visits']['data'] ?? [],
         ));
 
         if ($page > 1) {

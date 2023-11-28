@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Throwable;
 
-use function Functional\map;
+use function array_map;
 use function http_build_query;
 use function sprintf;
 
@@ -80,7 +80,7 @@ class KuttImporter implements ImporterStrategyInterface
      */
     private function mapUrls(array $urls): array
     {
-        return map($urls, function (array $url): ImportedShlinkUrl {
+        return array_map(function (array $url): ImportedShlinkUrl {
             $visitsCount = $url['visit_count'];
 
             return new ImportedShlinkUrl(
@@ -99,6 +99,6 @@ class KuttImporter implements ImporterStrategyInterface
                     null,
                 ),
             );
-        });
+        }, $urls);
     }
 }

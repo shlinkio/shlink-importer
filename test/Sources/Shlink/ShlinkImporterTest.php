@@ -20,7 +20,7 @@ use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkImporter;
 use Shlinkio\Shlink\Importer\Sources\Shlink\ShlinkMapper;
 
 use function array_merge;
-use function Functional\contains;
+use function in_array;
 use function sprintf;
 use function str_contains;
 
@@ -145,7 +145,7 @@ class ShlinkImporterTest extends TestCase
             foreach ($url->visits as $index => $visit) {
                 $visits[] = $visit;
 
-                self::assertEquals(contains([3, 4], $index) ? 'visit1' : 'visit2', $visit->referer);
+                self::assertEquals(in_array($index, [3, 4], true) ? 'visit1' : 'visit2', $visit->referer);
                 self::assertEquals(
                     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.10',
                     $visit->userAgent,

@@ -17,8 +17,8 @@ use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Util\DateHelper;
 use Throwable;
 
-use function Functional\filter;
-use function Functional\map;
+use function array_filter;
+use function array_map;
 use function is_array;
 use function ltrim;
 use function parse_url;
@@ -93,12 +93,12 @@ class BitlyApiImporter implements ImporterStrategyInterface
             ['links' => $links, 'pagination' => $pagination] = $this->callToBitlyApi($url, $params, $progressTracker);
             $progressTracker->updateLastProcessedGroup($groupId);
 
-            $filteredLinks = filter(
+            $filteredLinks = array_filter(
                 $links,
                 static fn (array $link): bool => isset($link['long_url']) && ! empty($link['long_url']),
             );
 
-            yield from map($filteredLinks, function (array $link) use ($params, $progressTracker): ImportedShlinkUrl {
+            yield from array_map(function (array $link) use ($params, $progressTracker): ImportedShlinkUrl {
                 $hasCreatedDate = isset($link['created_at']);
                 if ($hasCreatedDate) {
                     $progressTracker->updateLastProcessedUrlDate($link['created_at']);
@@ -116,7 +116,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
                 $title = $link['title'] ?? null;
 
                 return new ImportedShlinkUrl(ImportSource::BITLY, $longUrl, $tags, $date, $domain, $shortCode, $title);
-            });
+            }, $filteredLinks);
         } while (! empty($pagination['next']));
     }
 
