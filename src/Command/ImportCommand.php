@@ -68,7 +68,7 @@ class ImportCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $source = ImportSource::from($input->getArgument('source'));
