@@ -32,7 +32,7 @@ final class ShlinkMapper implements ShlinkMapperInterface
             $url['shortCode'],
             $url['title'] ?? null,
             $visits,
-            $url['visitsCount'],
+            $url['visitsCount'] ?? $url['visitsSummary']['total'],
             $meta,
         );
     }
