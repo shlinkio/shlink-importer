@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -58,7 +59,9 @@ class ShlinkImporterTest extends TestCase
             'shortUrl' => 'https://acel.me/rY9zd',
             'longUrl' => 'https://www.alejandrocelaya.com/foo',
             'dateCreated' => '2016-05-02T17:49:53+02:00',
-            'visitsCount' => 48,
+            'visitsSummary' => [
+                'total' => 48,
+            ],
             'tags' => ['bar', 'foo', 'website'],
             'meta' => [
                 'validUntil' => '2020-05-02T17:49:53+02:00',
@@ -216,7 +219,9 @@ class ShlinkImporterTest extends TestCase
     }
 
     #[Test]
-    public function orphanVisitsAreImportedWhenRequested(): void
+    #[TestWith([['orphanVisitsCount' => 800]])]
+    #[TestWith([['orphanVisits' => ['total' => 800]]])]
+    public function orphanVisitsAreImportedWhenRequested(array $visitsOverview): void
     {
         $visit1 = [
             'referer' => 'visit1',
@@ -244,11 +249,9 @@ class ShlinkImporterTest extends TestCase
         ];
 
         $this->apiConsumer->expects($this->exactly(4))->method('callApi')->willReturnCallback(
-            function (string $url) use ($visit1, $visit2) {
+            function (string $url) use ($visit1, $visit2, $visitsOverview) {
                 if (! str_contains($url, 'orphan')) {
-                    return [
-                        'visits' => ['orphanVisitsCount' => 800],
-                    ];
+                    return ['visits' => $visitsOverview];
                 }
 
                 return [

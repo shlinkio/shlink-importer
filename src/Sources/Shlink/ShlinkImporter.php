@@ -106,7 +106,7 @@ class ShlinkImporter implements ImporterStrategyInterface
             // reverse them.
             // In order to do that, we calculate the amount of pages we will get, and start from last to first.
             // Then, each page's result set gets reversed individually.
-            $visitsCount = $url['visitsCount'];
+            $visitsCount = $url['visitsCount'] ?? $url['visitsSummary']['total'];
             $expectedPages = (int) ceil($visitsCount / self::VISITS_PER_PAGE);
 
             return $this->mapper->mapShortUrl(
@@ -176,8 +176,9 @@ class ShlinkImporter implements ImporterStrategyInterface
             $url,
             ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
         );
+        $visits = $parsedBody['visits'] ?? [];
 
-        return (int) ($parsedBody['visits']['orphanVisitsCount'] ?? 0);
+        return (int) ($visits['orphanVisitsCount'] ?? $visits['orphanVisits']['total'] ?? 0);
     }
 
     private function loadOrphanVisits(ShlinkParams $params, int $page): iterable
