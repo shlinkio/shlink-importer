@@ -108,7 +108,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
                 $date = $hasCreatedDate && $params->keepCreationDate
                     ? DateHelper::dateFromAtom($link['created_at'])
                     : clone $progressTracker->startDate();
-                $parsedLink = $this->parseLink($link['link'] ?? '');
+                $parsedLink = $this->parseLink($link['custom_bitlinks'][0] ?? $link['link'] ?? '');
                 $host = $parsedLink['host'] ?? null;
                 $domain = $host !== 'bit.ly' && $params->importCustomDomains ? $host : null;
                 $shortCode = ltrim($parsedLink['path'] ?? '', '/');

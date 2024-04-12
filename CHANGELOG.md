@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [5.3.2] - 2024-04-12
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* Take into consideration `custom_bitlinks` when consuming Bitly API.
+
+  When custom slugs are used, they are returned there, while the `link` field contains an internal random link which is not the one you want to import.
+
+
 ## [5.3.1] - 2024-03-28
 ### Added
 * *Nothing*

@@ -71,6 +71,7 @@ class BitlyApiImporterTest extends TestCase
                             [
                                 'created_at' => '2020-04-01T00:00:00+0000',
                                 'link' => 'http://customdom.com/ddd',
+                                'custom_bitlinks' => [],
                                 'long_url' => 'https://github.com',
                                 'tags' => ['bar'],
                             ],
@@ -90,7 +91,8 @@ class BitlyApiImporterTest extends TestCase
                         ],
                         [
                             'created_at' => '2020-02-01T00:00:00+0000',
-                            'link' => 'http://bit.ly/bbb',
+                            'link' => 'http://bit.ly/this_should_be_ignored',
+                            'custom_bitlinks' => ['http://bit.ly/bbb'],
                             'long_url' => 'https://github.com',
                             'tags' => ['foo', 'bar'],
                         ],
