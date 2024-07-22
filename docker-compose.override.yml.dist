@@ -1,6 +1,3 @@
- 
-version: '3'
-
 services:
   shlink_importer_php:
     user: 1000:1000
