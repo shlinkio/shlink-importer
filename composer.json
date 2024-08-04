@@ -24,7 +24,7 @@
         "guzzlehttp/guzzle": "^7.9",
         "phpstan/phpstan": "^1.11",
         "phpstan/phpstan-phpunit": "^1.4",
-        "phpunit/phpunit": "^11.2",
+        "phpunit/phpunit": "^11.3",
         "psr/http-factory": "^1.1",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.3.0",
@@ -53,7 +53,7 @@
         "cs": "phpcs",
         "cs:fix": "phpcbf",
         "stan": "phpstan analyse",
-        "test": "phpunit --order-by=random --testdox --colors=always",
+        "test": "phpunit --order-by=random --testdox --testdox-summary",
         "test:ci": "@test --coverage-clover=build/clover.xml",
         "test:pretty": "@test --coverage-html=build/coverage-html"
     },

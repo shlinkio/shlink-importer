@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * Update dependencies.
+* Set empty string as escape character for CSVs to avoid deprecation warnings in PHP 8.4
 
 ### Deprecated
 * *Nothing*
