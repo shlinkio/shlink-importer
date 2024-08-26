@@ -49,6 +49,10 @@ class CsvImporter implements ImporterStrategyInterface
         $csvReader = Reader::createFromStream($params->stream)->setDelimiter($params->delimiter)
                                                               ->setHeaderOffset(0);
 
+        // FIXME Workaround for PHP 8.4 deprecation warnings. To remove with league/csv 10
+        //       See https://github.com/thephpleague/csv/issues/532 for details
+        $csvReader->setEscape('');
+
         foreach ($csvReader as $record) {
             $record = $this->remapRecordHeaders($record);
             [$shortCode, $domain] = $this->parseShortCodeAndDomain($record);
