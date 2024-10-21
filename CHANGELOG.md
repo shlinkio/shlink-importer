@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Changed
 * Update dependencies.
 * Set empty string as escape character for CSVs to avoid deprecation warnings in PHP 8.4
+* Switch to xdebug for code coverage reports, as pcov is not marking functions as covered
 
 ### Deprecated
 * *Nothing*
