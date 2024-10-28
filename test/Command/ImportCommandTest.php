@@ -75,7 +75,7 @@ class ImportCommandTest extends TestCase
     }
 
     #[Test, DataProvider('provideSource')]
-    public function dependenciesAreInvokedAsExpected(?string $providedSource, bool $expectSourceQuestion): void
+    public function dependenciesAreInvokedAsExpected(string|null $providedSource, bool $expectSourceQuestion): void
     {
         $source = $providedSource ?? ImportSource::BITLY->value;
         $params = ImportParams::fromSource(ImportSource::from($source));

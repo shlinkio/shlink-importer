@@ -14,7 +14,7 @@ final class BitlyApiParams
         public readonly bool $importCustomDomains,
         public readonly bool $keepCreationDate,
         public readonly bool $ignoreArchived,
-        public readonly ?string $continueToken = null,
+        public readonly string|null $continueToken = null,
     ) {
     }
 

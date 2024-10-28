@@ -14,7 +14,7 @@ final class ImportedShlinkOrphanVisit
         public readonly DateTimeInterface $date,
         public readonly string $visitedUrl,
         public readonly string $type,
-        public readonly ?ImportedShlinkVisitLocation $location,
+        public readonly ImportedShlinkVisitLocation|null $location,
     ) {
     }
 }

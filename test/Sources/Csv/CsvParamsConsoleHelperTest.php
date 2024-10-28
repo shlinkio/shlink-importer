@@ -39,7 +39,7 @@ class CsvParamsConsoleHelperTest extends TestCase
     }
 
     #[Test, DataProvider('provideEmptyStreamValues')]
-    public function pathToStreamThrowsExceptionWithInvalidValue(?string $value, string $expectedMessage): void
+    public function pathToStreamThrowsExceptionWithInvalidValue(string|null $value, string $expectedMessage): void
     {
         $this->expectException(InvalidPathException::class);
         $this->expectExceptionMessage($expectedMessage);

@@ -124,7 +124,7 @@ class ShlinkImporter implements ImporterStrategyInterface
      * @throws JsonException
      * @throws InvalidRequestException
      */
-    private function loadVisits(string $shortCode, ?string $domain, ShlinkParams $params, int $page): Generator
+    private function loadVisits(string $shortCode, string|null $domain, ShlinkParams $params, int $page): Generator
     {
         $queryString = http_build_query(
             ['page' => $page, 'itemsPerPage' => self::VISITS_PER_PAGE, 'domain' => $domain],

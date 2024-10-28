@@ -12,7 +12,7 @@ final class ImportedShlinkVisit
         public readonly string $referer,
         public readonly string $userAgent,
         public readonly DateTimeInterface $date,
-        public readonly ?ImportedShlinkVisitLocation $location,
+        public readonly ImportedShlinkVisitLocation|null $location,
     ) {
     }
 }
