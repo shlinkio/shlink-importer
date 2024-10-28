@@ -17,8 +17,8 @@ final class BitlyApiProgressTracker
 {
     private const SEPARATOR = '__';
 
-    private ?string $lastProcessedGroup = null;
-    private ?string $lastProcessedUrlDate = null;
+    private string|null $lastProcessedGroup = null;
+    private string|null $lastProcessedUrlDate = null;
     private array $originalDecodedTokenParts = [];
     private DateTimeImmutable $startDate;
 
@@ -39,7 +39,7 @@ final class BitlyApiProgressTracker
         return $instance;
     }
 
-    public function initialGroup(): ?string
+    public function initialGroup(): string|null
     {
         return $this->originalDecodedTokenParts[0] ?? null;
     }
@@ -64,7 +64,7 @@ final class BitlyApiProgressTracker
         return $this->startDate;
     }
 
-    public function generateContinueToken(): ?string
+    public function generateContinueToken(): string|null
     {
         if ($this->lastProcessedGroup === null) {
             return null;

@@ -13,7 +13,7 @@ final class YourlsParams
         public readonly string $username,
         public readonly string $password,
         public readonly bool $importVisits,
-        public readonly ?string $domain,
+        public readonly string|null $domain,
     ) {
     }
 

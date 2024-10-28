@@ -11,9 +11,9 @@ class ImportException extends RuntimeException implements ExceptionInterface
 {
     protected function __construct(
         string $message,
-        public readonly ?string $continueToken,
+        public readonly string|null $continueToken,
         int $code = 0,
-        ?Throwable $previous = null,
+        Throwable|null $previous = null,
     ) {
         parent::__construct($message, $code, $previous);
     }

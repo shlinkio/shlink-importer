@@ -11,7 +11,7 @@ use function sprintf;
 
 class BitlyApiException extends ImportException
 {
-    public static function fromInvalidRequest(InvalidRequestException $e, ?string $continueToken = null): self
+    public static function fromInvalidRequest(InvalidRequestException $e, string|null $continueToken = null): self
     {
         return new self(sprintf(
             'Request to Bitly API v4 to URL "%s" failed with status code "%s" and body "%s"',

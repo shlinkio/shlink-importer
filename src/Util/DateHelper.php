@@ -20,7 +20,7 @@ class DateHelper
         return self::dateFromFormat(DateTimeInterface::ATOM, $atomDate);
     }
 
-    public static function nullableDateFromFormatWithDefault(string $format, ?string $date): DateTimeImmutable
+    public static function nullableDateFromFormatWithDefault(string $format, string|null $date): DateTimeImmutable
     {
         if ($date === null) {
             return new DateTimeImmutable();
@@ -29,7 +29,7 @@ class DateHelper
         return self::dateFromFormat($format, $date);
     }
 
-    public static function nullableDateFromAtom(?string $atomDate): ?DateTimeImmutable
+    public static function nullableDateFromAtom(string|null $atomDate): DateTimeImmutable|null
     {
         if ($atomDate === null) {
             return null;

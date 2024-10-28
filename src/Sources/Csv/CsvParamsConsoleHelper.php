@@ -30,7 +30,7 @@ class CsvParamsConsoleHelper implements ParamsConsoleHelperInterface
     /**
      * @return resource
      */
-    public function pathToStream(?string $value)
+    public function pathToStream(string|null $value)
     {
         $value = trim($value ?? '');
         if ($value === '') {

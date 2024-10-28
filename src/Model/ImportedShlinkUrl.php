@@ -17,11 +17,11 @@ final class ImportedShlinkUrl
         public readonly string $longUrl,
         public readonly array $tags,
         public readonly DateTimeInterface $createdAt,
-        public readonly ?string $domain,
+        public readonly string|null $domain,
         public readonly string $shortCode,
-        public readonly ?string $title,
+        public readonly string|null $title,
         public readonly iterable $visits = [],
-        public readonly ?int $visitsCount = null,
+        public readonly int|null $visitsCount = null,
         public ImportedShlinkUrlMeta $meta = new ImportedShlinkUrlMeta(),
     ) {
     }

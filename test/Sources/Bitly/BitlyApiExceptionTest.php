@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Importer\Sources\Bitly\BitlyApiException;
 class BitlyApiExceptionTest extends TestCase
 {
     #[Test, DataProvider('provideContinueToken')]
-    public function generatesExpectedMessage(?string $continueToken): void
+    public function generatesExpectedMessage(string|null $continueToken): void
     {
         $e = BitlyApiException::fromInvalidRequest(
             InvalidRequestException::fromResponseData('something.com', 500, 'Error body'),

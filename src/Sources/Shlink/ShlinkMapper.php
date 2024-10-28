@@ -59,7 +59,7 @@ final class ShlinkMapper implements ShlinkMapperInterface
         );
     }
 
-    private function mapVisitLocation(?array $visitLocation): ?ImportedShlinkVisitLocation
+    private function mapVisitLocation(array|null $visitLocation): ImportedShlinkVisitLocation|null
     {
         return $visitLocation === null ? null : new ImportedShlinkVisitLocation(
             $visitLocation['countryCode'] ?? '',

@@ -26,7 +26,7 @@ use function trim;
 
 class CsvImporter implements ImporterStrategyInterface
 {
-    public function __construct(private readonly ?DateTimeInterface $date = null)
+    public function __construct(private readonly DateTimeInterface|null $date = null)
     {
     }
 
@@ -83,7 +83,7 @@ class CsvImporter implements ImporterStrategyInterface
     /**
      * @return non-empty-string|null
      */
-    private function nonEmptyValueOrNull(array $record, string $key): ?string
+    private function nonEmptyValueOrNull(array $record, string $key): string|null
     {
         $value = trim($record[$key] ?? '');
         return empty($value) ? null : $value;
