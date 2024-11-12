@@ -22,8 +22,8 @@
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.9",
-        "phpstan/phpstan": "^1.11",
-        "phpstan/phpstan-phpunit": "^1.4",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^11.3",
         "psr/http-factory": "^1.1",
         "roave/security-advisories": "dev-master",
