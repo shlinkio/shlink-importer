@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Model;
 
-final class ImportResult
+final readonly class ImportResult
 {
     /**
      * @param iterable<ImportedShlinkUrl> $shlinkUrls
      * @param iterable<ImportedShlinkOrphanVisit> $orphanVisits
      */
     private function __construct(
-        public readonly iterable $shlinkUrls,
-        public readonly iterable $orphanVisits,
+        public iterable $shlinkUrls,
+        public iterable $orphanVisits,
     ) {
     }
 

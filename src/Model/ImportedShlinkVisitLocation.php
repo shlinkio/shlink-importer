@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Model;
 
-final class ImportedShlinkVisitLocation
+final readonly class ImportedShlinkVisitLocation
 {
     public function __construct(
-        public readonly string $countryCode,
-        public readonly string $countryName,
-        public readonly string $regionName,
-        public readonly string $cityName,
-        public readonly string $timezone,
-        public readonly float $latitude,
-        public readonly float $longitude,
+        public string $countryCode,
+        public string $countryName,
+        public string $regionName,
+        public string $cityName,
+        public string $timezone,
+        public float $latitude,
+        public float $longitude,
     ) {
     }
 }
