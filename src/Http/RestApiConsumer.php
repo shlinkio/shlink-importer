@@ -11,12 +11,10 @@ use Psr\Http\Message\RequestFactoryInterface;
 
 use function Shlinkio\Shlink\Json\json_decode;
 
-class RestApiConsumer implements RestApiConsumerInterface
+readonly class RestApiConsumer implements RestApiConsumerInterface
 {
-    public function __construct(
-        private readonly ClientInterface $httpClient,
-        private readonly RequestFactoryInterface $requestFactory,
-    ) {
+    public function __construct(private ClientInterface $httpClient, private RequestFactoryInterface $requestFactory)
+    {
     }
 
     /**

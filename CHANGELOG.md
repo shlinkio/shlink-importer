@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#68](https://github.com/shlinkio/shlink-importer/issues/68) Import redirect rules when importing from Shlink
 
 ### Changed
 * Update shlinkio coding standard to v2.4

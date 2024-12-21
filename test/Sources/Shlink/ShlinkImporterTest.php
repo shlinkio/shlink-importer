@@ -13,6 +13,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
+use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
@@ -85,12 +86,16 @@ class ShlinkImporterTest extends TestCase
         $visit2 = array_merge($visit1, ['referer' => 'visit2']);
 
         $urlsCallNum = 0;
-        $this->apiConsumer->expects($this->exactly($expectedVisitsCalls + 3))->method('callApi')->willReturnCallback(
+        $this->apiConsumer->expects(
+            // 3 extra calls for the 3 pages of short URLs
+            // 9 extra calls for the redirect rules of 3 short URLs times 3 pages
+            $this->exactly($expectedVisitsCalls + 3 + 9),
+        )->method('callApi')->willReturnCallback(
             function (string $url) use (&$urlsCallNum, $shortUrl, $visit1, $visit2): array {
                 if (str_contains($url, 'short-urls?')) {
                     $urlsCallNum++;
 
-                    Assert::assertEquals(sprintf('/rest/v2/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
+                    Assert::assertEquals(sprintf('/rest/v3/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
 
                     return [
                         'shortUrls' => [
@@ -104,11 +109,38 @@ class ShlinkImporterTest extends TestCase
                 }
 
                 if (str_contains($url, 'visits')) {
-                    Assert::assertEquals('/rest/v2/short-urls/rY9zd/visits?page=1&itemsPerPage=300', $url);
+                    Assert::assertEquals('/rest/v3/short-urls/rY9zd/visits?page=1&itemsPerPage=300', $url);
 
                     return [
                         'visits' => [
                             'data' => [$visit1, $visit1, $visit2, $visit2, $visit2],
+                        ],
+                    ];
+                }
+
+                if (str_contains($url, 'redirect-rules?')) {
+                    Assert::assertEquals('/rest/v3/short-urls/rY9zd/redirect-rules?', $url);
+
+                    if ($urlsCallNum === 2) {
+                        throw InvalidRequestException::fromResponseData($url, 404, '');
+                    }
+
+                    if ($urlsCallNum === 3) {
+                        return ['redirectRules' => []];
+                    }
+
+                    return [
+                        'redirectRules' => [
+                            [
+                                'longUrl' => 'https://www.example.com',
+                                'conditions' => [
+                                    [
+                                        'type' => 'query-param',
+                                        'matchValue' => 'foo',
+                                        'matchKey' => 'bar',
+                                    ],
+                                ],
+                            ],
                         ],
                     ];
                 }
@@ -124,6 +156,7 @@ class ShlinkImporterTest extends TestCase
 
         $urls = [];
         $visits = [];
+        $urlIndex = 0;
         foreach ($result->shlinkUrls as $url) {
             $urls[] = $url;
 
@@ -144,6 +177,10 @@ class ShlinkImporterTest extends TestCase
                 $url->meta->validUntil,
             );
             self::assertNull($url->meta->maxVisits);
+
+            // First page of URLs (first 3) include redirect rules
+            self::assertEquals(empty($url->redirectRules), $urlIndex > 2);
+            $urlIndex++;
 
             foreach ($url->visits as $index => $visit) {
                 $visits[] = $visit;
@@ -189,15 +226,22 @@ class ShlinkImporterTest extends TestCase
             'title' => '',
         ];
 
-        $this->apiConsumer->expects($this->exactly(3))->method('callApi')->with(
-            $this->stringContains('short-urls?'),
+        $this->apiConsumer->expects(
+            // 3 extra calls for the 3 pages of short URLs
+            // 9 extra calls for the redirect rules of 3 short URLs times 3 pages
+            $this->exactly(3 + 9),
+        )->method('callApi')->with(
+            $this->stringContains('/short-urls'),
             $this->anything(),
             $this->anything(),
         )->willReturnCallback(
             function (string $url) use (&$urlsCallNum, $shortUrl): array {
-                $urlsCallNum++;
+                if (str_contains($url, 'redirect-rules')) {
+                    return ['redirectRules' => []];
+                }
 
-                Assert::assertEquals(sprintf('/rest/v2/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
+                $urlsCallNum++;
+                Assert::assertEquals(sprintf('/rest/v3/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
 
                 return [
                     'shortUrls' => [

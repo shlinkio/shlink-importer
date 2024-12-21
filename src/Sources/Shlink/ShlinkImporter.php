@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectRule;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportResult;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
@@ -72,7 +73,7 @@ class ShlinkImporter implements ImporterStrategyInterface
     private function loadUrls(ShlinkParams $params, int $page = 1): Generator
     {
         $queryString = http_build_query(['page' => $page, 'itemsPerPage' => self::SHORT_URLS_PER_PAGE]);
-        $url = sprintf('%s/rest/v2/short-urls?%s', $params->baseUrl, $queryString);
+        $url = sprintf('%s/rest/v3/short-urls?%s', $params->baseUrl, $queryString);
         $parsedBody = $this->apiConsumer->callApi(
             $url,
             ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
@@ -114,6 +115,7 @@ class ShlinkImporter implements ImporterStrategyInterface
                 $params->importVisits && $expectedPages > 0
                     ? $this->loadVisits($url['shortCode'], $url['domain'] ?? null, $params, $expectedPages)
                     : [],
+                $this->loadRedirectRules($url['shortCode'], $url['domain'] ?? null, $params),
                 $this->importStartTime,
             );
         }, $urls);
@@ -129,7 +131,7 @@ class ShlinkImporter implements ImporterStrategyInterface
         $queryString = http_build_query(
             ['page' => $page, 'itemsPerPage' => self::VISITS_PER_PAGE, 'domain' => $domain],
         );
-        $url = sprintf('%s/rest/v2/short-urls/%s/visits?%s', $params->baseUrl, $shortCode, $queryString);
+        $url = sprintf('%s/rest/v3/short-urls/%s/visits?%s', $params->baseUrl, $shortCode, $queryString);
         $parsedBody = $this->apiConsumer->callApi(
             $url,
             ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
@@ -142,6 +144,36 @@ class ShlinkImporter implements ImporterStrategyInterface
 
         if ($page > 1) {
             yield from $this->loadVisits($shortCode, $domain, $params, $page - 1);
+        }
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws JsonException
+     * @throws InvalidRequestException
+     * @return ImportedShlinkRedirectRule[]
+     */
+    private function loadRedirectRules(string $shortCode, string|null $domain, ShlinkParams $params): array
+    {
+        $queryString = http_build_query(['domain' => $domain]);
+        $url = sprintf('%s/rest/v3/short-urls/%s/redirect-rules?%s', $params->baseUrl, $shortCode, $queryString);
+
+        try {
+            $parsedBody = $this->apiConsumer->callApi(
+                $url,
+                ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
+            );
+            return array_map(
+                fn (array $redirectRule) => $this->mapper->mapRedirectRule($redirectRule),
+                $parsedBody['redirectRules'] ?? [],
+            );
+        } catch (InvalidRequestException $e) {
+            if ($e->statusCode === 404) {
+                // If consumed instance does not support redirect rules, simply skip it
+                return [];
+            }
+
+            throw $e;
         }
     }
 
@@ -169,9 +201,13 @@ class ShlinkImporter implements ImporterStrategyInterface
         }
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws JsonException
+     */
     private function getOrphanVisitsCount(ShlinkParams $params): int
     {
-        $url = sprintf('%s/rest/v2/visits', $params->baseUrl);
+        $url = sprintf('%s/rest/v3/visits', $params->baseUrl);
         $parsedBody = $this->apiConsumer->callApi(
             $url,
             ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],
@@ -181,10 +217,14 @@ class ShlinkImporter implements ImporterStrategyInterface
         return (int) ($visits['orphanVisitsCount'] ?? $visits['orphanVisits']['total'] ?? 0);
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws JsonException
+     */
     private function loadOrphanVisits(ShlinkParams $params, int $page): iterable
     {
         $queryString = http_build_query(['page' => $page, 'itemsPerPage' => self::VISITS_PER_PAGE]);
-        $url = sprintf('%s/rest/v2/visits/orphan?%s', $params->baseUrl, $queryString);
+        $url = sprintf('%s/rest/v3/visits/orphan?%s', $params->baseUrl, $queryString);
         $parsedBody = $this->apiConsumer->callApi(
             $url,
             ['X-Api-Key' => $params->apiKey, 'Accept' => 'application/json'],

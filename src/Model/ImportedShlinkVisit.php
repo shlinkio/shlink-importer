@@ -6,13 +6,13 @@ namespace Shlinkio\Shlink\Importer\Model;
 
 use DateTimeInterface;
 
-final class ImportedShlinkVisit
+final readonly class ImportedShlinkVisit
 {
     public function __construct(
-        public readonly string $referer,
-        public readonly string $userAgent,
-        public readonly DateTimeInterface $date,
-        public readonly ImportedShlinkVisitLocation|null $location,
+        public string $referer,
+        public string $userAgent,
+        public DateTimeInterface $date,
+        public ImportedShlinkVisitLocation|null $location,
     ) {
     }
 }
