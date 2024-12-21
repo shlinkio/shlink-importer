@@ -7,22 +7,24 @@ namespace Shlinkio\Shlink\Importer\Model;
 use DateTimeInterface;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
-final class ImportedShlinkUrl
+final readonly class ImportedShlinkUrl
 {
     /**
      * @param iterable<ImportedShlinkVisit> $visits
+     * @param ImportedShlinkRedirectRule[] $redirectRules
      */
     public function __construct(
-        public readonly ImportSource $source,
-        public readonly string $longUrl,
-        public readonly array $tags,
-        public readonly DateTimeInterface $createdAt,
-        public readonly string|null $domain,
-        public readonly string $shortCode,
-        public readonly string|null $title,
-        public readonly iterable $visits = [],
-        public readonly int|null $visitsCount = null,
+        public ImportSource $source,
+        public string $longUrl,
+        public array $tags,
+        public DateTimeInterface $createdAt,
+        public string|null $domain,
+        public string $shortCode,
+        public string|null $title,
+        public iterable $visits = [],
+        public int|null $visitsCount = null,
         public ImportedShlinkUrlMeta $meta = new ImportedShlinkUrlMeta(),
+        public array $redirectRules = [],
     ) {
     }
 }
