@@ -90,7 +90,7 @@ class ShlinkImporterTest extends TestCase
                 if (str_contains($url, 'short-urls?')) {
                     $urlsCallNum++;
 
-                    Assert::assertEquals(sprintf('/rest/v2/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
+                    Assert::assertEquals(sprintf('/rest/v3/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
 
                     return [
                         'shortUrls' => [
@@ -104,7 +104,7 @@ class ShlinkImporterTest extends TestCase
                 }
 
                 if (str_contains($url, 'visits')) {
-                    Assert::assertEquals('/rest/v2/short-urls/rY9zd/visits?page=1&itemsPerPage=300', $url);
+                    Assert::assertEquals('/rest/v3/short-urls/rY9zd/visits?page=1&itemsPerPage=300', $url);
 
                     return [
                         'visits' => [
@@ -197,7 +197,7 @@ class ShlinkImporterTest extends TestCase
             function (string $url) use (&$urlsCallNum, $shortUrl): array {
                 $urlsCallNum++;
 
-                Assert::assertEquals(sprintf('/rest/v2/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
+                Assert::assertEquals(sprintf('/rest/v3/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
 
                 return [
                     'shortUrls' => [

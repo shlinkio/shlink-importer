@@ -6,6 +6,8 @@ namespace Shlinkio\Shlink\Importer\Sources\Shlink;
 
 use DateTimeInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectCondition;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectRule;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrlMeta;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
@@ -13,10 +15,19 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Util\DateHelper;
 
+use function array_map;
+
 final class ShlinkMapper implements ShlinkMapperInterface
 {
-    public function mapShortUrl(array $url, iterable $visits, DateTimeInterface $fallbackDate): ImportedShlinkUrl
-    {
+    /**
+     * @inheritDoc
+     */
+    public function mapShortUrl(
+        array $url,
+        iterable $visits,
+        array $redirectRules,
+        DateTimeInterface $fallbackDate,
+    ): ImportedShlinkUrl {
         $meta = new ImportedShlinkUrlMeta(
             DateHelper::nullableDateFromAtom($url['meta']['validSince'] ?? null),
             DateHelper::nullableDateFromAtom($url['meta']['validUntil'] ?? null),
@@ -34,6 +45,7 @@ final class ShlinkMapper implements ShlinkMapperInterface
             visits: $visits,
             visitsCount: $url['visitsCount'] ?? $url['visitsSummary']['total'],
             meta: $meta,
+            redirectRules: $redirectRules,
         );
     }
 
@@ -69,6 +81,26 @@ final class ShlinkMapper implements ShlinkMapperInterface
             timezone: $visitLocation['timezone'] ?? '',
             latitude: $visitLocation['latitude'] ?? 0.0,
             longitude: $visitLocation['longitude'] ?? 0.0,
+        );
+    }
+
+    public function mapRedirectRule(array $redirectRule): ImportedShlinkRedirectRule
+    {
+        return new ImportedShlinkRedirectRule(
+            longUrl: $redirectRule['longUrl'] ?? '',
+            conditions: array_map(
+                fn (array $condition) => $this->mapRedirectCondition($condition),
+                $redirectRule['conditions'] ?? [],
+            ),
+        );
+    }
+
+    private function mapRedirectCondition(array $redirectCondition): ImportedShlinkRedirectCondition
+    {
+        return new ImportedShlinkRedirectCondition(
+            type: $redirectCondition['type'] ?? '',
+            matchValue: $redirectCondition['matchValue'] ?? '',
+            matchKey: $redirectCondition['matchKey'] ?? null,
         );
     }
 }
