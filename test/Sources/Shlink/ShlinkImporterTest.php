@@ -13,6 +13,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
+use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
@@ -117,8 +118,16 @@ class ShlinkImporterTest extends TestCase
                     ];
                 }
 
-                if (str_contains($url, 'redirect-rules?') && $urlsCallNum === 1) {
+                if (str_contains($url, 'redirect-rules?')) {
                     Assert::assertEquals('/rest/v3/short-urls/rY9zd/redirect-rules?', $url);
+
+                    if ($urlsCallNum === 2) {
+                        throw InvalidRequestException::fromResponseData($url, 404, '');
+                    }
+
+                    if ($urlsCallNum === 3) {
+                        return ['redirectRules' => []];
+                    }
 
                     return [
                         'redirectRules' => [
