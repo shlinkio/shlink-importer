@@ -14,21 +14,21 @@
     "require": {
         "php": "^8.2",
         "ext-json": "*",
-        "laminas/laminas-servicemanager": "^4.2 || ^3.22",
-        "league/csv": "^9.16",
-        "shlinkio/shlink-config": "^3.1",
-        "shlinkio/shlink-json": "^1.1",
-        "symfony/console": "^7.1"
+        "laminas/laminas-servicemanager": "^4.3 || ^3.23",
+        "league/csv": "^9.20",
+        "shlinkio/shlink-config": "^3.4",
+        "shlinkio/shlink-json": "^1.2",
+        "symfony/console": "^7.2"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.9",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
-        "phpunit/phpunit": "^11.3",
+        "phpunit/phpunit": "^11.5",
         "psr/http-factory": "^1.1",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.4.0",
-        "symfony/var-dumper": "^7.1"
+        "symfony/var-dumper": "^7.2"
     },
     "suggest": {
         "psr/http-client": "If you want to be able to import URLs from Bit.ly, YOURLS, Kutt.it or another Shlink instance",
