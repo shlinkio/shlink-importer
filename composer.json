@@ -12,7 +12,7 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-json": "*",
         "laminas/laminas-servicemanager": "^4.3 || ^3.23",
         "league/csv": "^9.20",
