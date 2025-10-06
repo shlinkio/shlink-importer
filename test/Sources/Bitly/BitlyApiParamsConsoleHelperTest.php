@@ -25,6 +25,10 @@ class BitlyApiParamsConsoleHelperTest extends TestCase
         $this->io = $this->createMock(StyleInterface::class);
     }
 
+    /**
+     * @param array<int, mixed> $askResponses
+     * @param array<int, mixed> $confirmResponses
+     */
     #[Test, DataProvider('provideResponses')]
     public function generatesExpectedParams(array $askResponses, array $confirmResponses, array $expected): void
     {
