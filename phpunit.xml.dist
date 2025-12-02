@@ -5,6 +5,8 @@
     bootstrap="./vendor/autoload.php"
     colors="true"
     cacheDirectory="build/.phpunit.cache"
+    displayDetailsOnPhpunitDeprecations="true"
+    displayDetailsOnTestsThatTriggerDeprecations="true"
 >
     <testsuites>
         <testsuite name="Config">
