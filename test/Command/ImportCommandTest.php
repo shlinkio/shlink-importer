@@ -56,7 +56,7 @@ class ImportCommandTest extends TestCase
             $this->importedLinksProcessor,
         );
         $app = new Application();
-        $app->add($command);
+        $app->addCommand($command);
 
         $this->commandTester = new CommandTester($command);
     }

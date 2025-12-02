@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* Add support for Symfony 8.0
 
 ### Changed
 * Update to PHPUnit 12
@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Removed
 * Drop support for shlink-config 3.0
+* Drop support for PHP 8.3
 
 ### Fixed
 * *Nothing*

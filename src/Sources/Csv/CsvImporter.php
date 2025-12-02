@@ -46,8 +46,8 @@ class CsvImporter implements ImporterStrategyInterface
     private function importShortUrls(CsvParams $params): iterable
     {
         $now = $this->date ?? new DateTimeImmutable();
-        $csvReader = Reader::createFromStream($params->stream)->setDelimiter($params->delimiter)
-                                                              ->setHeaderOffset(0);
+        $csvReader = Reader::from($params->stream)->setDelimiter($params->delimiter)
+                                                  ->setHeaderOffset(0);
 
         // FIXME Workaround for PHP 8.4 deprecation warnings. To remove with league/csv 10
         //       See https://github.com/thephpleague/csv/issues/532 for details
