@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Command;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,6 +30,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 use function putenv;
 
+#[AllowMockObjectsWithoutExpectations]
 class ImportCommandTest extends TestCase
 {
     private MockObject & ImporterStrategyManagerInterface $importerStrategyManager;
