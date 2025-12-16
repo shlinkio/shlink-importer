@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Csv;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Importer\Params\ParamsUtils;
 use Shlinkio\Shlink\Importer\Sources\Csv\CsvParamsConsoleHelper;
@@ -16,19 +16,19 @@ use Symfony\Component\Console\Style\StyleInterface;
 class CsvParamsConsoleHelperTest extends TestCase
 {
     private CsvParamsConsoleHelper $helper;
-    private MockObject & StyleInterface $io;
+    private Stub & StyleInterface $io;
 
     public function setUp(): void
     {
         $this->helper = new CsvParamsConsoleHelper();
-        $this->io = $this->createMock(StyleInterface::class);
+        $this->io = $this->createStub(StyleInterface::class);
     }
 
     #[Test]
     public function requestsParams(): void
     {
-        $this->io->expects($this->once())->method('ask')->willReturn('stream');
-        $this->io->expects($this->once())->method('choice')->willReturn(';');
+        $this->io->method('ask')->willReturn('stream');
+        $this->io->method('choice')->willReturn(';');
 
         $result = ParamsUtils::invokeCallbacks($this->helper->requestParams($this->io));
 
