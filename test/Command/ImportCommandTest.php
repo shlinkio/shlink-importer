@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Importer\Command\ImportCommand;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
-use Shlinkio\Shlink\Importer\Exception\InvalidSourceException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Model\ImportResult;
@@ -23,6 +22,7 @@ use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyInterface;
 use Shlinkio\Shlink\Importer\Strategy\ImporterStrategyManagerInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -69,8 +69,7 @@ class ImportCommandTest extends TestCase
     #[Test]
     public function exceptionIsThrownWhenInvalidSourceIsProvided(): void
     {
-        $this->expectException(InvalidSourceException::class);
-
+        $this->expectException(InvalidArgumentException::class);
         $this->commandTester->execute(['source' => 'invalid']);
     }
 
@@ -95,7 +94,7 @@ class ImportCommandTest extends TestCase
         $this->consoleHelperManager->expects($this->once())->method('get')->with($source);
 
         if ($expectSourceQuestion) {
-            $this->commandTester->setInputs(['0']);
+            $this->commandTester->setInputs([ImportSource::BITLY->value]);
         }
         $exitCode = $this->commandTester->execute(['source' => $providedSource]);
         $output = $this->commandTester->getDisplay();
