@@ -13,7 +13,6 @@
     ],
     "require": {
         "php": "^8.4",
-        "ext-json": "*",
         "laminas/laminas-servicemanager": "^4.5 || ^3.24",
         "league/csv": "^9.27",
         "shlinkio/shlink-config": "^4.0",

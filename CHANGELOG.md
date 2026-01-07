@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Removed
 * Drop support for shlink-config 3.0
 * Drop support for PHP 8.3
+* Remove explicit dependency in `ext-json`, since it's part of PHP since v8.0
 
 ### Fixed
 * *Nothing*
