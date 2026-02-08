@@ -4,12 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [5.7.0] - 2026-02-08
 ### Added
 * Add support for Symfony 8.0
 
 ### Changed
-* Update to PHPUnit 12
+* Update to PHPUnit 13
 * Convert `ImportCommand` into invokable command.
 
 ### Deprecated
