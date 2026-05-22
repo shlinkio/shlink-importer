@@ -6,6 +6,4 @@ namespace Shlinkio\Shlink\Importer\Params\ConsoleHelper;
 
 use Psr\Container\ContainerInterface;
 
-interface ConsoleHelperManagerInterface extends ContainerInterface
-{
-}
+interface ConsoleHelperManagerInterface extends ContainerInterface {}

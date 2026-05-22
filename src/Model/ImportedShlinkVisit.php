@@ -13,6 +13,5 @@ final readonly class ImportedShlinkVisit
         public string $userAgent,
         public DateTimeInterface $date,
         public ImportedShlinkVisitLocation|null $location,
-    ) {
-    }
+    ) {}
 }

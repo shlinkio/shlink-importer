@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Params\ConsoleHelper;
 
-use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\AbstractSingleInstancePluginManager;
 use Laminas\ServiceManager\Exception\InvalidServiceException;
 
 use function get_debug_type;
 use function sprintf;
 
 /**
- * @extends AbstractPluginManager<ParamsConsoleHelperInterface>
- * @todo Extend from AbstractSingleInstancePluginManager once servicemanager 3 is no longer supported
+ * @extends AbstractSingleInstancePluginManager<ParamsConsoleHelperInterface>
  */
-class ConsoleHelperManager extends AbstractPluginManager implements ConsoleHelperManagerInterface
+class ConsoleHelperManager extends AbstractSingleInstancePluginManager implements ConsoleHelperManagerInterface
 {
     /** @var class-string<ParamsConsoleHelperInterface> */
-    protected $instanceOf = ParamsConsoleHelperInterface::class; // phpcs:ignore
+    protected string $instanceOf = ParamsConsoleHelperInterface::class;
 
     public function validate(mixed $instance): void
     {

@@ -29,7 +29,7 @@ use function str_contains;
 class ShlinkImporterTest extends TestCase
 {
     private ShlinkImporter $importer;
-    private MockObject & RestApiConsumerInterface $apiConsumer;
+    private MockObject&RestApiConsumerInterface $apiConsumer;
 
     public function setUp(): void
     {
@@ -86,72 +86,78 @@ class ShlinkImporterTest extends TestCase
         $visit2 = array_merge($visit1, ['referer' => 'visit2']);
 
         $urlsCallNum = 0;
-        $this->apiConsumer->expects(
-            // 3 extra calls for the 3 pages of short URLs
-            // 9 extra calls for the redirect rules of 3 short URLs times 3 pages
-            $this->exactly($expectedVisitsCalls + 3 + 9),
-        )->method('callApi')->willReturnCallback(
-            function (string $url) use (&$urlsCallNum, $shortUrl, $visit1, $visit2): array {
-                if (str_contains($url, 'short-urls?')) {
-                    $urlsCallNum++;
+        $this->apiConsumer
+            ->expects(
+                // 3 extra calls for the 3 pages of short URLs
+                // 9 extra calls for the redirect rules of 3 short URLs times 3 pages
+                $this->exactly($expectedVisitsCalls + 3 + 9),
+            )
+            ->method('callApi')
+            ->willReturnCallback(
+                static function (string $url) use (&$urlsCallNum, $shortUrl, $visit1, $visit2): array {
+                    if (str_contains($url, 'short-urls?')) {
+                        $urlsCallNum++;
 
-                    Assert::assertEquals(sprintf('/rest/v3/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
+                        Assert::assertEquals(
+                            sprintf('/rest/v3/short-urls?page=%s&itemsPerPage=50', $urlsCallNum),
+                            $url,
+                        );
 
-                    return [
-                        'shortUrls' => [
-                            'data' => [$shortUrl, $shortUrl, $shortUrl],
-                            'pagination' => [
-                                'currentPage' => $urlsCallNum,
-                                'pagesCount' => 3,
+                        return [
+                            'shortUrls' => [
+                                'data' => [$shortUrl, $shortUrl, $shortUrl],
+                                'pagination' => [
+                                    'currentPage' => $urlsCallNum,
+                                    'pagesCount' => 3,
+                                ],
                             ],
-                        ],
-                    ];
-                }
-
-                if (str_contains($url, 'visits')) {
-                    Assert::assertEquals('/rest/v3/short-urls/rY9zd/visits?page=1&itemsPerPage=300', $url);
-
-                    return [
-                        'visits' => [
-                            'data' => [$visit1, $visit1, $visit2, $visit2, $visit2],
-                        ],
-                    ];
-                }
-
-                if (str_contains($url, 'redirect-rules?')) {
-                    Assert::assertEquals('/rest/v3/short-urls/rY9zd/redirect-rules?', $url);
-
-                    if ($urlsCallNum === 2) {
-                        throw InvalidRequestException::fromResponseData($url, 404, '');
+                        ];
                     }
 
-                    if ($urlsCallNum === 3) {
-                        return ['redirectRules' => []];
+                    if (str_contains($url, 'visits')) {
+                        Assert::assertEquals('/rest/v3/short-urls/rY9zd/visits?page=1&itemsPerPage=300', $url);
+
+                        return [
+                            'visits' => [
+                                'data' => [$visit1, $visit1, $visit2, $visit2, $visit2],
+                            ],
+                        ];
                     }
 
-                    return [
-                        'redirectRules' => [
-                            [
-                                'longUrl' => 'https://www.example.com',
-                                'conditions' => [
-                                    [
-                                        'type' => 'query-param',
-                                        'matchValue' => 'foo',
-                                        'matchKey' => 'bar',
+                    if (str_contains($url, 'redirect-rules?')) {
+                        Assert::assertEquals('/rest/v3/short-urls/rY9zd/redirect-rules?', $url);
+
+                        if ($urlsCallNum === 2) {
+                            throw InvalidRequestException::fromResponseData($url, 404, '');
+                        }
+
+                        if ($urlsCallNum === 3) {
+                            return ['redirectRules' => []];
+                        }
+
+                        return [
+                            'redirectRules' => [
+                                [
+                                    'longUrl' => 'https://www.example.com',
+                                    'conditions' => [
+                                        [
+                                            'type' => 'query-param',
+                                            'matchValue' => 'foo',
+                                            'matchKey' => 'bar',
+                                        ],
                                     ],
                                 ],
                             ],
-                        ],
-                    ];
-                }
+                        ];
+                    }
 
-                return [];
-            },
-        );
+                    return [];
+                },
+            );
 
         $result = $this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
-            'api_key' => fn () => $apiKey,
-            ImportParams::IMPORT_VISITS_PARAM => fn () => $doLoadVisits,
+            'api_key' => static fn () => $apiKey,
+            ImportParams::IMPORT_VISITS_PARAM => static fn () => $doLoadVisits,
         ]));
 
         $urls = [];
@@ -226,40 +232,46 @@ class ShlinkImporterTest extends TestCase
             'title' => '',
         ];
 
-        $this->apiConsumer->expects(
-            // 3 extra calls for the 3 pages of short URLs
-            // 9 extra calls for the redirect rules of 3 short URLs times 3 pages
-            $this->exactly(3 + 9),
-        )->method('callApi')->with(
-            $this->stringContains('/short-urls'),
-            $this->anything(),
-            $this->anything(),
-        )->willReturnCallback(
-            function (string $url) use (&$urlsCallNum, $shortUrl): array {
-                if (str_contains($url, 'redirect-rules')) {
-                    return ['redirectRules' => []];
-                }
+        $this->apiConsumer
+            ->expects(
+                // 3 extra calls for the 3 pages of short URLs
+                // 9 extra calls for the redirect rules of 3 short URLs times 3 pages
+                $this->exactly(3 + 9),
+            )
+            ->method('callApi')
+            ->with(
+                $this->stringContains('/short-urls'),
+                $this->anything(),
+                $this->anything(),
+            )
+            ->willReturnCallback(
+                static function (string $url) use (&$urlsCallNum, $shortUrl): array {
+                    if (str_contains($url, 'redirect-rules')) {
+                        return ['redirectRules' => []];
+                    }
 
-                $urlsCallNum++;
-                Assert::assertEquals(sprintf('/rest/v3/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
+                    $urlsCallNum++;
+                    Assert::assertEquals(sprintf('/rest/v3/short-urls?page=%s&itemsPerPage=50', $urlsCallNum), $url);
 
-                return [
-                    'shortUrls' => [
-                        'data' => [$shortUrl, $shortUrl, $shortUrl],
-                        'pagination' => [
-                            'currentPage' => $urlsCallNum,
-                            'pagesCount' => 3,
+                    return [
+                        'shortUrls' => [
+                            'data' => [$shortUrl, $shortUrl, $shortUrl],
+                            'pagination' => [
+                                'currentPage' => $urlsCallNum,
+                                'pagesCount' => 3,
+                            ],
                         ],
-                    ],
-                ];
-            },
-        );
+                    ];
+                },
+            );
 
         // The result needs to be iterated in order to perform the calls
-        [...$this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
-            'api_key' => fn () => 'foo',
-            ImportParams::IMPORT_VISITS_PARAM => fn () => true,
-        ]))->shlinkUrls];
+        [
+            ...$this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
+                'api_key' => static fn () => 'foo',
+                ImportParams::IMPORT_VISITS_PARAM => static fn () => true,
+            ]))->shlinkUrls,
+        ];
     }
 
     #[Test]
@@ -292,30 +304,33 @@ class ShlinkImporterTest extends TestCase
             ],
         ];
 
-        $this->apiConsumer->expects($this->exactly(4))->method('callApi')->willReturnCallback(
-            function (string $url) use ($visit1, $visit2, $visitsOverview) {
-                if (! str_contains($url, 'orphan')) {
-                    return ['visits' => $visitsOverview];
-                }
+        $this->apiConsumer
+            ->expects($this->exactly(4))
+            ->method('callApi')
+            ->willReturnCallback(
+                static function (string $url) use ($visit1, $visit2, $visitsOverview) {
+                    if (!str_contains($url, 'orphan')) {
+                        return ['visits' => $visitsOverview];
+                    }
 
-                return [
-                    'visits' => [
-                        'data' => [$visit1, $visit2],
-                    ],
-                ];
-            },
-        );
+                    return [
+                        'visits' => [
+                            'data' => [$visit1, $visit2],
+                        ],
+                    ];
+                },
+            );
 
         $result = $this->importer->import(ImportSource::SHLINK->toParamsWithCallableMap([
-            'api_key' => fn () => 'foo',
-            ImportParams::IMPORT_ORPHAN_VISITS_PARAM => fn () => true,
+            'api_key' => static fn () => 'foo',
+            ImportParams::IMPORT_ORPHAN_VISITS_PARAM => static fn () => true,
         ]));
         /** @var ImportedShlinkOrphanVisit[] $orphanVisits */
         $orphanVisits = [...$result->orphanVisits];
 
         self::assertCount(6, $orphanVisits);
         foreach ($orphanVisits as $index => $visit) {
-            $isEven = $index % 2 === 0;
+            $isEven = ($index % 2) === 0;
 
             self::assertEquals($isEven ? 'visit2' : 'visit1', $visit->referer);
             self::assertEquals(

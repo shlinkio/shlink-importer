@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\StyleInterface;
 class CsvParamsConsoleHelperTest extends TestCase
 {
     private CsvParamsConsoleHelper $helper;
-    private Stub & StyleInterface $io;
+    private Stub&StyleInterface $io;
 
     public function setUp(): void
     {
@@ -32,10 +32,13 @@ class CsvParamsConsoleHelperTest extends TestCase
 
         $result = ParamsUtils::invokeCallbacks($this->helper->requestParams($this->io));
 
-        self::assertEquals([
-            'stream' => 'stream',
-            'delimiter' => ';',
-        ], $result);
+        self::assertEquals(
+            [
+                'stream' => 'stream',
+                'delimiter' => ';',
+            ],
+            $result,
+        );
     }
 
     #[Test, DataProvider('provideEmptyStreamValues')]

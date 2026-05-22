@@ -12,6 +12,5 @@ final readonly class ImportedShlinkUrlMeta
         public DateTimeInterface|null $validSince = null,
         public DateTimeInterface|null $validUntil = null,
         public int|null $maxVisits = null,
-    ) {
-    }
+    ) {}
 }

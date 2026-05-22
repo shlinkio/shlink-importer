@@ -35,8 +35,7 @@ class ShlinkImporter implements ImporterStrategyInterface
     public function __construct(
         private readonly RestApiConsumerInterface $apiConsumer,
         private readonly ShlinkMapperInterface $mapper,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws ImportException
@@ -102,23 +101,26 @@ class ShlinkImporter implements ImporterStrategyInterface
      */
     private function mapUrls(array $urls, ShlinkParams $params): array
     {
-        return array_map(function (array $url) use ($params): ImportedShlinkUrl {
-            // Shlink returns visits ordered from newer to older. To keep stats working once imported, we need to
-            // reverse them.
-            // In order to do that, we calculate the amount of pages we will get, and start from last to first.
-            // Then, each page's result set gets reversed individually.
-            $visitsCount = $url['visitsCount'] ?? $url['visitsSummary']['total'];
-            $expectedPages = (int) ceil($visitsCount / self::VISITS_PER_PAGE);
+        return array_map(
+            function (array $url) use ($params): ImportedShlinkUrl {
+                // Shlink returns visits ordered from newer to older. To keep stats working once imported, we need to
+                // reverse them.
+                // In order to do that, we calculate the amount of pages we will get, and start from last to first.
+                // Then, each page's result set gets reversed individually.
+                $visitsCount = $url['visitsCount'] ?? $url['visitsSummary']['total'];
+                $expectedPages = (int) ceil($visitsCount / self::VISITS_PER_PAGE);
 
-            return $this->mapper->mapShortUrl(
-                $url,
-                $params->importVisits && $expectedPages > 0
-                    ? $this->loadVisits($url['shortCode'], $url['domain'] ?? null, $params, $expectedPages)
-                    : [],
-                $this->loadRedirectRules($url['shortCode'], $url['domain'] ?? null, $params),
-                $this->importStartTime,
-            );
-        }, $urls);
+                return $this->mapper->mapShortUrl(
+                    $url,
+                    $params->importVisits && $expectedPages > 0
+                        ? $this->loadVisits($url['shortCode'], $url['domain'] ?? null, $params, $expectedPages)
+                        : [],
+                    $this->loadRedirectRules($url['shortCode'], $url['domain'] ?? null, $params),
+                    $this->importStartTime,
+                );
+            },
+            $urls,
+        );
     }
 
     /**
@@ -183,7 +185,7 @@ class ShlinkImporter implements ImporterStrategyInterface
      */
     private function importOrphanVisits(ShlinkParams $params): iterable
     {
-        if (! $params->importOrphanVisits) {
+        if (!$params->importOrphanVisits) {
             return [];
         }
 

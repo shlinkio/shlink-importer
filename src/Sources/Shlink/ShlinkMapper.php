@@ -52,9 +52,9 @@ final class ShlinkMapper implements ShlinkMapperInterface
     public function mapVisit(array $visit, DateTimeInterface $fallbackDate): ImportedShlinkVisit
     {
         return new ImportedShlinkVisit(
-            referer:$visit['referer'] ?? '',
-            userAgent:$visit['userAgent'] ?? '',
-            date:DateHelper::nullableDateFromAtom($visit['date'] ?? null) ?? $fallbackDate,
+            referer: $visit['referer'] ?? '',
+            userAgent: $visit['userAgent'] ?? '',
+            date: DateHelper::nullableDateFromAtom($visit['date'] ?? null) ?? $fallbackDate,
             location: $this->mapVisitLocation($visit['visitLocation'] ?? null),
         );
     }
@@ -73,15 +73,17 @@ final class ShlinkMapper implements ShlinkMapperInterface
 
     private function mapVisitLocation(array|null $visitLocation): ImportedShlinkVisitLocation|null
     {
-        return $visitLocation === null ? null : new ImportedShlinkVisitLocation(
-            countryCode: $visitLocation['countryCode'] ?? '',
-            countryName: $visitLocation['countryName'] ?? '',
-            regionName: $visitLocation['regionName'] ?? '',
-            cityName: $visitLocation['cityName'] ?? '',
-            timezone: $visitLocation['timezone'] ?? '',
-            latitude: $visitLocation['latitude'] ?? 0.0,
-            longitude: $visitLocation['longitude'] ?? 0.0,
-        );
+        return $visitLocation === null
+            ? null
+            : new ImportedShlinkVisitLocation(
+                countryCode: $visitLocation['countryCode'] ?? '',
+                countryName: $visitLocation['countryName'] ?? '',
+                regionName: $visitLocation['regionName'] ?? '',
+                cityName: $visitLocation['cityName'] ?? '',
+                timezone: $visitLocation['timezone'] ?? '',
+                latitude: $visitLocation['latitude'] ?? 0.0,
+                longitude: $visitLocation['longitude'] ?? 0.0,
+            );
     }
 
     public function mapRedirectRule(array $redirectRule): ImportedShlinkRedirectRule
@@ -89,7 +91,7 @@ final class ShlinkMapper implements ShlinkMapperInterface
         return new ImportedShlinkRedirectRule(
             longUrl: $redirectRule['longUrl'] ?? '',
             conditions: array_map(
-                fn (array $condition) => $this->mapRedirectCondition($condition),
+                $this->mapRedirectCondition(...),
                 $redirectRule['conditions'] ?? [],
             ),
         );

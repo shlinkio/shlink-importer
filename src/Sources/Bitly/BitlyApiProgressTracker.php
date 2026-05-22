@@ -35,7 +35,11 @@ final class BitlyApiProgressTracker
             return $instance;
         }
 
-        $instance->originalDecodedTokenParts = explode(self::SEPARATOR, base64_decode($providedContinueToken));
+        // @phpstan-ignore argument.type
+        $instance->originalDecodedTokenParts = explode(self::SEPARATOR, base64_decode(
+            $providedContinueToken,
+            strict: true,
+        ));
         return $instance;
     }
 

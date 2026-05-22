@@ -15,6 +15,5 @@ final readonly class ImportedShlinkOrphanVisit
         public string $visitedUrl,
         public string $type,
         public ImportedShlinkVisitLocation|null $location,
-    ) {
-    }
+    ) {}
 }

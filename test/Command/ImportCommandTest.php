@@ -33,11 +33,11 @@ use function putenv;
 #[AllowMockObjectsWithoutExpectations]
 class ImportCommandTest extends TestCase
 {
-    private MockObject & ImporterStrategyManagerInterface $importerStrategyManager;
-    private MockObject & ConsoleHelperManagerInterface $consoleHelperManager;
-    private MockObject & ImportedLinksProcessorInterface $importedLinksProcessor;
-    private MockObject & ParamsConsoleHelperInterface $paramsHelper;
-    private MockObject & ImporterStrategyInterface $importerStrategy;
+    private MockObject&ImporterStrategyManagerInterface $importerStrategyManager;
+    private MockObject&ConsoleHelperManagerInterface $consoleHelperManager;
+    private MockObject&ImportedLinksProcessorInterface $importedLinksProcessor;
+    private MockObject&ParamsConsoleHelperInterface $paramsHelper;
+    private MockObject&ImporterStrategyInterface $importerStrategy;
     private CommandTester $commandTester;
 
     public function setUp(): void
@@ -81,17 +81,28 @@ class ImportCommandTest extends TestCase
         $source = $providedSource ?? ImportSource::BITLY->value;
         $params = ImportParams::fromSource(ImportSource::from($source));
 
-        $this->paramsHelper->expects($this->once())->method('requestParams')->with(
-            $this->isInstanceOf(StyleInterface::class),
-        )->willReturn([]);
-        $this->importerStrategy->expects($this->once())->method('import')->with($params)->willReturn(
-            ImportResult::emptyInstance(),
-        );
-        $this->importedLinksProcessor->expects($this->once())->method('process')->with(
-            $this->isInstanceOf(StyleInterface::class),
-            ImportResult::emptyInstance(),
-            $params,
-        );
+        $this->paramsHelper
+            ->expects($this->once())
+            ->method('requestParams')
+            ->with(
+                $this->isInstanceOf(StyleInterface::class),
+            )
+            ->willReturn([]);
+        $this->importerStrategy
+            ->expects($this->once())
+            ->method('import')
+            ->with($params)
+            ->willReturn(
+                ImportResult::emptyInstance(),
+            );
+        $this->importedLinksProcessor
+            ->expects($this->once())
+            ->method('process')
+            ->with(
+                $this->isInstanceOf(StyleInterface::class),
+                ImportResult::emptyInstance(),
+                $params,
+            );
         $this->importerStrategyManager->expects($this->once())->method('get')->with($source);
         $this->consoleHelperManager->expects($this->once())->method('get')->with($source);
 
@@ -122,12 +133,20 @@ class ImportCommandTest extends TestCase
         array $expectedOutputs,
         array $notExpectedOutputs,
     ): void {
-        $this->paramsHelper->expects($this->once())->method('requestParams')->with(
-            $this->isInstanceOf(StyleInterface::class),
-        )->willReturn([]);
-        $this->importerStrategy->expects($this->once())->method('import')->with(
-            ImportSource::BITLY->toParams(),
-        )->willThrowException($e);
+        $this->paramsHelper
+            ->expects($this->once())
+            ->method('requestParams')
+            ->with(
+                $this->isInstanceOf(StyleInterface::class),
+            )
+            ->willReturn([]);
+        $this->importerStrategy
+            ->expects($this->once())
+            ->method('import')
+            ->with(
+                ImportSource::BITLY->toParams(),
+            )
+            ->willThrowException($e);
         $this->importedLinksProcessor->expects($this->never())->method('process');
 
         $exitCode = $this->commandTester->execute(
@@ -153,7 +172,7 @@ class ImportCommandTest extends TestCase
             ['[ERROR] An error occurred while importing URLs.'],
             [
                 '[WARNING] Not all URLs were properly imported. Wait a few minutes, and then try executing this '
-                . 'command again, providing',
+                    . 'command again, providing',
                 '"foobar" when the "continue token" is requested. That will ensure already processed URLs are skipped.',
                 '[Shlinkio\Shlink\Importer\Exception\ImportException (-1)]',
             ],
@@ -167,7 +186,7 @@ class ImportCommandTest extends TestCase
             ],
             [
                 '[WARNING] Not all URLs were properly imported. Wait a few minutes, and then try executing this '
-                . 'command again, providing',
+                    . 'command again, providing',
                 '"foobar" when the "continue token" is requested. That will ensure already processed URLs are skipped.',
             ],
         ];
@@ -176,7 +195,7 @@ class ImportCommandTest extends TestCase
             OutputInterface::VERBOSITY_NORMAL,
             [
                 '[WARNING] Not all URLs were properly imported. Wait a few minutes, and then try executing this '
-                . 'command again, providing',
+                    . 'command again, providing',
                 '"foobar" when the "continue token" is requested. That will ensure already processed URLs are skipped.',
             ],
             [
@@ -189,7 +208,7 @@ class ImportCommandTest extends TestCase
             OutputInterface::VERBOSITY_VERBOSE,
             [
                 '[WARNING] Not all URLs were properly imported. Wait a few minutes, and then try executing this '
-                . 'command again, providing',
+                    . 'command again, providing',
                 '"foobar" when the "continue token" is requested. That will ensure already processed URLs are skipped.',
             ],
             ['[ERROR] An error occurred while importing URLs.'],

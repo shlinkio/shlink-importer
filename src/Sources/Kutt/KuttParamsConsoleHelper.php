@@ -15,9 +15,9 @@ class KuttParamsConsoleHelper implements ParamsConsoleHelperInterface
     public function requestParams(StyleInterface $io): array
     {
         return [
-            'base_url' => fn () => $io->ask('What is your Kutt.it instance base URL?'),
-            'api_key' => fn () => $io->ask('What is your Kutt.it instance API key?'),
-            'import_all_urls' => fn () => $io->confirm('Do you want to import URLs created anonymously?', false),
+            'base_url' => static fn () => $io->ask('What is your Kutt.it instance base URL?'),
+            'api_key' => static fn () => $io->ask('What is your Kutt.it instance API key?'),
+            'import_all_urls' => static fn () => $io->confirm('Do you want to import URLs created anonymously?', false),
         ];
     }
 }

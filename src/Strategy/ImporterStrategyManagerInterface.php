@@ -6,6 +6,4 @@ namespace Shlinkio\Shlink\Importer\Strategy;
 
 use Psr\Container\ContainerInterface;
 
-interface ImporterStrategyManagerInterface extends ContainerInterface
-{
-}
+interface ImporterStrategyManagerInterface extends ContainerInterface {}

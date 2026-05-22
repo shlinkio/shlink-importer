@@ -28,9 +28,7 @@ class YourlsImporter implements ImporterStrategyInterface
     private const VISITS_ACTION = 'shlink-link-visits';
     private const YOURLS_DATE_FORMAT = 'Y-m-d H:i:s';
 
-    public function __construct(private readonly RestApiConsumerInterface $apiConsumer)
-    {
-    }
+    public function __construct(private readonly RestApiConsumerInterface $apiConsumer) {}
 
     /**
      * @throws ImportException
@@ -85,7 +83,7 @@ class YourlsImporter implements ImporterStrategyInterface
     {
         $result = $this->callYourlsApi(self::VISITS_ACTION, $params, $shortCode);
 
-        yield from array_map(function (array $visit) {
+        yield from array_map(static function (array $visit) {
             $referer = $visit['referrer'] ?? '';
 
             return new ImportedShlinkVisit(

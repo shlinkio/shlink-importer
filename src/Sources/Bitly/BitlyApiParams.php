@@ -15,8 +15,7 @@ final class BitlyApiParams
         public readonly bool $keepCreationDate,
         public readonly bool $ignoreArchived,
         public readonly string|null $continueToken = null,
-    ) {
-    }
+    ) {}
 
     public static function fromImportParams(ImportParams $params): self
     {

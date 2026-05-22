@@ -16,13 +16,13 @@ class YourlsParamsConsoleHelper implements ParamsConsoleHelperInterface
     public function requestParams(StyleInterface $io): array
     {
         return [
-            'base_url' => fn () => $io->ask('What is your YOURLS instance base URL?'),
-            'username' => fn () => $io->ask('What is your YOURLS instance username?'),
-            'password' => fn () => $io->ask('What is your YOURLS instance password?'),
-            ImportParams::IMPORT_VISITS_PARAM => fn () => $io->confirm(
+            'base_url' => static fn () => $io->ask('What is your YOURLS instance base URL?'),
+            'username' => static fn () => $io->ask('What is your YOURLS instance username?'),
+            'password' => static fn () => $io->ask('What is your YOURLS instance password?'),
+            ImportParams::IMPORT_VISITS_PARAM => static fn () => $io->confirm(
                 'Do you want to import each short URL\'s visits too?',
             ),
-            'domain' => fn () => $io->ask(
+            'domain' => static fn () => $io->ask(
                 'To what domain do you want the URLs to be linked? (leave empty to link them to default domain)',
             ),
         ];

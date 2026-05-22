@@ -13,8 +13,7 @@ final readonly class ImportResult
     private function __construct(
         public iterable $shlinkUrls,
         public iterable $orphanVisits,
-    ) {
-    }
+    ) {}
 
     public static function emptyInstance(): self
     {

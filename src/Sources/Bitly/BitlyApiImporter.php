@@ -27,9 +27,7 @@ use function str_starts_with;
 
 class BitlyApiImporter implements ImporterStrategyInterface
 {
-    public function __construct(private readonly RestApiConsumerInterface $apiConsumer)
-    {
-    }
+    public function __construct(private readonly RestApiConsumerInterface $apiConsumer) {}
 
     /**
      * @throws ImportException
@@ -56,7 +54,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
             foreach ($groups as ['guid' => $groupId]) {
                 // Skip groups until the initial one is found
                 $initialGroupFound = $initialGroupFound || $groupId === $initialGroup;
-                if (! $initialGroupFound) {
+                if (!$initialGroupFound) {
                     continue;
                 }
 
@@ -95,7 +93,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
 
             $filteredLinks = array_filter(
                 $links,
-                static fn (array $link): bool => isset($link['long_url']) && ! empty($link['long_url']),
+                static fn (array $link): bool => isset($link['long_url']) && !empty($link['long_url']),
             );
 
             yield from array_map(function (array $link) use ($params, $progressTracker): ImportedShlinkUrl {
@@ -117,7 +115,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
 
                 return new ImportedShlinkUrl(ImportSource::BITLY, $longUrl, $tags, $date, $domain, $shortCode, $title);
             }, $filteredLinks);
-        } while (! empty($pagination['next']));
+        } while (!empty($pagination['next']));
     }
 
     /**

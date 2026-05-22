@@ -25,6 +25,5 @@ final readonly class ImportedShlinkUrl
         public int|null $visitsCount = null,
         public ImportedShlinkUrlMeta $meta = new ImportedShlinkUrlMeta(),
         public array $redirectRules = [],
-    ) {
-    }
+    ) {}
 }

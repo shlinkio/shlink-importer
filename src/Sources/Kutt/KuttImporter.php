@@ -23,9 +23,7 @@ class KuttImporter implements ImporterStrategyInterface
 {
     private const SHORT_URLS_PER_PAGE = 50;
 
-    public function __construct(private readonly RestApiConsumerInterface $apiConsumer)
-    {
-    }
+    public function __construct(private readonly RestApiConsumerInterface $apiConsumer) {}
 
     /**
      * @throws ImportException
@@ -80,25 +78,28 @@ class KuttImporter implements ImporterStrategyInterface
      */
     private function mapUrls(array $urls): array
     {
-        return array_map(function (array $url): ImportedShlinkUrl {
-            $visitsCount = $url['visit_count'];
+        return array_map(
+            static function (array $url): ImportedShlinkUrl {
+                $visitsCount = $url['visit_count'];
 
-            return new ImportedShlinkUrl(
-                ImportSource::KUTT,
-                $url['target'],
-                [],
-                new DateTimeImmutable($url['created_at']),
-                $url['domain'] ?? null,
-                $url['address'],
-                $url['description'] ?? null,
-                [], // TODO
-                $visitsCount,
-                new ImportedShlinkUrlMeta(
-                    null,
-                    isset($url['expire_in']) ? new DateTimeImmutable($url['expire_in']) : null,
-                    null,
-                ),
-            );
-        }, $urls);
+                return new ImportedShlinkUrl(
+                    ImportSource::KUTT,
+                    $url['target'],
+                    [],
+                    new DateTimeImmutable($url['created_at']),
+                    $url['domain'] ?? null,
+                    $url['address'],
+                    $url['description'] ?? null,
+                    [], // TODO
+                    $visitsCount,
+                    new ImportedShlinkUrlMeta(
+                        null,
+                        isset($url['expire_in']) ? new DateTimeImmutable($url['expire_in']) : null,
+                        null,
+                    ),
+                );
+            },
+            $urls,
+        );
     }
 }

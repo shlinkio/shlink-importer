@@ -21,8 +21,8 @@ use Shlinkio\Shlink\Importer\Http\RestApiConsumer;
 class RestApiConsumerTest extends TestCase
 {
     private RestApiConsumer $apiConsumer;
-    private MockObject & ClientInterface $httpClient;
-    private MockObject & RequestFactoryInterface $requestFactory;
+    private MockObject&ClientInterface $httpClient;
+    private MockObject&RequestFactoryInterface $requestFactory;
 
     public function setUp(): void
     {
@@ -61,9 +61,13 @@ class RestApiConsumerTest extends TestCase
     {
         $req = new Request('GET', '');
         $this->requestFactory->expects($this->once())->method('createRequest')->willReturn($req);
-        $this->httpClient->expects($this->once())->method('sendRequest')->with($req)->willReturn(
-            new Response(200, [], '{"foo'),
-        );
+        $this->httpClient
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($req)
+            ->willReturn(
+                new Response(200, [], '{"foo'),
+            );
 
         $this->expectException(JsonException::class);
 
@@ -75,18 +79,22 @@ class RestApiConsumerTest extends TestCase
     {
         $req = new Request('GET', '');
         $this->requestFactory->expects($this->once())->method('createRequest')->willReturn($req);
-        $this->httpClient->expects($this->once())->method('sendRequest')->with($this->callback(
-            function (RequestInterface $request): bool {
-                $headers = $request->getHeaders();
+        $this->httpClient
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(
+                static function (RequestInterface $request): bool {
+                    $headers = $request->getHeaders();
 
-                Assert::assertArrayHasKey('Authorization', $headers);
-                Assert::assertEquals('Bearer foobar', $request->getHeaderLine('Authorization'));
-                Assert::assertArrayHasKey('X-Api-Key', $headers);
-                Assert::assertEquals('abc-123', $request->getHeaderLine('X-Api-Key'));
+                    Assert::assertArrayHasKey('Authorization', $headers);
+                    Assert::assertEquals('Bearer foobar', $request->getHeaderLine('Authorization'));
+                    Assert::assertArrayHasKey('X-Api-Key', $headers);
+                    Assert::assertEquals('abc-123', $request->getHeaderLine('X-Api-Key'));
 
-                return true;
-            },
-        ))->willReturn(new Response(200, [], '{"foo": "bar"}'));
+                    return true;
+                },
+            ))
+            ->willReturn(new Response(200, [], '{"foo": "bar"}'));
 
         $result = $this->apiConsumer->callApi('/foo/bar', [
             'Authorization' => 'Bearer foobar',

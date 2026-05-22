@@ -17,7 +17,7 @@ use function count;
 class BitlyApiParamsConsoleHelperTest extends TestCase
 {
     private BitlyApiParamsConsoleHelper $paramsHelper;
-    private MockObject & StyleInterface $io;
+    private MockObject&StyleInterface $io;
 
     public function setUp(): void
     {
@@ -32,12 +32,18 @@ class BitlyApiParamsConsoleHelperTest extends TestCase
     #[Test, DataProvider('provideResponses')]
     public function generatesExpectedParams(array $askResponses, array $confirmResponses, array $expected): void
     {
-        $this->io->expects($this->exactly(count($askResponses)))->method('ask')->willReturnOnConsecutiveCalls(
-            ...$askResponses,
-        );
-        $this->io->expects($this->exactly(count($confirmResponses)))->method('confirm')->willReturnOnConsecutiveCalls(
-            ...$confirmResponses,
-        );
+        $this->io
+            ->expects($this->exactly(count($askResponses)))
+            ->method('ask')
+            ->willReturnOnConsecutiveCalls(
+                ...$askResponses,
+            );
+        $this->io
+            ->expects($this->exactly(count($confirmResponses)))
+            ->method('confirm')
+            ->willReturnOnConsecutiveCalls(
+                ...$confirmResponses,
+            );
 
         self::assertEquals(
             $expected,

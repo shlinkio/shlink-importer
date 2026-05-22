@@ -18,8 +18,7 @@ final class ImportParams
         public readonly bool $importVisits,
         public readonly bool $importOrphanVisits,
         private readonly array $extraParams,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<string, callable> $callableMap
