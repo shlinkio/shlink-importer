@@ -14,6 +14,5 @@ final readonly class ImportedShlinkVisitLocation
         public string $timezone,
         public float $latitude,
         public float $longitude,
-    ) {
-    }
+    ) {}
 }

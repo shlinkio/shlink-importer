@@ -14,8 +14,7 @@ final class YourlsParams
         public readonly string $password,
         public readonly bool $importVisits,
         public readonly string|null $domain,
-    ) {
-    }
+    ) {}
 
     public static function fromImportParams(ImportParams $params): self
     {

@@ -18,12 +18,19 @@ class CsvParamsConsoleHelper implements ParamsConsoleHelperInterface
     public function requestParams(StyleInterface $io): array
     {
         return [
-            'stream' => fn () =>
-                $io->ask('What\'s the path for the CSV file you want to import', null, $this->pathToStream(...)),
-            'delimiter' => fn () => $io->choice('What\'s the delimiter used to separate values?', [
-                ',' => 'Comma',
-                ';' => 'Semicolon',
-            ], ','),
+            'stream' => fn () => $io->ask(
+                'What\'s the path for the CSV file you want to import',
+                null,
+                $this->pathToStream(...),
+            ),
+            'delimiter' => static fn () => $io->choice(
+                'What\'s the delimiter used to separate values?',
+                [
+                    ',' => 'Comma',
+                    ';' => 'Semicolon',
+                ],
+                ',',
+            ),
         ];
     }
 
@@ -38,7 +45,7 @@ class CsvParamsConsoleHelper implements ParamsConsoleHelperInterface
         }
 
         $file = @fopen($value, 'rb');
-        if (! $file) {
+        if (!$file) {
             throw InvalidPathException::pathIsNotFile($value);
         }
 

@@ -16,8 +16,7 @@ final class ShlinkParams
         public readonly string $apiKey,
         public readonly bool $importVisits,
         public readonly bool $importOrphanVisits,
-    ) {
-    }
+    ) {}
 
     public static function fromImportParams(ImportParams $params): self
     {

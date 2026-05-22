@@ -14,8 +14,7 @@ final class CsvParams
     private function __construct(
         public readonly mixed $stream,
         public readonly string $delimiter,
-    ) {
-    }
+    ) {}
 
     public static function fromImportParams(ImportParams $params): self
     {

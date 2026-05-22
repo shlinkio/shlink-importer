@@ -26,9 +26,7 @@ use function trim;
 
 class CsvImporter implements ImporterStrategyInterface
 {
-    public function __construct(private readonly DateTimeInterface|null $date = null)
-    {
-    }
+    public function __construct(private readonly DateTimeInterface|null $date = null) {}
 
     /**
      * @throws ImportException
@@ -46,8 +44,7 @@ class CsvImporter implements ImporterStrategyInterface
     private function importShortUrls(CsvParams $params): iterable
     {
         $now = $this->date ?? new DateTimeImmutable();
-        $csvReader = Reader::from($params->stream)->setDelimiter($params->delimiter)
-                                                  ->setHeaderOffset(0);
+        $csvReader = Reader::from($params->stream)->setDelimiter($params->delimiter)->setHeaderOffset(0);
 
         // FIXME Workaround for PHP 8.4 deprecation warnings. To remove with league/csv 10
         //       See https://github.com/thephpleague/csv/issues/532 for details

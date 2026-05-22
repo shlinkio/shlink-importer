@@ -11,7 +11,6 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
 return [
-
     'dependencies' => [
         'factories' => [
             Command\ImportCommand::class => ConfigAbstractFactory::class,
@@ -86,5 +85,4 @@ return [
             ImportedLinksProcessorInterface::class,
         ],
     ],
-
 ];

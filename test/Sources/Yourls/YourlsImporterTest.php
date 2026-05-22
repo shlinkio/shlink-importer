@@ -23,7 +23,7 @@ use function str_contains;
 class YourlsImporterTest extends TestCase
 {
     private YourlsImporter $importer;
-    private MockObject & RestApiConsumerInterface $apiConsumer;
+    private MockObject&RestApiConsumerInterface $apiConsumer;
 
     public function setUp(): void
     {
@@ -65,73 +65,78 @@ class YourlsImporterTest extends TestCase
             InvalidRequestException::fromResponseData('', 1, '"message":"Unknown or missing \"action\" parameter"'),
             YourlsMissingPluginException::class,
             'The YOURLS instance from where you are trying to import links, does not have the '
-            . '"yourls-shlink-import-plugin" installed, or it is not enabled. Go to https://slnk.to/yourls-import '
-            . 'and follow the installation instructions, then try to import again.',
+                . '"yourls-shlink-import-plugin" installed, or it is not enabled. Go to https://slnk.to/yourls-import '
+                . 'and follow the installation instructions, then try to import again.',
         ];
     }
 
     #[Test, DataProvider('provideLoadParams')]
     public function linksAndVisitsAreLoadedFromYourls(bool $doLoadVisits, int $expectedVisitsCallas): void
     {
-        $this->apiConsumer->expects($this->exactly($expectedVisitsCallas + 1))->method('callApi')->willReturnCallback(
-            function (string $url) {
-                if (
-                    str_contains($url, 'format=json&action=shlink-list')
-                    && str_contains($url, 'username=the_username&password=the_password')
-                ) {
-                    return [
-                        'result' => [
-                            [
-                                'keyword' => 'keyword_0',
-                                'url' => 'url_0',
-                                'timestamp' => '2021-01-01 00:00:00',
-                                'title' => 'title_0',
-                                'clicks' => 0,
+        $this->apiConsumer
+            ->expects($this->exactly($expectedVisitsCallas + 1))
+            ->method('callApi')
+            ->willReturnCallback(
+                static function (string $url) {
+                    if (
+                        str_contains($url, 'format=json&action=shlink-list')
+                        && str_contains($url, 'username=the_username&password=the_password')
+                    ) {
+                        return [
+                            'result' => [
+                                [
+                                    'keyword' => 'keyword_0',
+                                    'url' => 'url_0',
+                                    'timestamp' => '2021-01-01 00:00:00',
+                                    'title' => 'title_0',
+                                    'clicks' => 0,
+                                ],
+                                [
+                                    'keyword' => 'keyword_1',
+                                    'url' => 'url_1',
+                                    'timestamp' => '2021-01-01 00:00:00',
+                                    'title' => 'title_1',
+                                    'clicks' => 3,
+                                ],
                             ],
-                            [
-                                'keyword' => 'keyword_1',
-                                'url' => 'url_1',
-                                'timestamp' => '2021-01-01 00:00:00',
-                                'title' => 'title_1',
-                                'clicks' => 3,
-                            ],
-                        ],
-                    ];
-                }
+                        ];
+                    }
 
-                if (str_contains($url, 'action=shlink-link-visits')) {
-                    $result = str_contains($url, 'keyword_1') ? [] : [
-                        [
-                            'referrer' => 'referrer_0',
-                            'user_agent' => 'user_agent_0',
-                            'click_time' => '2021-01-01 00:00:00',
-                            'country_code' => 'country_code_0',
-                        ],
-                        [
-                            'referrer' => 'direct',
-                            'user_agent' => 'user_agent_1',
-                            'click_time' => '2021-01-01 00:00:00',
-                            'country_code' => 'country_code_1',
-                        ],
-                        [
-                            'referrer' => 'direct',
-                            'user_agent' => 'user_agent_2',
-                            'click_time' => '2021-01-01 00:00:00',
-                            'country_code' => 'country_code_2',
-                        ],
-                    ];
+                    if (str_contains($url, 'action=shlink-link-visits')) {
+                        $result = str_contains($url, 'keyword_1')
+                            ? []
+                            : [
+                                [
+                                    'referrer' => 'referrer_0',
+                                    'user_agent' => 'user_agent_0',
+                                    'click_time' => '2021-01-01 00:00:00',
+                                    'country_code' => 'country_code_0',
+                                ],
+                                [
+                                    'referrer' => 'direct',
+                                    'user_agent' => 'user_agent_1',
+                                    'click_time' => '2021-01-01 00:00:00',
+                                    'country_code' => 'country_code_1',
+                                ],
+                                [
+                                    'referrer' => 'direct',
+                                    'user_agent' => 'user_agent_2',
+                                    'click_time' => '2021-01-01 00:00:00',
+                                    'country_code' => 'country_code_2',
+                                ],
+                            ];
 
-                    return ['result' => $result];
-                }
+                        return ['result' => $result];
+                    }
 
-                return [];
-            },
-        );
+                    return [];
+                },
+            );
 
         $result = $this->importer->import(ImportSource::YOURLS->toParamsWithCallableMap([
-            'username' => fn () => 'the_username',
-            'password' => fn () => 'the_password',
-            ImportParams::IMPORT_VISITS_PARAM => fn () => $doLoadVisits,
+            'username' => static fn () => 'the_username',
+            'password' => static fn () => 'the_password',
+            ImportParams::IMPORT_VISITS_PARAM => static fn () => $doLoadVisits,
         ]));
 
         foreach ($result->shlinkUrls as $urlIndex => $url) {

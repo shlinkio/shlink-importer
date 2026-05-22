@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Strategy;
 
-use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\AbstractSingleInstancePluginManager;
 use Laminas\ServiceManager\Exception\InvalidServiceException;
 
 use function get_debug_type;
 use function sprintf;
 
 /**
- * @extends AbstractPluginManager<ImporterStrategyInterface>
- * @todo Extend from AbstractSingleInstancePluginManager once servicemanager 3 is no longer supported
+ * @extends AbstractSingleInstancePluginManager<ImporterStrategyInterface>
  */
-class ImporterStrategyManager extends AbstractPluginManager implements ImporterStrategyManagerInterface
+class ImporterStrategyManager extends AbstractSingleInstancePluginManager implements ImporterStrategyManagerInterface
 {
     /** @var class-string<ImporterStrategyInterface> */
-    protected $instanceOf = ImporterStrategyInterface::class; // phpcs:ignore
+    protected string $instanceOf = ImporterStrategyInterface::class;
 
     public function validate(mixed $instance): void
     {

@@ -30,7 +30,7 @@ class CsvImporterTest extends TestCase
     public function csvIsProperlyImported(string $csv, string $delimiter, array $expectedList): void
     {
         $options = ImportSource::CSV->toParamsWithCallableMap(
-            ['delimiter' => fn () => $delimiter, 'stream' => fn () => $this->createCsvStream($csv)],
+            ['delimiter' => static fn () => $delimiter, 'stream' => fn () => $this->createCsvStream($csv)],
         );
 
         $result = $this->importer->import($options);
@@ -43,10 +43,10 @@ class CsvImporterTest extends TestCase
     {
         yield 'comma separator' => [
             <<<CSV
-            Long URL,Tags,Domain  ,Short code, Title
-            https://shlink.io,foo|bar|baz,,123,
-            https://facebook.com,,example.com,456,my title
-            CSV,
+                Long URL,Tags,Domain  ,Short code, Title
+                https://shlink.io,foo|bar|baz,,123,
+                https://facebook.com,,example.com,456,my title
+                CSV,
             ',',
             [
                 new ImportedShlinkUrl(
@@ -71,11 +71,11 @@ class CsvImporterTest extends TestCase
         ];
         yield 'semicolon separator' => [
             <<<CSV
-            longURL;tags;domain;short code;Title
-            https://alejandrocelaya.blog;;;abc;
-            https://facebook.com;foo|baz;example.com;def;
-            https://shlink.io/documentation;;example.com;ghi;the title
-            CSV,
+                longURL;tags;domain;short code;Title
+                https://alejandrocelaya.blog;;;abc;
+                https://facebook.com;foo|baz;example.com;def;
+                https://shlink.io/documentation;;example.com;ghi;the title
+                CSV,
             ';',
             [
                 new ImportedShlinkUrl(
@@ -109,9 +109,9 @@ class CsvImporterTest extends TestCase
         ];
         yield 'comma separator in tags' => [
             <<<CSV
-            longURL;tags;domain;short code;Title
-            https://facebook.com;foo,baz;example.com;def;
-            CSV,
+                longURL;tags;domain;short code;Title
+                https://facebook.com;foo,baz;example.com;def;
+                CSV,
             ';',
             [
                 new ImportedShlinkUrl(
@@ -127,9 +127,9 @@ class CsvImporterTest extends TestCase
         ];
         yield 'unknown separator in tags' => [
             <<<CSV
-            longURL;tags;domain;short code;Title
-            https://facebook.com;foo-baz;example.com;def;
-            CSV,
+                longURL;tags;domain;short code;Title
+                https://facebook.com;foo-baz;example.com;def;
+                CSV,
             ';',
             [
                 new ImportedShlinkUrl(
@@ -145,9 +145,9 @@ class CsvImporterTest extends TestCase
         ];
         yield 'inferred shortCode and domain' => [
             <<<CSV
-            longURL;tags;short URL;Title
-            https://facebook.com;foo-baz;https://example.es/inferred-short-code;
-            CSV,
+                longURL;tags;short URL;Title
+                https://facebook.com;foo-baz;https://example.es/inferred-short-code;
+                CSV,
             ';',
             [
                 new ImportedShlinkUrl(

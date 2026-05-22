@@ -22,7 +22,7 @@ use function sprintf;
 class KuttImporterTest extends TestCase
 {
     private KuttImporter $importer;
-    private MockObject & RestApiConsumerInterface $apiConsumer;
+    private MockObject&RestApiConsumerInterface $apiConsumer;
 
     public function setUp(): void
     {
@@ -46,39 +46,47 @@ class KuttImporterTest extends TestCase
     public function expectedAmountOfCallsIsPerformed(bool $loadAll): void
     {
         $urlsCallNum = 0;
-        $this->apiConsumer->expects($this->exactly(2))->method('callApi')->with(
-            $this->stringContains('/api/v2/links'),
-            ['X-Api-Key' => 'my_api_key', 'Accept' => 'application/json'],
-        )->willReturnCallback(
-            function (string $url) use (&$urlsCallNum, $loadAll): array {
-                Assert::assertEquals(
-                    sprintf('/api/v2/links?limit=50&skip=%s&all=%s', $urlsCallNum * 50, $loadAll ? 'true' : 'false'),
-                    $url,
-                );
-                $urlsCallNum++;
+        $this->apiConsumer
+            ->expects($this->exactly(2))
+            ->method('callApi')
+            ->with(
+                $this->stringContains('/api/v2/links'),
+                ['X-Api-Key' => 'my_api_key', 'Accept' => 'application/json'],
+            )
+            ->willReturnCallback(
+                static function (string $url) use (&$urlsCallNum, $loadAll): array {
+                    Assert::assertEquals(
+                        sprintf(
+                            '/api/v2/links?limit=50&skip=%s&all=%s',
+                            $urlsCallNum * 50,
+                            $loadAll ? 'true' : 'false',
+                        ),
+                        $url,
+                    );
+                    $urlsCallNum++;
 
-                return [
-                    'total' => 51,
-                    'data' => [
-                        [
-                            'visit_count' => 3,
-                            'target' => 'https://longurl.com',
-                            'created_at' => '2022-04-14T08:28:57.155Z',
-                            'domain' => 's.test',
-                            'address' => 'short-code',
-                            'expire_in' => '2023-04-16T00:00:00.000Z',
+                    return [
+                        'total' => 51,
+                        'data' => [
+                            [
+                                'visit_count' => 3,
+                                'target' => 'https://longurl.com',
+                                'created_at' => '2022-04-14T08:28:57.155Z',
+                                'domain' => 's.test',
+                                'address' => 'short-code',
+                                'expire_in' => '2023-04-16T00:00:00.000Z',
+                            ],
+                            [
+                                'visit_count' => 25,
+                                'target' => 'https://longurl-2.com',
+                                'created_at' => '2022-04-16T00:00:00.000Z',
+                                'address' => 'short-code-2',
+                                'description' => 'foo link',
+                            ],
                         ],
-                        [
-                            'visit_count' => 25,
-                            'target' => 'https://longurl-2.com',
-                            'created_at' => '2022-04-16T00:00:00.000Z',
-                            'address' => 'short-code-2',
-                            'description' => 'foo link',
-                        ],
-                    ],
-                ];
-            },
-        );
+                    ];
+                },
+            );
 
         $result = $this->importer->import(ImportSource::BITLY->toParamsWithCallableMap([
             'api_key' => static fn () => 'my_api_key',
@@ -88,7 +96,7 @@ class KuttImporterTest extends TestCase
         foreach ($result->shlinkUrls as $index => $url) {
             self::assertEquals(ImportSource::KUTT, $url->source);
 
-            if ($index % 2 === 0) {
+            if (($index % 2) === 0) {
                 self::assertEquals(3, $url->visitsCount);
                 self::assertEquals('https://longurl.com', $url->longUrl);
                 self::assertEquals('s.test', $url->domain);

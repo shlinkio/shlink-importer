@@ -13,9 +13,7 @@ use function Shlinkio\Shlink\Json\json_decode;
 
 readonly class RestApiConsumer implements RestApiConsumerInterface
 {
-    public function __construct(private ClientInterface $httpClient, private RequestFactoryInterface $requestFactory)
-    {
-    }
+    public function __construct(private ClientInterface $httpClient, private RequestFactoryInterface $requestFactory) {}
 
     /**
      * @throws ClientExceptionInterface

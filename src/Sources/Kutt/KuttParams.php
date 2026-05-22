@@ -12,8 +12,7 @@ final class KuttParams
         public readonly string $baseUrl,
         public readonly string $apiKey,
         public readonly bool $importAllUrls,
-    ) {
-    }
+    ) {}
 
     public static function fromImportParams(ImportParams $params): self
     {
