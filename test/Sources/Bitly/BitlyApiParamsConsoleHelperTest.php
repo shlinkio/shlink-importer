@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -19,6 +20,7 @@ class BitlyApiParamsConsoleHelperTest extends TestCase
     private BitlyApiParamsConsoleHelper $paramsHelper;
     private MockObject&StyleInterface $io;
 
+    #[Override]
     public function setUp(): void
     {
         $this->paramsHelper = new BitlyApiParamsConsoleHelper();

@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Importer\Params\ConsoleHelper;
 
 use Laminas\ServiceManager\AbstractSingleInstancePluginManager;
 use Laminas\ServiceManager\Exception\InvalidServiceException;
+use Override;
 
 use function get_debug_type;
 use function sprintf;
@@ -18,6 +19,7 @@ class ConsoleHelperManager extends AbstractSingleInstancePluginManager implement
     /** @var class-string<ParamsConsoleHelperInterface> */
     protected string $instanceOf = ParamsConsoleHelperInterface::class;
 
+    #[Override]
     public function validate(mixed $instance): void
     {
         if ($instance instanceof $this->instanceOf) {

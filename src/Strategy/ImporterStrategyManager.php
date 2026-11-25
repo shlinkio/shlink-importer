@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Importer\Strategy;
 
 use Laminas\ServiceManager\AbstractSingleInstancePluginManager;
 use Laminas\ServiceManager\Exception\InvalidServiceException;
+use Override;
 
 use function get_debug_type;
 use function sprintf;
@@ -18,6 +19,7 @@ class ImporterStrategyManager extends AbstractSingleInstancePluginManager implem
     /** @var class-string<ImporterStrategyInterface> */
     protected string $instanceOf = ImporterStrategyInterface::class;
 
+    #[Override]
     public function validate(mixed $instance): void
     {
         if ($instance instanceof $this->instanceOf) {

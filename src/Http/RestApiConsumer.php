@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Http;
 
 use JsonException;
+use Override;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -20,6 +21,7 @@ readonly class RestApiConsumer implements RestApiConsumerInterface
      * @throws JsonException
      * @throws InvalidRequestException
      */
+    #[Override]
     public function callApi(string $url, array $headers = [], string $method = 'GET'): array
     {
         $request = $this->requestFactory->createRequest($method, $url);

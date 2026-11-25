@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Importer\Sources\Kutt;
 
 use DateTimeImmutable;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -24,6 +25,7 @@ class KuttImporterTest extends TestCase
     private KuttImporter $importer;
     private MockObject&RestApiConsumerInterface $apiConsumer;
 
+    #[Override]
     public function setUp(): void
     {
         $this->apiConsumer = $this->createMock(RestApiConsumerInterface::class);

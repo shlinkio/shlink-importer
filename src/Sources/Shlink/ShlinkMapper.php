@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Sources\Shlink;
 
 use DateTimeInterface;
+use Override;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectCondition;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectRule;
@@ -22,6 +23,7 @@ final class ShlinkMapper implements ShlinkMapperInterface
     /**
      * @inheritDoc
      */
+    #[Override]
     public function mapShortUrl(
         array $url,
         iterable $visits,
@@ -49,6 +51,7 @@ final class ShlinkMapper implements ShlinkMapperInterface
         );
     }
 
+    #[Override]
     public function mapVisit(array $visit, DateTimeInterface $fallbackDate): ImportedShlinkVisit
     {
         return new ImportedShlinkVisit(
@@ -59,6 +62,7 @@ final class ShlinkMapper implements ShlinkMapperInterface
         );
     }
 
+    #[Override]
     public function mapOrphanVisit(array $visit, DateTimeInterface $fallbackDate): ImportedShlinkOrphanVisit
     {
         return new ImportedShlinkOrphanVisit(
@@ -86,6 +90,7 @@ final class ShlinkMapper implements ShlinkMapperInterface
             );
     }
 
+    #[Override]
     public function mapRedirectRule(array $redirectRule): ImportedShlinkRedirectRule
     {
         return new ImportedShlinkRedirectRule(

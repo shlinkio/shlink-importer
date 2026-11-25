@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Csv;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -21,6 +22,7 @@ class CsvImporterTest extends TestCase
 {
     private CsvImporter $importer;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->importer = new CsvImporter(self::getDate());
@@ -178,6 +180,6 @@ class CsvImporterTest extends TestCase
     private static function getDate(): DateTimeInterface
     {
         static $date;
-        return $date ?? ($date = new DateTimeImmutable());
+        return $date ??= new DateTimeImmutable();
     }
 }

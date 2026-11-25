@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Sources\Kutt;
 
+use Override;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 
@@ -12,6 +13,7 @@ class KuttParamsConsoleHelper implements ParamsConsoleHelperInterface
     /**
      * @return array<string, callable>
      */
+    #[Override]
     public function requestParams(StyleInterface $io): array
     {
         return [

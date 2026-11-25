@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Importer\Sources\Csv;
 use DateTimeImmutable;
 use DateTimeInterface;
 use League\Csv\Reader;
+use Override;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportResult;
@@ -31,6 +32,7 @@ class CsvImporter implements ImporterStrategyInterface
     /**
      * @throws ImportException
      */
+    #[Override]
     public function import(ImportParams $importParams): ImportResult
     {
         $params = CsvParams::fromImportParams($importParams);

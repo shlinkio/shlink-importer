@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Importer\Http;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use JsonException;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -24,6 +25,7 @@ class RestApiConsumerTest extends TestCase
     private MockObject&ClientInterface $httpClient;
     private MockObject&RequestFactoryInterface $requestFactory;
 
+    #[Override]
     public function setUp(): void
     {
         $this->httpClient = $this->createMock(ClientInterface::class);

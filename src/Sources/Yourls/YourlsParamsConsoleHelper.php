@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Importer\Sources\Yourls;
 
+use Override;
 use Shlinkio\Shlink\Importer\Params\ConsoleHelper\ParamsConsoleHelperInterface;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
 use Symfony\Component\Console\Style\StyleInterface;
@@ -13,6 +14,7 @@ class YourlsParamsConsoleHelper implements ParamsConsoleHelperInterface
     /**
      * @return array<string, callable>
      */
+    #[Override]
     public function requestParams(StyleInterface $io): array
     {
         return [

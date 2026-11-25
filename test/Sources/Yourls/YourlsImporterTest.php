@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Yourls;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -25,6 +26,7 @@ class YourlsImporterTest extends TestCase
     private YourlsImporter $importer;
     private MockObject&RestApiConsumerInterface $apiConsumer;
 
+    #[Override]
     public function setUp(): void
     {
         $this->apiConsumer = $this->createMock(RestApiConsumerInterface::class);
