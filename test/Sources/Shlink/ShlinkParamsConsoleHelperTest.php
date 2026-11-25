@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Shlink;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +17,7 @@ class ShlinkParamsConsoleHelperTest extends TestCase
     private ShlinkParamsConsoleHelper $helper;
     private MockObject&StyleInterface $io;
 
+    #[Override]
     public function setUp(): void
     {
         $this->helper = new ShlinkParamsConsoleHelper();

@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Importer\Sources\Bitly;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -27,6 +28,7 @@ class BitlyApiImporterTest extends TestCase
     private BitlyApiImporter $importer;
     private MockObject&RestApiConsumerInterface $apiConsumer;
 
+    #[Override]
     public function setUp(): void
     {
         $this->apiConsumer = $this->createMock(RestApiConsumerInterface::class);
@@ -526,6 +528,6 @@ class BitlyApiImporterTest extends TestCase
 
     private static function createDate(string $date): DateTimeInterface
     {
-        return DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $date); // @phpstan-ignore-line
+        return DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $date);
     }
 }

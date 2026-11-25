@@ -20,11 +20,10 @@
         "symfony/console": "^8.1"
     },
     "require-dev": {
-        "carthage-software/mago": "^1.45",
+        "carthage-software/mago": "~1.61.0",
         "guzzlehttp/guzzle": "^7.15",
         "phpunit/phpunit": "^13.2",
         "psr/http-factory": "^1.1",
-        "roave/security-advisories": "dev-master",
         "shlinkio/shlink-mago-config": "^1.1",
         "symfony/var-dumper": "^8.1"
     },

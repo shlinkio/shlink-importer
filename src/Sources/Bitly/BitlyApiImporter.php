@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Sources\Bitly;
 
 use JsonException;
+use Override;
 use Psr\Http\Client\ClientExceptionInterface;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
@@ -32,6 +33,7 @@ class BitlyApiImporter implements ImporterStrategyInterface
     /**
      * @throws ImportException
      */
+    #[Override]
     public function import(ImportParams $importParams): ImportResult
     {
         $params = BitlyApiParams::fromImportParams($importParams);

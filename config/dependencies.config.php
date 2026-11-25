@@ -18,18 +18,20 @@ return [
 
             Sources\Shlink\ShlinkMapper::class => InvokableFactory::class,
 
-            Strategy\ImporterStrategyManager::class => static fn (
-                ContainerInterface $container,
-            ) => new Strategy\ImporterStrategyManager(
-                $container,
-                $container->get('config')['cli']['importer_strategies'],
-            ),
-            Params\ConsoleHelper\ConsoleHelperManager::class => static fn (
-                ContainerInterface $container,
-            ) => new Params\ConsoleHelper\ConsoleHelperManager(
-                $container,
-                $container->get('config')['cli']['params_console_helpers'],
-            ),
+            Strategy\ImporterStrategyManager::class =>
+                static fn (
+                    ContainerInterface $container,
+                ) => new Strategy\ImporterStrategyManager(
+                    $container,
+                    $container->get('config')['cli']['importer_strategies'],
+                ),
+            Params\ConsoleHelper\ConsoleHelperManager::class =>
+                static fn (
+                    ContainerInterface $container,
+                ) => new Params\ConsoleHelper\ConsoleHelperManager(
+                    $container,
+                    $container->get('config')['cli']['params_console_helpers'],
+                ),
         ],
     ],
 

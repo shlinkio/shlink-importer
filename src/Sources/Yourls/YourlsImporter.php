@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Sources\Yourls;
 
 use Generator;
+use Override;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
@@ -33,6 +34,7 @@ class YourlsImporter implements ImporterStrategyInterface
     /**
      * @throws ImportException
      */
+    #[Override]
     public function import(ImportParams $importParams): ImportResult
     {
         $params = YourlsParams::fromImportParams($importParams);

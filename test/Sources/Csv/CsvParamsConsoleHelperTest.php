@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Csv;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Stub;
@@ -18,6 +19,7 @@ class CsvParamsConsoleHelperTest extends TestCase
     private CsvParamsConsoleHelper $helper;
     private Stub&StyleInterface $io;
 
+    #[Override]
     public function setUp(): void
     {
         $this->helper = new CsvParamsConsoleHelper();

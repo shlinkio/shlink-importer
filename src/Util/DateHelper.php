@@ -11,7 +11,6 @@ class DateHelper
 {
     public static function dateFromFormat(string $format, string $date): DateTimeImmutable
     {
-        // @phpstan-ignore-next-line
         return DateTimeImmutable::createFromFormat($format, $date);
     }
 

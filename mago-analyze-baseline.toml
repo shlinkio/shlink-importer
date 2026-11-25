@@ -3,7 +3,7 @@ variant = "loose"
 [[issues]]
 file = "config/dependencies.config.php"
 code = "mixed-argument"
-message = '''Invalid argument type for argument #2 of `Laminas\ServiceManager\AbstractPluginManager::__construct`: expected `array{'abstract_factories'?: array<array-key, Laminas\ServiceManager\Factory\AbstractFactoryInterface|class-string<Laminas\ServiceManager\Factory\AbstractFactoryInterface>>, 'aliases'?: array<string, string>, 'delegators'?: !Laminas\ServiceManager\ServiceManager::DelegatorsConfiguration, 'factories'?: !Laminas\ServiceManager\ServiceManager::FactoriesConfiguration, 'initializers'?: !Laminas\ServiceManager\ServiceManager::InitializersConfiguration, 'invokables'?: array<string, class-string>, 'lazy_services'?: array{'class_map'?: array<string, class-string>, 'proxies_namespace'?: non-empty-string, 'proxies_target_dir'?: non-empty-string, 'write_proxy_files'?: bool}, 'services'?: array<string, mixed>, 'shared'?: array<string, bool>, 'shared_by_default'?: bool, ...<string, mixed>}`, but found `mixed`.'''
+message = '''Invalid argument type for argument #2 of `Laminas\ServiceManager\AbstractPluginManager::__construct`: expected `array{'abstract_factories'?: array<array-key, Laminas\ServiceManager\Factory\AbstractFactoryInterface|class-string<Laminas\ServiceManager\Factory\AbstractFactoryInterface>>, 'aliases'?: array<string, string>, 'delegators'?: array<string, array<array-key, (callable(Psr\Container\ContainerInterface, string, (callable(): mixed), array<array-key, mixed>|null): mixed)|Laminas\ServiceManager\Factory\DelegatorFactoryInterface|class-string<(!Laminas\ServiceManager\ServiceManager::DelegatorCallable)&object>|class-string<Laminas\ServiceManager\Factory\DelegatorFactoryInterface>>>, 'factories'?: array<string, (callable(Psr\Container\ContainerInterface, string, array<array-key, mixed>|null): mixed)|Laminas\ServiceManager\Factory\FactoryInterface|class-string<(!Laminas\ServiceManager\ServiceManager::FactoryCallable)&object>|class-string<Laminas\ServiceManager\Factory\FactoryInterface>>, 'initializers'?: array<array-key, (callable(Psr\Container\ContainerInterface, mixed): void)|Laminas\ServiceManager\Initializer\InitializerInterface|class-string<(!Laminas\ServiceManager\ServiceManager::InitializerCallable)&object>|class-string<Laminas\ServiceManager\Initializer\InitializerInterface>>, 'invokables'?: array<string, class-string>, 'lazy_services'?: array{'class_map'?: array<string, class-string>, 'proxies_namespace'?: non-empty-string, 'proxies_target_dir'?: non-empty-string, 'write_proxy_files'?: bool}, 'services'?: array<string, mixed>, 'shared'?: array<string, bool>, 'shared_by_default'?: bool, ...<string, mixed>}`, but found `mixed`.'''
 count = 2
 
 [[issues]]
@@ -16,24 +16,18 @@ count = 4
 file = "src/Http/RestApiConsumer.php"
 code = "less-specific-argument"
 message = 'Argument type mismatch for argument #1 of `Psr\Http\Message\MessageInterface::withHeader`: expected `string`, but provided type `array-key` is less specific.'
-count = 2
+count = 1
 
 [[issues]]
 file = "src/Http/RestApiConsumer.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #2 of `Psr\Http\Message\MessageInterface::withHeader`: expected `array<array-key, string>|string`, but found `mixed`.'
-count = 2
+count = 1
 
 [[issues]]
 file = "src/Http/RestApiConsumer.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Params/ConsoleHelper/ConsoleHelperManager.php"
-code = "incompatible-property-type"
-message = 'Property `Shlinkio\Shlink\Importer\Params\ConsoleHelper\ConsoleHelperManager::$instanceOf` has an incompatible type declaration from docblock.'
 count = 1
 
 [[issues]]
@@ -166,24 +160,6 @@ count = 1
 file = "src/Sources/Bitly/BitlyApiImporter.php"
 code = "mixed-assignment"
 message = "Assigning `truthy-mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Sources/Bitly/BitlyApiImporter.php"
-code = "redundant-condition"
-message = "Redundant condition"
-count = 1
-
-[[issues]]
-file = "src/Sources/Bitly/BitlyApiImporter.php"
-code = "redundant-null-coalesce"
-message = "Redundant null coalesce: left-hand side can never be `null` or undefined."
-count = 1
-
-[[issues]]
-file = "src/Sources/Bitly/BitlyApiImporter.php"
-code = "redundant-null-coalesce"
-message = "Redundant null coalesce: left-hand side is always `null`."
 count = 1
 
 [[issues]]
@@ -757,21 +733,15 @@ message = 'Invalid argument type for argument #5 of `Shlinkio\Shlink\Importer\So
 count = 1
 
 [[issues]]
-file = "src/Strategy/ImporterStrategyManager.php"
-code = "incompatible-property-type"
-message = 'Property `Shlinkio\Shlink\Importer\Strategy\ImporterStrategyManager::$instanceOf` has an incompatible type declaration from docblock.'
-count = 1
-
-[[issues]]
 file = "src/Util/DateHelper.php"
 code = "falsable-return-statement"
-message = '''Function `Shlinkio\Shlink\Importer\Util\DateHelper::dateFromFormat` is declared to return `DateTimeImmutable` but possibly returns 'false' (inferred as `DateTimeImmutable&static|false`).'''
+message = '''Function `Shlinkio\Shlink\Importer\Util\DateHelper::dateFromFormat` is declared to return `DateTimeImmutable` but possibly returns 'false' (inferred as `DateTimeImmutable|false`).'''
 count = 1
 
 [[issues]]
 file = "src/Util/DateHelper.php"
 code = "invalid-return-statement"
-message = 'Invalid return type for function `Shlinkio\Shlink\Importer\Util\DateHelper::dateFromFormat`: expected `DateTimeImmutable`, but found `DateTimeImmutable&static|false`.'
+message = 'Invalid return type for function `Shlinkio\Shlink\Importer\Util\DateHelper::dateFromFormat`: expected `DateTimeImmutable`, but found `DateTimeImmutable|false`.'
 count = 1
 
 [[issues]]
@@ -782,44 +752,14 @@ count = 2
 
 [[issues]]
 file = "test/Sources/Bitly/BitlyApiImporterTest.php"
-code = "falsable-return-statement"
-message = '''Function `ShlinkioTest\Shlink\Importer\Sources\Bitly\BitlyApiImporterTest::createDate` is declared to return `DateTimeInterface` but possibly returns 'false' (inferred as `DateTimeImmutable&static|false`).'''
-count = 1
-
-[[issues]]
-file = "test/Sources/Bitly/BitlyApiImporterTest.php"
 code = "invalid-array-element-key"
 message = "Cannot use spread operator on an iterable with key type `mixed`."
 count = 2
 
 [[issues]]
 file = "test/Sources/Bitly/BitlyApiImporterTest.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `ShlinkioTest\Shlink\Importer\Sources\Bitly\BitlyApiImporterTest::createDate`: expected `DateTimeInterface`, but found `DateTimeImmutable&static|false`.'
-count = 1
-
-[[issues]]
-file = "test/Sources/Bitly/BitlyApiImporterTest.php"
 code = "less-specific-argument"
 message = '''Argument type mismatch for argument #1 of `Shlinkio\Shlink\Importer\Sources\ImportSource::toParamsWithCallableMap`: expected `array<string, (callable(...mixed): mixed)>`, but provided type `array{'access_token': (closure(): string('abc123')), ...}` is less specific.'''
-count = 1
-
-[[issues]]
-file = "test/Sources/Bitly/BitlyApiImporterTest.php"
-code = "redundant-comparison"
-message = "Redundant `===` comparison: left-hand side is always identical to right-hand side."
-count = 1
-
-[[issues]]
-file = "test/Sources/Bitly/BitlyApiImporterTest.php"
-code = "redundant-logical-operation"
-message = "Redundant `&&` operation: left operand is always truthy and right operand is evaluated."
-count = 1
-
-[[issues]]
-file = "test/Sources/Bitly/BitlyApiImporterTest.php"
-code = "redundant-null-coalesce"
-message = "Redundant null coalesce: left-hand side is always `null`."
 count = 1
 
 [[issues]]
@@ -832,6 +772,12 @@ count = 1
 file = "test/Sources/Csv/CsvImporterTest.php"
 code = "invalid-array-element-key"
 message = "Cannot use spread operator on an iterable with key type `mixed`."
+count = 1
+
+[[issues]]
+file = "test/Sources/Csv/CsvImporterTest.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
 count = 1
 
 [[issues]]

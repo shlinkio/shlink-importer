@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Importer\Sources\Shlink;
 use DateTimeImmutable;
 use Generator;
 use JsonException;
+use Override;
 use Psr\Http\Client\ClientExceptionInterface;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\InvalidRequestException;
@@ -40,6 +41,7 @@ class ShlinkImporter implements ImporterStrategyInterface
     /**
      * @throws ImportException
      */
+    #[Override]
     public function import(ImportParams $importParams): ImportResult
     {
         $this->importStartTime = new DateTimeImmutable();

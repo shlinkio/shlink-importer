@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Sources\Yourls;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +17,7 @@ class YourlsParamsConsoleHelperTest extends TestCase
     private YourlsParamsConsoleHelper $helper;
     private MockObject&StyleInterface $io;
 
+    #[Override]
     public function setUp(): void
     {
         $this->helper = new YourlsParamsConsoleHelper();

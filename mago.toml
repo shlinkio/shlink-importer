@@ -24,4 +24,6 @@ baseline = "mago-analyze-baseline.toml"
 ignore = [
     { code = "mixed-argument", in = "test/" },
     { code = "less-specific-nested-argument-type", in = "test/" },
+    { code = "invalid-return-statement", in = "test/" },
+    { code = "falsable-return-statement", in = "test/" },
 ]

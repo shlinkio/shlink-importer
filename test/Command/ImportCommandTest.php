@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Importer\Command;
 
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -40,6 +41,7 @@ class ImportCommandTest extends TestCase
     private MockObject&ImporterStrategyInterface $importerStrategy;
     private CommandTester $commandTester;
 
+    #[Override]
     public function setUp(): void
     {
         putenv('COLUMNS=120'); // This ensures a consistent output length
@@ -63,6 +65,7 @@ class ImportCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         putenv('COLUMNS');

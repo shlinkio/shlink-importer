@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Importer\Sources\Kutt;
 
 use DateTimeImmutable;
+use Override;
 use Shlinkio\Shlink\Importer\Exception\ImportException;
 use Shlinkio\Shlink\Importer\Http\RestApiConsumerInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -28,6 +29,7 @@ class KuttImporter implements ImporterStrategyInterface
     /**
      * @throws ImportException
      */
+    #[Override]
     public function import(ImportParams $importParams): ImportResult
     {
         $params = KuttParams::fromImportParams($importParams);
